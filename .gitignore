@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Personal config
+configs/local.yaml
+.env
+
+# Heavy data (share via team drive, not git)
+data/raw/
+data/pages/
+data/parsed/
+data/indexes/
+data/cache/
+*.pt
+*.pkl
+*.safetensors
+*.bin
+
+# Stealth study answer key must not leak to annotators
+report/stealth/key*.csv
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
