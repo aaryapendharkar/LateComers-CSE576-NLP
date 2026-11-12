@@ -1,0 +1,13 @@
+{"qid": "syn_q01", "source": "finqa", "question": "what is the percentage change in total revenue from 2018 to 2019?", "program": "subtract(1514, 1385), divide(#0, 1385)", "expected_by_rules": "trend", "expected_needs_review": false}
+{"qid": "syn_q02", "source": "finqa", "question": "what portion of total revenue came from product revenue in 2019?", "program": "divide(1204, 1514)", "expected_by_rules": "arithmetic", "expected_needs_review": false}
+{"qid": "syn_q03", "source": "finqa", "question": "was product revenue greater than service revenue in 2019?", "program": "greater(1204, 310)", "expected_by_rules": "comparison", "expected_needs_review": false}
+{"qid": "syn_q04", "source": "finqa", "question": "did total revenue increase from 2018 to 2019?", "program": "greater(1514, 1385)", "expected_by_rules": "trend", "expected_needs_review": true}
+{"qid": "syn_q05", "source": "finqa", "question": "what is the sum of product and service revenue in 2018?", "program": "add(1090, 295)", "expected_by_rules": "arithmetic", "expected_needs_review": false}
+{"qid": "syn_q06", "source": "finqa", "question": "what were total revenues in 2019 in thousands?", "program": "multiply(1514, const_1000)", "expected_by_rules": "arithmetic", "expected_needs_review": true}
+{"qid": "syn_q07", "source": "finqa", "question": "what was the increase in service revenue in 2019?", "program": "subtract(310, 295)", "expected_by_rules": "arithmetic", "expected_needs_review": false}
+{"qid": "syn_q08", "source": "chartqa", "question": "What was the unemployment rate in 2015?", "program": null, "expected_by_rules": "lookup", "expected_needs_review": false}
+{"qid": "syn_q09", "source": "chartqa", "question": "What is the difference between the values for 2010 and 2015?", "program": null, "expected_by_rules": "arithmetic", "expected_needs_review": false}
+{"qid": "syn_q10", "source": "chartqa", "question": "By how much did sales grow between 2016 and 2020?", "program": null, "expected_by_rules": "trend", "expected_needs_review": false}
+{"qid": "syn_q11", "source": "chartqa", "question": "What is the value of the tallest bar?", "program": null, "expected_by_rules": "comparison", "expected_needs_review": true}
+{"qid": "syn_q12", "source": "chartqa", "question": "Is the share of Asia higher than Europe?", "program": null, "expected_by_rules": "comparison", "expected_needs_review": false}
+{"qid": "syn_q13", "source": "chartqa", "question": "Bananas in Ecuador?", "program": null, "expected_by_rules": "lookup", "expected_needs_review": true}

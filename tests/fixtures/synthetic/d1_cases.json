@@ -1,0 +1,275 @@
+{
+  "fixture_set": "d1_synthetic_v1",
+  "provenance": "Hand-written SYNTHETIC fixtures by Person 3 (Vatsal). Company names and values are invented. Expected outcomes were derived by hand (see each 'derivation') before running D1. These demonstrate implementation behaviour only; they are not benchmark data and do not estimate detection rates.",
+  "input_kind": "synthetic_fixture",
+  "cases": [
+    {
+      "case_id": "01_valid_table",
+      "description": "Clean table whose total adds up; prose agrees with the table.",
+      "detector_input": {
+        "table": {"title": "ACME Corp revenue", "unit_note": "in millions", "header": ["", "2019", "2018"],
+                  "rows": [["Product revenue", "1,204", "1,090"], ["Service revenue", "310", "295"], ["Total revenue", "1,514", "1,385"]]},
+        "pre_text": "ACME Corp revenue by type is shown below.",
+        "post_text": "Total revenue was $1.5 billion in 2019. Product revenue was $1,204 million in 2019, compared to $1,090 million in 2018."
+      },
+      "derivation": "1204+310=1514, 1090+295=1385 (tolerance 3 x 0.5 = 1.5). $1.5 billion vs 1,514 million: |1500-1514|=14M <= 50M+0.5M. Product 1,204 and 1,090 match exactly.",
+      "expected": {"status": "checks_passed", "flag": false,
+                   "n_checks": {"arithmetic": 2, "prose": 3}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "reason_contains": ["NO_CONTRADICTION_FOUND", "does not establish factual correctness"]}
+    },
+    {
+      "case_id": "02_naive_edit_breaks_total",
+      "description": "Baseline B1: Product revenue 2019 changed 1,204 -> 1,312; total left at 1,514. No numeric prose, so only arithmetic can fire.",
+      "detector_input": {
+        "table": {"title": "ACME Corp revenue", "unit_note": "in millions", "header": ["", "2019", "2018"],
+                  "rows": [["Product revenue", "1,312", "1,090"], ["Service revenue", "310", "295"], ["Total revenue", "1,514", "1,385"]]},
+        "pre_text": "", "post_text": ""
+      },
+      "derivation": "2019: 1312+310=1622 vs 1514, discrepancy 108 > 1.5 -> contradiction. 2018 still adds up.",
+      "expected": {"status": "contradiction", "flag": true,
+                   "n_checks": {"arithmetic": 2, "prose": 0}, "n_failed": {"arithmetic": 1, "prose": 0},
+                   "reason_contains": ["Total revenue", "'2019'", "1,622", "discrepancy 108"]}
+    },
+    {
+      "case_id": "03_consistent_edit_passes_arithmetic",
+      "description": "Consistency-preserving edit: Product revenue 2019 -> 1,312 and Total revenue 2019 -> 1,622. No numeric prose. Expected MISS.",
+      "detector_input": {
+        "table": {"title": "ACME Corp revenue", "unit_note": "in millions", "header": ["", "2019", "2018"],
+                  "rows": [["Product revenue", "1,312", "1,090"], ["Service revenue", "310", "295"], ["Total revenue", "1,622", "1,385"]]},
+        "pre_text": "", "post_text": ""
+      },
+      "derivation": "1312+310=1622 and 1090+295=1385, so every arithmetic check passes although the table is poisoned.",
+      "expected": {"status": "checks_passed", "flag": false,
+                   "n_checks": {"arithmetic": 2, "prose": 0}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "reason_contains": ["NO_CONTRADICTION_FOUND"]}
+    },
+    {
+      "case_id": "04_consistent_edit_contradicted_by_prose",
+      "description": "Same consistent edit as case 03, but the surrounding prose was left unchanged.",
+      "detector_input": {
+        "table": {"title": "ACME Corp revenue", "unit_note": "in millions", "header": ["", "2019", "2018"],
+                  "rows": [["Product revenue", "1,312", "1,090"], ["Service revenue", "310", "295"], ["Total revenue", "1,622", "1,385"]]},
+        "pre_text": "ACME Corp revenue by type is shown below.",
+        "post_text": "Total revenue was $1.5 billion in 2019. Product revenue was $1,204 million in 2019, compared to $1,090 million in 2018."
+      },
+      "derivation": "Arithmetic passes (case 03). $1.5B vs 1,622M: 122M > 50.5M tolerance. $1,204M vs 1,312M: 108M > 1M. 2018 product claim matches.",
+      "expected": {"status": "contradiction", "flag": true,
+                   "n_checks": {"arithmetic": 2, "prose": 3}, "n_failed": {"arithmetic": 0, "prose": 2},
+                   "reason_contains": ["[prose]", "Total revenue", "Product revenue", "'2019'"]}
+    },
+    {
+      "case_id": "05_coordinated_edit_undetectable",
+      "description": "Consistent table edit AND prose rewritten to match. Internally consistent but wrong. Expected MISS.",
+      "detector_input": {
+        "table": {"title": "ACME Corp revenue", "unit_note": "in millions", "header": ["", "2019", "2018"],
+                  "rows": [["Product revenue", "1,312", "1,090"], ["Service revenue", "310", "295"], ["Total revenue", "1,622", "1,385"]]},
+        "pre_text": "ACME Corp revenue by type is shown below.",
+        "post_text": "Total revenue was $1.6 billion in 2019. Product revenue was $1,312 million in 2019, compared to $1,090 million in 2018."
+      },
+      "derivation": "$1.6B vs 1,622M: 22M <= 50.5M. Product claims match exactly. Nothing on the page disagrees, so D1 cannot detect it.",
+      "expected": {"status": "checks_passed", "flag": false,
+                   "n_checks": {"arithmetic": 2, "prose": 3}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "reason_contains": ["NO_CONTRADICTION_FOUND"]}
+    },
+    {
+      "case_id": "06_rounding_within_tolerance",
+      "description": "Components printed to one decimal sum to 99.9 while the total shows 100.0.",
+      "detector_input": {
+        "table": {"title": "Segment revenue", "unit_note": "in millions", "header": ["", "2020"],
+                  "rows": [["Segment A", "33.3"], ["Segment B", "33.3"], ["Segment C", "33.3"], ["Total", "100.0"]]},
+        "pre_text": "", "post_text": ""
+      },
+      "derivation": "Discrepancy 0.1. Tolerance = 4 printed values x 0.05 = 0.2. Passes.",
+      "expected": {"status": "checks_passed", "flag": false,
+                   "n_checks": {"arithmetic": 1, "prose": 0}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "reason_contains": ["NO_CONTRADICTION_FOUND"]}
+    },
+    {
+      "case_id": "07_rounding_beyond_tolerance",
+      "description": "Same as 06 but total 100.2: more than rounding can explain.",
+      "detector_input": {
+        "table": {"title": "Segment revenue", "unit_note": "in millions", "header": ["", "2020"],
+                  "rows": [["Segment A", "33.3"], ["Segment B", "33.3"], ["Segment C", "33.3"], ["Total", "100.2"]]},
+        "pre_text": "", "post_text": ""
+      },
+      "derivation": "Discrepancy 0.3 > tolerance 0.2 -> contradiction.",
+      "expected": {"status": "contradiction", "flag": true,
+                   "n_checks": {"arithmetic": 1, "prose": 0}, "n_failed": {"arithmetic": 1, "prose": 0},
+                   "reason_contains": ["discrepancy 0.3 exceeds rounding tolerance 0.2"]}
+    },
+    {
+      "case_id": "08_negative_values",
+      "description": "Parentheses and '$ (150)' denote negatives; totals only add up if they are read as negative.",
+      "detector_input": {
+        "table": {"title": "Income before taxes", "unit_note": "in thousands", "header": ["", "2019", "2018"],
+                  "rows": [["Operating income", "5,400", "4,900"], ["Other income (expense)", "(1,200)", "350"],
+                           ["Foreign exchange loss", "$ (150)", "(75)"], ["Total income before taxes", "4,050", "5,175"]]},
+        "pre_text": "", "post_text": ""
+      },
+      "derivation": "2019: 5400-1200-150=4050. 2018: 4900+350-75=5175. Reading parentheses as positive would give 6750 and 5325 (fail).",
+      "expected": {"status": "checks_passed", "flag": false,
+                   "n_checks": {"arithmetic": 2, "prose": 0}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "reason_contains": ["NO_CONTRADICTION_FOUND"]}
+    },
+    {
+      "case_id": "09_missing_value_not_zero",
+      "description": "A dash in a component cell. D1 must not treat it as zero by default.",
+      "detector_input": {
+        "table": {"title": "Software revenue", "unit_note": "in millions", "header": ["", "2019", "2018"],
+                  "rows": [["Licenses", "120", "—"], ["Support", "80", "60"], ["Total", "200", "60"]]},
+        "pre_text": "", "post_text": ""
+      },
+      "derivation": "2019: 120+80=200 checked and passes. 2018 has a dash -> skipped as missing_value (would pass only if the dash were assumed to be 0).",
+      "expected": {"status": "checks_passed", "flag": false,
+                   "n_checks": {"arithmetic": 1, "prose": 0}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "skip_codes_include": ["missing_value"],
+                   "reason_contains": ["1 items not checkable"]}
+    },
+    {
+      "case_id": "10_nested_subtotals_valid",
+      "description": "Total assets = Total current assets + Property + Goodwill; Cash and Receivables must not be counted twice.",
+      "detector_input": {
+        "table": {"title": "Balance sheet", "unit_note": "in millions", "header": ["", "2019"],
+                  "rows": [["Cash", "100"], ["Receivables", "250"], ["Total current assets", "350"],
+                           ["Property and equipment", "400"], ["Goodwill", "150"], ["Total assets", "900"]]},
+        "pre_text": "", "post_text": ""
+      },
+      "derivation": "100+250=350. Contiguous hypothesis for Total assets: 400+150=550 (fails); nested hypothesis: 350+400+150=900 (passes). Double counting would give 1250.",
+      "expected": {"status": "checks_passed", "flag": false,
+                   "n_checks": {"arithmetic": 2, "prose": 0}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "reason_contains": ["NO_CONTRADICTION_FOUND"]}
+    },
+    {
+      "case_id": "11_nested_leaf_naive_edit",
+      "description": "Cash changed 100 -> 130 with no totals updated.",
+      "detector_input": {
+        "table": {"title": "Balance sheet", "unit_note": "in millions", "header": ["", "2019"],
+                  "rows": [["Cash", "130"], ["Receivables", "250"], ["Total current assets", "350"],
+                           ["Property and equipment", "400"], ["Goodwill", "150"], ["Total assets", "900"]]},
+        "pre_text": "", "post_text": ""
+      },
+      "derivation": "Total current assets: 130+250=380 vs 350 -> fail. Total assets uses the printed subtotal 350: 350+400+150=900 -> pass. Exactly one contradiction.",
+      "expected": {"status": "contradiction", "flag": true,
+                   "n_checks": {"arithmetic": 2, "prose": 0}, "n_failed": {"arithmetic": 1, "prose": 0},
+                   "reason_contains": ["Total current assets", "discrepancy 30"]}
+    },
+    {
+      "case_id": "12_unit_edit_contradicted_by_prose",
+      "description": "Person 2-style unit attack: unit note changed 'in millions' -> 'in thousands'. Prose still says $1.5 billion.",
+      "detector_input": {
+        "table": {"title": "ACME Corp revenue", "unit_note": "in thousands", "header": ["", "2019", "2018"],
+                  "rows": [["Product revenue", "1,204", "1,090"], ["Service revenue", "310", "295"], ["Total revenue", "1,514", "1,385"]]},
+        "pre_text": "", "post_text": "Total revenue was $1.5 billion in 2019."
+      },
+      "derivation": "Arithmetic is scale-free and passes. 1,514 thousand = 1,514,000 vs 1,500,000,000 -> prose contradiction.",
+      "expected": {"status": "contradiction", "flag": true,
+                   "n_checks": {"arithmetic": 2, "prose": 1}, "n_failed": {"arithmetic": 0, "prose": 1},
+                   "reason_contains": ["[prose]", "Total revenue", "1,514,000"]}
+    },
+    {
+      "case_id": "13_ambiguous_scale",
+      "description": "Title says thousands, unit note says millions. Prose comparison cannot be aligned.",
+      "detector_input": {
+        "table": {"title": "ACME Corp revenue (in thousands)", "unit_note": "in millions", "header": ["", "2019", "2018"],
+                  "rows": [["Product revenue", "1,204", "1,090"], ["Service revenue", "310", "295"], ["Total revenue", "1,514", "1,385"]]},
+        "pre_text": "", "post_text": "Total revenue was $1.5 billion in 2019."
+      },
+      "derivation": "Arithmetic passes (2 checks). The prose claim is skipped as table_scale_ambiguous, not passed.",
+      "expected": {"status": "checks_passed", "flag": false,
+                   "n_checks": {"arithmetic": 2, "prose": 0}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "skip_codes_include": ["table_scale_ambiguous"]}
+    },
+    {
+      "case_id": "14_prose_other_metric_or_year",
+      "description": "Prose mentions net revenue, a year not in the table, and a narrower scope; only the last sentence is comparable.",
+      "detector_input": {
+        "table": {"title": "Gross profit", "unit_note": "in millions", "header": ["", "2019", "2018"],
+                  "rows": [["Revenue", "2,000", "1,800"], ["Cost of revenue", "1,200", "1,100"], ["Gross profit", "800", "700"]]},
+        "pre_text": "",
+        "post_text": "Net revenue was $1.9 billion in 2019. Revenue was $1.5 billion in 2017. Revenue from services was $0.4 billion in 2019. Revenue was $2.0 billion in 2019."
+      },
+      "derivation": "'Net revenue' is a different metric (qualifier). 2017 is not a column. 'Revenue from services' is a narrower scope. Each of these would be a false contradiction if compared. 'Revenue ... $2.0 billion in 2019' matches 2,000M exactly.",
+      "expected": {"status": "checks_passed", "flag": false,
+                   "n_checks": {"arithmetic": 0, "prose": 1}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "skip_codes_include": ["scope_qualifier", "period_not_in_table"]}
+    },
+    {
+      "case_id": "15_ragged_parse_uncheckable",
+      "description": "Simulated parsing error: a label and value merged, so the last row has too few cells.",
+      "detector_input": {
+        "table": {"title": "ACME Corp revenue", "unit_note": "in millions", "header": ["", "2019", "2018"],
+                  "rows": [["Product revenue", "1,204", "1,090"], ["Service revenue", "310", "295"], ["Total revenue 1,514", "1,385"]]},
+        "pre_text": "",
+        "post_text": "Total revenue was $1.5 billion in 2019."
+      },
+      "derivation": "Column alignment cannot be trusted -> no checks; must be reported as NOT_CHECKABLE, not as passing.",
+      "expected": {"status": "uncheckable", "flag": false,
+                   "n_checks": {"arithmetic": 0, "prose": 0}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "skip_codes_include": ["ragged_table"],
+                   "reason_contains": ["NOT_CHECKABLE", "ragged_table"]}
+    },
+    {
+      "case_id": "16_no_table",
+      "description": "The parser found no table on the page.",
+      "detector_input": {"table": null, "pre_text": "", "post_text": "Total revenue was $1.5 billion in 2019."},
+      "derivation": "Nothing to align prose against.",
+      "expected": {"status": "uncheckable", "flag": false,
+                   "n_checks": {"arithmetic": 0, "prose": 0}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "skip_codes_include": ["no_table"],
+                   "reason_contains": ["NOT_CHECKABLE", "no_table"]}
+    },
+    {
+      "case_id": "17_less_row_sign_ambiguous",
+      "description": "A 'Less:' row is subtracted but printed positive; D1 does not guess the sign.",
+      "detector_input": {
+        "table": {"title": "Property", "unit_note": "in millions", "header": ["", "2019"],
+                  "rows": [["Gross property", "500"], ["Less: accumulated depreciation", "200"], ["Total property, net", "300"]]},
+        "pre_text": "", "post_text": ""
+      },
+      "derivation": "Summing would give 700 vs 300 (false alarm). The relationship is unsupported -> uncheckable.",
+      "expected": {"status": "uncheckable", "flag": false,
+                   "n_checks": {"arithmetic": 0, "prose": 0}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "skip_codes_include": ["sign_convention_ambiguous"]}
+    },
+    {
+      "case_id": "18_column_total",
+      "description": "A 'Total' column summing quarterly columns, including negative returns.",
+      "detector_input": {
+        "table": {"title": "Quarterly sales", "unit_note": "in millions", "header": ["", "Q1", "Q2", "Q3", "Q4", "Total"],
+                  "rows": [["Sales", "10", "12", "11", "13", "46"], ["Returns", "(1)", "(2)", "(1)", "(1)", "(5)"]]},
+        "pre_text": "", "post_text": ""
+      },
+      "derivation": "10+12+11+13=46; -1-2-1-1=-5.",
+      "expected": {"status": "checks_passed", "flag": false,
+                   "n_checks": {"arithmetic": 2, "prose": 0}, "n_failed": {"arithmetic": 0, "prose": 0}}
+    },
+    {
+      "case_id": "19_header_swap_contradicted_by_prose",
+      "description": "Person 2-style header attack: the 2019 and 2018 headers are swapped; values unchanged; prose unchanged.",
+      "detector_input": {
+        "table": {"title": "ACME Corp revenue", "unit_note": "in millions", "header": ["", "2018", "2019"],
+                  "rows": [["Product revenue", "1,204", "1,090"], ["Service revenue", "310", "295"], ["Total revenue", "1,514", "1,385"]]},
+        "pre_text": "",
+        "post_text": "Total revenue was $1.5 billion in 2019. Product revenue was $1,204 million in 2019, compared to $1,090 million in 2018."
+      },
+      "derivation": "Sums still hold per column. Now 2019 total = 1,385 (|1500-1385|=115 > 50.5), product 2019 = 1,090 (vs 1,204) and 2018 = 1,204 (vs 1,090): three prose contradictions.",
+      "expected": {"status": "contradiction", "flag": true,
+                   "n_checks": {"arithmetic": 2, "prose": 3}, "n_failed": {"arithmetic": 0, "prose": 3},
+                   "reason_contains": ["[prose]"]}
+    },
+    {
+      "case_id": "20_change_language_not_compared",
+      "description": "A change amount ('increased by $114 million') must not be compared with a level cell.",
+      "detector_input": {
+        "table": {"title": "ACME Corp revenue", "unit_note": "in millions", "header": ["", "2019", "2018"],
+                  "rows": [["Product revenue", "1,204", "1,090"], ["Service revenue", "310", "295"], ["Total revenue", "1,514", "1,385"]]},
+        "pre_text": "",
+        "post_text": "Product revenue increased by $114 million to $1,204 million in 2019."
+      },
+      "derivation": "'$114 million' is in a change clause -> skipped. '$1,204 million in 2019' is a level and matches.",
+      "expected": {"status": "checks_passed", "flag": false,
+                   "n_checks": {"arithmetic": 2, "prose": 1}, "n_failed": {"arithmetic": 0, "prose": 0},
+                   "skip_codes_include": ["change_or_bound_language"]}
+    }
+  ]
+}
