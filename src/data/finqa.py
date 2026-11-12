@@ -69,18 +69,40 @@ def join_finqa(row_id: str, doc_key: str, answer: str, finqa: dict[str, dict]) -
     return cands[0] if len(cands) == 1 else None
 
 
+def _clean_cell(c: str) -> str:
+    return re.sub(r"<sup>.*?</sup>", "", str(c)).strip()
+
+
+def finqa_table_rows(fq: dict) -> tuple[list[list[str]], str]:
+    """Prefer ``table_ori`` (original casing/formatting: "$(4,614)", "—") over ``table``
+    (lowercased; FinQA's normaliser even turns "—" into "2014"). table_ori is only used
+    when it is rectangular; multi-row headers make it ragged, then we fall back."""
+    ori = fq.get("table_ori")
+    if ori and len({len(r) for r in ori}) == 1:
+        return [[_clean_cell(c) for c in r] for r in ori], "finqa_table_ori"
+    return [[_clean_cell(c) for c in r] for r in fq["table"]], "finqa_table"
+
+
 # ---------------------------------------------------------------------------
 # Build
 # ---------------------------------------------------------------------------
 
 
 def build(rows: Iterable[dict[str, Any]], fields: dict[str, Optional[str]], n_docs: int, n_questions: int,
-          seed: int, finqa: Optional[dict[str, dict]] = None) -> tuple[list[Doc], list[Example], dict[str, Any]]:
+          seed: int, finqa: Optional[dict[str, dict]] = None,
+          distractor_rows: Optional[Iterable[dict[str, Any]]] = None) -> tuple[list[Doc], list[Example], dict[str, Any]]:
+    """Questions come only from ``rows``. If ``rows`` has fewer than ``n_docs`` documents,
+    the corpus is filled with distractor documents from ``distractor_rows`` (e.g. the dev split)."""
     f = fields
     by_doc: dict[str, list[dict]] = defaultdict(list)
     for r in rows:
         by_doc[str(r[f["doc_key"]])].append(r)
     doc_keys = sorted(by_doc)
+    extra_docs: dict[str, list[dict]] = defaultdict(list)
+    for r in distractor_rows or []:
+        k = str(r[f["doc_key"]])
+        if k not in by_doc:
+            extra_docs[k].append(r)
     rng = random.Random(seed)
 
     # 1) sample questions, 2) their gold docs, 3) fill with distractor docs up to n_docs
@@ -97,9 +119,13 @@ def build(rows: Iterable[dict[str, Any]], fields: dict[str, Optional[str]], n_do
             gold_keys.append(k)
     others = [k for k in doc_keys if k not in set(gold_keys)]
     rng.shuffle(others)
-    corpus_keys = gold_keys + others[: max(0, n_docs - len(gold_keys))]
+    extra = sorted(extra_docs)
+    rng.shuffle(extra)
+    corpus_keys = (gold_keys + others + extra)[:max(n_docs, len(gold_keys))]
+    by_doc.update(extra_docs)
 
-    stats = {"n_rows": len(all_q), "n_source_docs": len(doc_keys), "joined": 0, "with_program": 0,
+    stats = {"n_rows": len(all_q), "n_source_docs": len(doc_keys), "n_distractor_source_docs": len(extra_docs),
+             "joined": 0, "with_program": 0,
              "table_from": defaultdict(int)}
     docs: list[Doc] = []
     for k in corpus_keys:
@@ -107,8 +133,9 @@ def build(rows: Iterable[dict[str, Any]], fields: dict[str, Optional[str]], n_do
         fq = finqa and join_finqa(str(r0.get(f["id"], "")), k, str(r0.get(f["answer"], "")), finqa)
         if fq:  # structured table straight from FinQA
             pre, post = " ".join(fq["pre_text"]), " ".join(fq["post_text"])
-            table = rows_to_table(fq["table"], pre)
-            stats["table_from"]["finqa"] += 1
+            rows, origin = finqa_table_rows(fq)
+            table = rows_to_table(rows, pre)
+            stats["table_from"][origin] += 1
         else:
             pre, rws, post = split_markdown_context(str(r0[f["context"]]))
             table = rows_to_table(rws, pre)
