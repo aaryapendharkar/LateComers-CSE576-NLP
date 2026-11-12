@@ -1,0 +1,27 @@
+# Replace each placeholder with the teammate's real GitHub username, then
+# enable "Require review from Code Owners" in Settings -> Branches (optional).
+# Last matching line wins.
+
+*                                   @AARYA_GITHUB_USERNAME
+
+src/attacks/tables/                 @JANHAVI_GITHUB_USERNAME
+scripts/make_g1_attacks.py          @JANHAVI_GITHUB_USERNAME
+tests/test_p2_*                     @JANHAVI_GITHUB_USERNAME
+
+src/defenses/reconcile.py           @VATSAL_GITHUB_USERNAME
+src/analysis/qtypes.py              @VATSAL_GITHUB_USERNAME
+src/analysis/stealth.py             @VATSAL_GITHUB_USERNAME
+src/analysis/funnel.py              @VATSAL_GITHUB_USERNAME
+tests/test_p3_*                     @VATSAL_GITHUB_USERNAME
+
+src/render/                         @AARON_GITHUB_USERNAME
+src/attacks/representation/         @AARON_GITHUB_USERNAME
+tests/test_p4_*                     @AARON_GITHUB_USERNAME
+
+src/defenses/img_text_check.py      @DISHA_GITHUB_USERNAME
+src/analysis/which_wins.py          @DISHA_GITHUB_USERNAME
+tests/test_p5_*                     @DISHA_GITHUB_USERNAME
+
+# Shared contracts: Aarya + group agreement
+src/common/schemas.py               @AARYA_GITHUB_USERNAME
+src/common/edits.py                 @AARYA_GITHUB_USERNAME
