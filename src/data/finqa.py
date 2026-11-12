@@ -23,8 +23,15 @@ from ..common.schemas import Doc, Example
 from ..common.tables import rows_to_table, split_markdown_context
 
 
+def normalize_doc_key(doc_key: str) -> str:
+    """T2-RAGBench writes 'pdf/ETR/2016/page_23.pdf'; FinQA writes 'ETR/2016/page_23.pdf'."""
+    k = str(doc_key).strip()
+    return k[4:] if k.startswith("pdf/") else k
+
+
 def make_doc_id(doc_key: str) -> str:
     """'ABC/2019/page_12.pdf' -> 'finqa_ABC_2019_p12' (falls back to a sanitised key)."""
+    doc_key = normalize_doc_key(doc_key)
     m = re.match(r"^([^/]+)/(\d{4})/page_(\d+)\.pdf", doc_key)
     if m:
         return f"finqa_{m.group(1)}_{m.group(2)}_p{m.group(3)}"
@@ -56,21 +63,41 @@ def inspect_rows(rows: list[dict[str, Any]], n: int = 1) -> str:
 
 
 def load_finqa_json(path: str) -> dict[str, dict[str, Any]]:
+    """FinQA examples keyed by their own id AND by the T2-RAGBench id 'finqa_<split>_<row>'
+    (T2-RAGBench numbers FinQA rows in file order: finqa_test_0 = test.json[0])."""
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
-    return {d["id"]: d for d in data}
+    split = Path(path).stem  # test / dev / train
+    out: dict[str, dict[str, Any]] = {}
+    for i, d in enumerate(data):
+        out[d["id"]] = d
+        out[f"finqa_{split}_{i}"] = d
+    return out
 
 
 def join_finqa(row_id: str, doc_key: str, answer: str, finqa: dict[str, dict]) -> Optional[dict]:
-    if row_id in finqa:
+    """Find the original FinQA example. Every match is checked: same source page AND same answer."""
+    key = normalize_doc_key(doc_key)
+
+    def ok(d: dict) -> bool:
+        return d.get("filename") == key and numbers_match(d["qa"].get("exe_ans"), answer)
+
+    if row_id in finqa and ok(finqa[row_id]):
         return finqa[row_id]
-    cands = [d for k, d in finqa.items() if d.get("filename") == doc_key or k.startswith(doc_key)]
-    cands = [d for d in cands if numbers_match(d["qa"].get("exe_ans"), answer)]
-    return cands[0] if len(cands) == 1 else None
+    cands = {id(d): d for d in finqa.values() if ok(d)}
+    return next(iter(cands.values())) if len(cands) == 1 else None
 
 
 def _clean_cell(c: str) -> str:
     return re.sub(r"<sup>.*?</sup>", "", str(c)).strip()
+
+
+def drop_index_column(rows: list[list[str]]) -> list[list[str]]:
+    """T2-RAGBench tables come from pandas.to_markdown(): first column is the row index (blank, 0, 1, 2...)."""
+    if rows and len(rows) > 1 and rows[0] and rows[0][0] == "" and all(
+            r and r[0].strip().isdigit() for r in rows[1:]):
+        return [r[1:] for r in rows]
+    return rows
 
 
 def finqa_table_rows(fq: dict) -> tuple[list[list[str]], str]:
@@ -96,11 +123,11 @@ def build(rows: Iterable[dict[str, Any]], fields: dict[str, Optional[str]], n_do
     f = fields
     by_doc: dict[str, list[dict]] = defaultdict(list)
     for r in rows:
-        by_doc[str(r[f["doc_key"]])].append(r)
+        by_doc[normalize_doc_key(r[f["doc_key"]])].append(r)
     doc_keys = sorted(by_doc)
     extra_docs: dict[str, list[dict]] = defaultdict(list)
     for r in distractor_rows or []:
-        k = str(r[f["doc_key"]])
+        k = normalize_doc_key(r[f["doc_key"]])
         if k not in by_doc:
             extra_docs[k].append(r)
     rng = random.Random(seed)
@@ -136,10 +163,15 @@ def build(rows: Iterable[dict[str, Any]], fields: dict[str, Optional[str]], n_do
             rows, origin = finqa_table_rows(fq)
             table = rows_to_table(rows, pre)
             stats["table_from"][origin] += 1
+        elif f.get("table") and r0.get(f["table"]):
+            pre, post = str(r0.get(f.get("pre_text") or "", "") or ""), str(r0.get(f.get("post_text") or "", "") or "")
+            _, rws, _ = split_markdown_context(str(r0[f["table"]]))
+            table = rows_to_table(drop_index_column(rws), pre)
+            stats["table_from"]["t2_table"] += 1
         else:
             pre, rws, post = split_markdown_context(str(r0[f["context"]]))
-            table = rows_to_table(rws, pre)
-            stats["table_from"]["t2_markdown"] += 1
+            table = rows_to_table(drop_index_column(rws), pre)
+            stats["table_from"]["t2_context"] += 1
         if not table["header"]:
             continue  # no table found: not usable for this project
         docs.append(Doc(doc_id=make_doc_id(k), source="finqa", pre_text=pre, post_text=post, table=table))

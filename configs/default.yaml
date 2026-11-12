@@ -25,18 +25,21 @@ paths:
 data:
   finqa:
     hf_dataset: G4KMU/t2-ragbench
-    hf_config: FinQA                       # VERIFY with: python scripts/prepare_finqa.py --inspect
+    hf_config: FinQA                       # verified Nov 12 with --inspect (splits: train/dev/test)
     split: test
     n_docs: 500
     n_questions: 200
-    # Map our names -> T2-RAGBench column names. VERIFY with --inspect and fix here.
+    # Our names -> T2-RAGBench column names (verified Nov 12 with --inspect).
     fields:
-      id: id
-      question: question
-      answer: program_answer
+      id: id                               # "finqa_test_0" = row 0 of original FinQA test.json
+      question: question                   # context-independent rewrite (company + year added)
+      answer: program_answer               # "94.0" (original_answer = "94")
       context: context
-      doc_key: file_name                   # identifies the source page/document
-      program: null                        # null -> join to original FinQA (see --finqa-json)
+      pre_text: pre_text
+      post_text: post_text
+      table: table                         # markdown, with a pandas index column we drop
+      doc_key: file_name                   # "pdf/ETR/2016/page_23.pdf" (leading "pdf/" is stripped)
+      program: null                        # not in T2-RAGBench -> join to original FinQA (--finqa-json)
   chartqa:
     n_questions: 100
     n_corpus: 300
