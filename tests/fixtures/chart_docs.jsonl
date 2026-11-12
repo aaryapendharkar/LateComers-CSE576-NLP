@@ -1,0 +1,1 @@
+{"doc_id": "chartqa_00001", "source": "chartqa", "pre_text": "Annual sales of electric bicycles in Country X, 2016-2020 (thousand units)", "post_text": "", "table": {"title": "E-bike sales", "unit_note": "thousand units", "header": ["Year", "Sales"], "rows": [["2016", "120"], ["2017", "145"], ["2018", "190"], ["2019", "240"], ["2020", "310"]]}}

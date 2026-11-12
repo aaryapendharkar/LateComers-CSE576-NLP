@@ -1,0 +1,10 @@
+# Full stack for the GPU machine. After the first working install, pin it:
+#   pip freeze > requirements.lock.txt   (and commit that file)
+-r requirements-core.txt
+torch
+transformers
+accelerate
+datasets
+FlagEmbedding          # BGE-M3 (P1)
+colpali-engine         # ColPali (P2)
+docling                # PDF parsing, OCR off (P1)

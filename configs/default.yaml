@@ -1,0 +1,105 @@
+# Shared configuration. Committed.
+# RULE: edit only YOUR section (marked with the owner). Machine-specific changes
+# (GPU, local model paths, smaller models) go in configs/local.yaml (gitignored).
+# See configs/local.example.yaml.
+
+seed: 576
+
+# ---------------------------------------------------------------- Person 1
+paths:
+  raw_dir: data/raw
+  docs: data/docs.jsonl                    # Person 1
+  examples: data/examples.jsonl            # Person 1
+  chart_docs: data/chart_docs.jsonl        # Person 4
+  chart_examples: data/chart_examples.jsonl  # Person 4
+  qtypes: data/labels/qtypes.jsonl         # Person 3
+  pages_dir: data/pages                    # rendered PDFs/PNGs (gitignored)
+  manifests_dir: data/manifests            # pages_<producer>.jsonl
+  attacks_dir: data/attacks                # g1.jsonl (Person 2), g2.jsonl (Person 4)
+  parsed_dir: data/parsed                  # Docling / pdfplumber output per page (gitignored)
+  indexes_dir: data/indexes                # embeddings (gitignored)
+  runs_dir: results/runs
+  baselines_dir: results/baselines
+  r2_correct: results/r2_correct.json
+
+data:
+  finqa:
+    hf_dataset: G4KMU/t2-ragbench
+    hf_config: FinQA                       # VERIFY with: python scripts/prepare_finqa.py --inspect
+    split: test
+    n_docs: 500
+    n_questions: 200
+    # Map our names -> T2-RAGBench column names. VERIFY with --inspect and fix here.
+    fields:
+      id: id
+      question: question
+      answer: program_answer
+      context: context
+      doc_key: file_name                   # identifies the source page/document
+      program: null                        # null -> join to original FinQA (see --finqa-json)
+  chartqa:
+    n_questions: 100
+    n_corpus: 300
+
+pipelines:
+  top_k_retrieve: 20
+  top_k_final: 5
+  rrf_k: 60
+  # backend: "real" loads the models below; "mock" uses a tiny keyword retriever
+  # and a fake generator so anyone can run the whole flow on a laptop/CI.
+  backend: real
+  # Where P1 gets page text: "standin" (docs.jsonl, Day 1), "docling", or "pdfplumber"
+  p1_text_source: standin
+
+models:
+  embedder: BAAI/bge-m3
+  colpali: vidore/colpali-v1.3             # VERIFY current checkpoint on Hugging Face
+  reranker: Qwen/Qwen3-VL-Reranker-2B      # from the proposal; VERIFY id. null -> reranker off
+  generator: Qwen/Qwen3.5-9B               # from the proposal; VERIFY id. Record substitutions!
+  generator_fallback: null                 # smaller model from the same family if needed
+  device: cuda
+  dtype: bfloat16
+  batch_size: 8
+
+generation:
+  prompt_file: configs/prompts/generator_v1.txt
+  closed_book_prompt_file: configs/prompts/closed_book_v1.txt
+  max_new_tokens: 256
+  do_sample: false                         # greedy decoding
+
+metrics:
+  rel_tol: 0.01
+  bootstrap_resamples: 1000
+  ci: 0.95
+
+# ---------------------------------------------------------------- Person 4
+render:
+  dpi: 150
+  page_size: letter
+  font: Times-Roman
+  font_size: 10.5
+  margin_pt: 54
+
+# ---------------------------------------------------------------- Person 2
+attacks_g1:
+  min_rel_change: 0.05
+  max_rel_change: 0.25
+  min_target_diff: 0.05                    # keep edits whose target differs from gold by >5%
+  n_per_type: 50
+  program_reproduce_tol: 0.01
+
+# ---------------------------------------------------------------- Person 4
+attacks_g2:
+  n_table_questions: 50
+  n_charts: 50
+
+# ---------------------------------------------------------------- Person 3
+reconcile:
+  sum_rel_tol: 0.005                       # rounding tolerance for totals
+  sum_abs_tol: 1.0
+  total_keywords: [total, net, sum, subtotal]
+
+# ---------------------------------------------------------------- Person 5
+img_text_check:
+  rel_tol: 0.01
+  only_question_rows: false                # cheaper mode: compare rows named in the question

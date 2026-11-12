@@ -1,0 +1,10 @@
+# Copy to configs/local.yaml (gitignored) and change what you need on YOUR machine.
+# Anything here overrides configs/default.yaml for you only.
+
+# pipelines:
+#   backend: mock            # no GPU: run everything with the mock retriever/generator
+# models:
+#   device: cpu
+#   generator: Qwen/<smaller-model-from-same-family>
+# paths:
+#   pages_dir: /scratch/<asurite>/cse576/pages   # e.g. on Sol

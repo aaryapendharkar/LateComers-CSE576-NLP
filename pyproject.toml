@@ -1,0 +1,13 @@
+[project]
+name = "cse576-structured-poisoning"
+version = "0.1.0"
+description = "Small Edits, Wrong Answers: structured visual evidence poisoning in multimodal RAG (CSE 576 Project #12)"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-p no:cacheprovider"

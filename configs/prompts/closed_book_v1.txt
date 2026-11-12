@@ -1,0 +1,7 @@
+Answer the following question about a company's financial report from your own knowledge. No documents are provided.
+
+Question: {question}
+
+Give the final answer as a single number (no units or currency symbols; percentages without the % sign), or "yes"/"no".
+Reply with JSON only, exactly in this form:
+{{"answer": "<number or yes/no>", "cited_pages": []}}

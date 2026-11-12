@@ -1,0 +1,9 @@
+You are answering a question about financial documents. Use ONLY the pages above (labelled [PAGE <id>]).
+
+Question: {question}
+
+Rules:
+- Give the final answer as a single number (no units or currency symbols). For percentages give the number without the % sign (e.g. 12.4). For yes/no questions answer "yes" or "no".
+- List the id(s) of the page(s) you used as evidence. Available page ids: {page_ids}
+- Reply with JSON only, exactly in this form:
+{{"answer": "<number or yes/no>", "cited_pages": ["<page_id>"]}}

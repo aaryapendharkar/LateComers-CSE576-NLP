@@ -1,0 +1,12 @@
+# Light dependencies: enough for tests, mocks, analysis, rendering. Used by CI.
+numpy
+pyyaml
+scipy
+pandas
+statsmodels
+tqdm
+pytest
+reportlab
+pdfplumber
+matplotlib
+pillow

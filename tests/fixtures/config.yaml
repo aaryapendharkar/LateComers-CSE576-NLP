@@ -1,0 +1,16 @@
+# Config used by tests and by `CSE576_CONFIG=tests/fixtures/config.yaml` for a
+# laptop dry run on the hand-made mock data. Paths are repo-relative.
+paths:
+  docs: tests/fixtures/docs.jsonl
+  examples: tests/fixtures/examples.jsonl
+  chart_docs: tests/fixtures/chart_docs.jsonl
+  chart_examples: tests/fixtures/chart_examples.jsonl
+  qtypes: tests/fixtures/labels/qtypes.jsonl
+  manifests_dir: tests/fixtures/manifests
+  attacks_dir: tests/fixtures/attacks
+  runs_dir: /tmp/cse576_test_runs
+  baselines_dir: /tmp/cse576_test_runs/baselines
+  r2_correct: /tmp/cse576_test_runs/r2_correct.json
+pipelines:
+  backend: mock
+  p1_text_source: standin
