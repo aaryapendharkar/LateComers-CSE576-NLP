@@ -1,4 +1,3 @@
-"""Person 5 (Disha): which-version-wins analysis on hand-made run records."""
 import pytest
 
 from src.analysis.which_wins import (label_runs, rank_shift_by_condition, to_markdown,
@@ -24,27 +23,24 @@ ATTACKS = {a["attack_id"]: a for a in
             for q in ("q1", "q2")]}
 
 RUNS = [
-    # P1 sees only text -> follows text on both conflict types
     _run("text_only_table", "q1", "P1", TARGET), _run("text_only_table", "q2", "P1", TARGET),
     _run("image_only_table", "q1", "P1", GOLD), _run("image_only_table", "q2", "P1", "99"),
-    # P2 sees only the image -> follows image
     _run("text_only_table", "q1", "P2", GOLD), _run("image_only_table", "q1", "P2", TARGET),
-    # propagate: both layers poisoned -> "both" if fooled
     _run("propagate_table", "q1", "P1", TARGET), _run("propagate_table", "q2", "P1", GOLD),
-    {"qid": "q9", "attack_id": None, "pipeline": "P1", "reranker": True, "answer": "1"},  # clean run, skipped
+    {"qid": "q9", "attack_id": None, "pipeline": "P1", "reranker": True, "answer": "1"},
 ]
 
 
 def test_labels():
     lab = {(x["pipeline"], x["attack_id"]): x["label"] for x in label_runs(RUNS, ATTACKS)}
     assert lab[("P1", "G2_text_only_table_q1")] == "text"
-    assert lab[("P1", "G2_image_only_table_q1")] == "text"      # gold is what P1's text layer shows
+    assert lab[("P1", "G2_image_only_table_q1")] == "text"
     assert lab[("P1", "G2_image_only_table_q2")] == "neither"
     assert lab[("P2", "G2_text_only_table_q1")] == "image"
     assert lab[("P2", "G2_image_only_table_q1")] == "image"
     assert lab[("P1", "G2_propagate_table_q1")] == "both"
     assert lab[("P1", "G2_propagate_table_q2")] == "neither"
-    assert len(lab) == 8                                          # clean run skipped
+    assert len(lab) == 8
 
 
 def test_table_rates_and_r2_filter():

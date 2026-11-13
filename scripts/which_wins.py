@@ -1,14 +1,4 @@
 #!/usr/bin/env python
-"""Person 5 (Disha): which-version-wins table from Gap 2 run logs -> results/gap2/which_wins.md
-
-    python scripts/which_wins.py --runs results/runs/P1_G2.jsonl results/runs/P2_G2.jsonl
-    python scripts/which_wins.py --runs results/runs/P*_G2.jsonl \
-        --clean-runs results/runs/P1_R2_finqa.jsonl results/runs/P2_R2_finqa.jsonl   # + rank shift
-    python scripts/which_wins.py --runs ... --only-r2-correct                        # ASR population
-
-Writes results/gap2/which_wins.md, which_wins.csv, which_wins_labels.jsonl
-(one labelled row per run, for picking examples), and rank_shift.md if --clean-runs.
-"""
 import _bootstrap  # noqa: F401
 import argparse
 import csv
@@ -22,7 +12,7 @@ from src.common.io import load_attacks, load_r2_correct, read_jsonl, write_jsonl
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", nargs="+", required=True, help="Gap 2 attack run logs")
-    ap.add_argument("--clean-runs", nargs="*", default=[], help="clean R2 run logs (for rank shift)")
+    ap.add_argument("--clean-runs", nargs="*", default=[], help="clean R2 run logs, for the rank-shift table")
     ap.add_argument("--only-r2-correct", action="store_true")
     ap.add_argument("--out-dir", default="results/gap2")
     args = ap.parse_args()
@@ -38,7 +28,7 @@ def main():
 
     rows = which_wins_table(records, attacks, r2_correct=r2, rel_tol=tol)
     if not rows:
-        raise SystemExit("no Gap 2 runs found in --runs (check attack ids and data/attacks/*.jsonl)")
+        raise SystemExit("no Gap 2 runs found in --runs")
     md = to_markdown(rows)
     (out / "which_wins.md").write_text(md + "\n", encoding="utf-8")
     with open(out / "which_wins.csv", "w", newline="", encoding="utf-8") as f:
@@ -55,7 +45,7 @@ def main():
         clean = [r for p in args.clean_runs for r in read_jsonl(resolve(p)) if r.get("attack_id") is None]
         shift_md = rank_shift_markdown(rank_shift_by_condition(records, clean, attacks))
         (out / "rank_shift.md").write_text(shift_md + "\n", encoding="utf-8")
-        print("\nRank shift (poisoned page rank - clean page rank):\n" + shift_md)
+        print("\nRank shift:\n" + shift_md)
     print(f"\nwrote {out}/which_wins.md, which_wins.csv, which_wins_labels.jsonl")
 
 

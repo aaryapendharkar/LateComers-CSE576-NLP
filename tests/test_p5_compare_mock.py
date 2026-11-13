@@ -1,8 +1,3 @@
-"""Person 5 (Disha): extra tests for compare_tables on hand-made mock pairs.
-
-Covers cases the acceptance test does not: formatting-only differences,
-OCR typos, duplicate "Total" rows, unit-note conflicts, charts, only_rows mode.
-"""
 import pytest
 
 from src.defenses.img_text_check import align, cells_equal, compare_tables
@@ -15,7 +10,6 @@ def T(rows, header=("", "2019", "2018"), unit="in millions"):
 CLEAN = T([["Revenue", "1,204", "1,090"], ["Cost of sales", "(700)", "(650)"], ["Total", "504", "440"]])
 
 CASES = [
-    # (name, img_table, text_table, expected_flag, expected_n_mismatches)
     ("clean_identical", CLEAN, CLEAN, False, 0),
     ("text_only_edit_cell_and_total", CLEAN,
      T([["Revenue", "1,312", "1,090"], ["Cost of sales", "(700)", "(650)"], ["Total", "612", "440"]]), True, 2),

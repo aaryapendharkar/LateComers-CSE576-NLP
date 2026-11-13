@@ -1,50 +1,43 @@
-"""Image-text consistency checker for Gap 2.
-
-OWNER: Person 5 (Disha). Brief task 1.
-
-  1. a VLM (reuse the generator model) reads the page IMAGE -> table JSON (charts: value list)
-  2. parse the page's TEXT layer (Docling output P1 uses) into the same format
-  3. align rows/cols by label, compare numbers with tolerance, flag any mismatch
-Cheaper mode (configs: img_text_check.only_question_rows): compare only rows
-whose label appears in the question.
-
-Expected: catches text_only / image_only, ~0% on propagate (both layers agree on
-the wrong value) -> the key blind spot.
-
-Both tables use the shared Table format (src/common/schemas.py):
-  {"title": str, "unit_note": str, "header": ["", "2019", "2018"],
-   "rows": [["Revenue", "1,204", "1,090"], ...]}
-Charts use the same shape: header = ["", "<series>"], rows = [["<bar label>", "<value>"], ...].
-"""
-
 from __future__ import annotations
 
+import csv
+import json
+import random
 import re
+from collections import Counter
 from difflib import SequenceMatcher
 from typing import Any, NotRequired, Optional, TypedDict
 
+from ..common import io
 from ..common.answer_match import parse_number
+from ..common.config import get_config, resolve
+from ..common.edits import apply_edit
+from ..common.metrics import fmt_rate, rate
+from ..common.schemas import doc_id_of_page
+from ..common.tables import guess_unit_note, rows_to_table, split_markdown_context
 
-LABEL_MATCH = 0.80   # how alike two labels must look to be paired (0-1); absorbs OCR/VLM typos
+LABEL_MATCH = 0.80
+G2_ORDER = ("propagate_table", "text_only_table", "image_only_table",
+            "propagate_chart", "text_only_chart", "image_only_chart")
+DEFAULTS = {"rel_tol": 0.01, "only_question_rows": False, "prompt_file": "configs/prompts/img_extract_v1.txt",
+            "max_new_tokens": 1024, "text_source": None, "cache_dir": "data/parsed/img_tables", "n_clean": 100}
+
+_NUM_TOKEN = re.compile(r"^\(?[-−$]?\$?\d[\d,]*\.?\d*%?\)?\*?$")
+_PAIR = re.compile(r"([^,;:]+?)\s*[:=]\s*(\(?[-−]?\$?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?\)?)")
 
 
 class CheckResult(TypedDict):
     flag: bool
-    mismatches: list[list[Any]]   # [[row_label, col_label, img_val, text_val], ...]
-    unmatched: NotRequired[dict[str, list[str]]]   # rows/cols seen on one side only (info, never flags)
+    mismatches: list[list[Any]]
+    unmatched: NotRequired[dict[str, list[str]]]
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 def norm_label(label: Any) -> str:
-    """' Net  Income*' -> 'net income' (lowercase, letters/digits only, single spaces)."""
     s = re.sub(r"[^a-z0-9]+", " ", str(label or "").lower())
     return " ".join(s.split())
 
 
 def label_similarity(a: Any, b: Any) -> float:
-    """0-1 score for how alike two labels look."""
     a, b = norm_label(a), norm_label(b)
     if a == b:
         return 1.0
@@ -54,7 +47,6 @@ def label_similarity(a: Any, b: Any) -> float:
 
 
 def cells_equal(img_cell: Any, text_cell: Any, rel_tol: float = 0.01) -> bool:
-    """Same value? Numbers with relative tolerance (uses the shared parser), text after normalising."""
     a, b = parse_number(img_cell), parse_number(text_cell)
     if a is not None and b is not None:
         return a == b or abs(a - b) <= rel_tol * max(abs(a), abs(b))
@@ -64,15 +56,10 @@ def cells_equal(img_cell: Any, text_cell: Any, rel_tol: float = 0.01) -> bool:
 
 
 def align(labels_a: list[Any], labels_b: list[Any], threshold: float = LABEL_MATCH) -> list[tuple[int, int]]:
-    """Pair two label lists IN ORDER (rows or columns). Returns [(i, j), ...].
-
-    Order-preserving alignment (dynamic programming), so repeated labels such
-    as two "Total" rows pair with the right partner, and fuzzy similarity
-    tolerates OCR/VLM typos ("Reveune" ~ "Revenue").
-    """
+    # order-preserving DP alignment, so duplicate labels pair in order
     n, m = len(labels_a), len(labels_b)
     sim = [[label_similarity(labels_a[i], labels_b[j]) for j in range(m)] for i in range(n)]
-    best = [[0.0] * (m + 1) for _ in range(n + 1)]   # best[i][j]: score using a[i:], b[j:]
+    best = [[0.0] * (m + 1) for _ in range(n + 1)]
     for i in range(n - 1, -1, -1):
         for j in range(m - 1, -1, -1):
             take = sim[i][j] + best[i + 1][j + 1] if sim[i][j] >= threshold else -1.0
@@ -90,41 +77,29 @@ def align(labels_a: list[Any], labels_b: list[Any], threshold: float = LABEL_MAT
 
 
 def rows_named_in_question(table: dict[str, Any], question: str) -> list[str]:
-    """Row labels that appear in the question (for the cheaper only_question_rows mode)."""
     q = norm_label(question)
     labels = [r[0] for r in table.get("rows") or [] if r]
     return [lab for lab in labels if len(norm_label(lab)) >= 3 and norm_label(lab) in q]
 
 
-# ---------------------------------------------------------------------------
-# Step 3: compare (pure logic, no model)
-# ---------------------------------------------------------------------------
 def compare_tables(img_table: dict[str, Any], text_table: dict[str, Any], rel_tol: float = 0.01,
                    only_rows: Optional[list[str]] = None) -> CheckResult:
-    """Compare the table read from the image with the table from the text layer.
-
-    only_rows: if given, compare only rows whose label matches one of these
-    (falls back to all rows if none match, so the check never silently does nothing).
-    """
     mismatches: list[list[Any]] = []
     unmatched: dict[str, list[str]] = {}
 
-    # 1. Unit note ("in millions" vs "in thousands"): cheap, strong signal
     u_img, u_txt = img_table.get("unit_note") or "", text_table.get("unit_note") or ""
     if norm_label(u_img) and norm_label(u_txt) and norm_label(u_img) != norm_label(u_txt):
         mismatches.append(["<unit_note>", None, u_img, u_txt])
 
-    # 2. Columns: pair by header (header[0] is the row-label column)
     h_img = list(img_table.get("header") or [])[1:]
     h_txt = list(text_table.get("header") or [])[1:]
     col_pairs = align(h_img, h_txt)
-    if not col_pairs and len(h_img) == len(h_txt):           # headers unreadable -> by position
+    if not col_pairs and len(h_img) == len(h_txt):
         col_pairs = [(k, k) for k in range(len(h_img))]
     used_a, used_b = {a for a, _ in col_pairs}, {b for _, b in col_pairs}
     unmatched["cols_img_only"] = [h for k, h in enumerate(h_img) if k not in used_a]
     unmatched["cols_text_only"] = [h for k, h in enumerate(h_txt) if k not in used_b]
 
-    # 3. Rows: pair by label
     r_img = [r for r in img_table.get("rows") or [] if r]
     r_txt = [r for r in text_table.get("rows") or [] if r]
     row_pairs = align([r[0] for r in r_img], [r[0] for r in r_txt])
@@ -138,7 +113,6 @@ def compare_tables(img_table: dict[str, Any], text_table: dict[str, Any], rel_to
                    if any(label_similarity(r_img[a][0], w) >= LABEL_MATCH for w in wanted)]
         row_pairs = focused or row_pairs
 
-    # 4. Compare every paired cell
     for a, b in row_pairs:
         row_i, row_t = r_img[a], r_txt[b]
         for ci, ct in col_pairs:
@@ -150,11 +124,7 @@ def compare_tables(img_table: dict[str, Any], text_table: dict[str, Any], rel_to
     return {"flag": bool(mismatches), "mismatches": mismatches, "unmatched": unmatched}
 
 
-# ---------------------------------------------------------------------------
-# Shared cleanup for anything that should become a table
-# ---------------------------------------------------------------------------
 def _normalise_table(t: dict[str, Any]) -> dict[str, Any]:
-    """Coerce to the shared Table shape: strings everywhere, rows padded to header width."""
     header = [str(h if h is not None else "") for h in (t.get("header") or [])]
     rows = [[str(c if c is not None else "") for c in r] for r in (t.get("rows") or []) if r]
     width = max([len(header)] + [len(r) for r in rows]) if (header or rows) else 0
@@ -164,23 +134,11 @@ def _normalise_table(t: dict[str, Any]) -> dict[str, Any]:
             "header": header, "rows": rows}
 
 
-_NUM_TOKEN = re.compile(r"^\(?[-−$]?\$?\d[\d,]*\.?\d*%?\)?\*?$")
-
-
 def _is_num_token(tok: str) -> bool:
     return bool(_NUM_TOKEN.match(tok)) or tok in {"-", "—", "–"}
 
 
-# ---------------------------------------------------------------------------
-# Step 1: page IMAGE -> table (VLM)
-# ---------------------------------------------------------------------------
 def _vlm_complete(generator: Any, image_path: str, prompt: str, max_new_tokens: int = 1024) -> str:
-    """Run one image + prompt through the model and return the raw reply.
-
-    ``generator`` is Person 1's VLMGenerator (same model as the pipelines, so no
-    extra setup), OR any callable ``f(image_path, prompt) -> str`` -- used by
-    tests, and the hook for a backup reader (OCR / hosted API) if the GPU is out.
-    """
     if not hasattr(generator, "_load"):
         if callable(generator):
             return generator(image_path, prompt)
@@ -200,15 +158,11 @@ def _vlm_complete(generator: Any, image_path: str, prompt: str, max_new_tokens: 
 
 
 def parse_table_reply(raw: str) -> dict[str, Any]:
-    """Model reply -> table. Accepts JSON (with code fences / <think> / extra prose) or a markdown table."""
-    from ..common.tables import rows_to_table, split_markdown_context
-
     text = re.sub(r"<think>.*?</think>", "", raw or "", flags=re.DOTALL)
     text = re.sub(r"^.*?</think>", "", text, flags=re.DOTALL)
     text = re.sub(r"```(?:json)?", "", text).strip()
     start, end = text.find("{"), text.rfind("}")
     if start != -1 and end > start:
-        import json
         for candidate in (text[start:end + 1], text[start:end + 1].replace("'", '"')):
             try:
                 obj = json.loads(candidate)
@@ -224,30 +178,12 @@ def parse_table_reply(raw: str) -> dict[str, Any]:
 
 def extract_table_from_image(image_path: str, generator: Any, prompt_file: Optional[str] = None,
                              max_new_tokens: int = 1024) -> dict[str, Any]:
-    """VLM prompt -> table JSON. Save the prompt in configs/prompts/ (e.g. img_extract_v1.txt)."""
-    from ..common.config import resolve
-
-    prompt = resolve(prompt_file or "configs/prompts/img_extract_v1.txt").read_text(encoding="utf-8")
+    prompt = resolve(prompt_file or DEFAULTS["prompt_file"]).read_text(encoding="utf-8")
     return parse_table_reply(_vlm_complete(generator, image_path, prompt, max_new_tokens))
 
 
-# ---------------------------------------------------------------------------
-# Step 2: page TEXT layer -> table
-# ---------------------------------------------------------------------------
-_PAIR = re.compile(r"([^,;:]+?)\s*[:=]\s*(\(?[-−]?\$?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?\)?)")
-
-
 def parse_text_layer(text: str) -> dict[str, Any]:
-    """Text the pipeline sees (Docling markdown or pdfplumber plain text) -> table.
-
-    Tries, in order:
-      1. a markdown table (Docling exports tables this way)
-      2. a chart "Source data: <label>: <value>, ..." note
-      3. plain-text rows "<label> <num> <num> ..." (pdfplumber fallback)
-    """
-    from ..common.tables import guess_unit_note, rows_to_table, split_markdown_context
-
-    pre, rows, post = split_markdown_context(text or "")
+    pre, rows, _ = split_markdown_context(text or "")
     if rows:
         t = rows_to_table(rows, pre_text=pre)
         if not t["unit_note"]:
@@ -265,11 +201,7 @@ def parse_text_layer(text: str) -> dict[str, Any]:
 
 
 def _plain_text_rows(text: str) -> dict[str, Any]:
-    from collections import Counter
-
-    from ..common.tables import guess_unit_note
-
-    parsed = []   # (line_no, label, values)
+    parsed = []
     lines = text.splitlines()
     for i, ln in enumerate(lines):
         toks = ln.split()
@@ -285,7 +217,7 @@ def _plain_text_rows(text: str) -> dict[str, Any]:
     body = [(i, lab, v) for i, lab, v in parsed if len(v) == width]
     header = [""] + [f"col{j + 1}" for j in range(width)]
     first = body[0][0]
-    if first > 0:                       # header line right above the first row, e.g. "2019 2018"
+    if first > 0:
         htoks = lines[first - 1].split()
         if len(htoks) >= width:
             header = [" ".join(htoks[:-width])] + htoks[-width:]
@@ -293,13 +225,8 @@ def _plain_text_rows(text: str) -> dict[str, Any]:
             "unit_note": guess_unit_note(text)}
 
 
-# ---------------------------------------------------------------------------
-# Page-level entry point
-# ---------------------------------------------------------------------------
 def _settings(cfg: dict) -> dict[str, Any]:
-    s = {"rel_tol": 0.01, "only_question_rows": False, "prompt_file": "configs/prompts/img_extract_v1.txt",
-         "max_new_tokens": 1024, "text_source": None, "cache_dir": "data/parsed/img_tables"}
-    s.update(cfg.get("img_text_check") or {})
+    s = {**DEFAULTS, **(cfg.get("img_text_check") or {})}
     if not s["text_source"]:
         src = (cfg.get("pipelines") or {}).get("p1_text_source")
         s["text_source"] = src if src in ("docling", "pdfplumber") else "docling"
@@ -307,9 +234,6 @@ def _settings(cfg: dict) -> dict[str, Any]:
 
 
 def page_text(page_id: str, cfg: dict) -> str:
-    """The text layer exactly as P1 sees it: data/parsed/<text_source>/<page_id>.txt."""
-    from ..common.config import resolve
-
     s = _settings(cfg)
     path = resolve(cfg["paths"].get("parsed_dir", "data/parsed")) / s["text_source"] / f"{page_id}.txt"
     if not path.exists():
@@ -319,11 +243,6 @@ def page_text(page_id: str, cfg: dict) -> str:
 
 def image_table(page_id: str, image_path: str, cfg: dict, generator: Any = None,
                 use_cache: bool = True) -> dict[str, Any]:
-    """Step 1 with a cache: each page image is read by the model only once."""
-    import json
-
-    from ..common.config import resolve
-
     s = _settings(cfg)
     cache = resolve(s["cache_dir"]) / f"{page_id}.json"
     if use_cache and cache.exists():
@@ -341,15 +260,6 @@ def image_table(page_id: str, image_path: str, cfg: dict, generator: Any = None,
 
 def check_page(page_id: str, question: Optional[str] = None, cfg: Optional[dict] = None,
                generator: Any = None, pages: Optional[dict] = None, use_cache: bool = True) -> CheckResult:
-    """Full checker for one rendered page: image -> table, text layer -> table, compare.
-
-    generator: VLMGenerator or callable(image_path, prompt) -> str (default: the pipelines' generator).
-    pages: preloaded io.load_pages(cfg) (pass it when checking many pages).
-    use_cache: False for test readers (e.g. the oracle) so they never overwrite real VLM reads.
-    """
-    from ..common import io
-    from ..common.config import get_config
-
     cfg = cfg or get_config()
     s = _settings(cfg)
     pages = pages if pages is not None else io.load_pages(cfg)
@@ -361,21 +271,7 @@ def check_page(page_id: str, question: Optional[str] = None, cfg: Optional[dict]
     return compare_tables(img_t, txt_t, rel_tol=s["rel_tol"], only_rows=only)
 
 
-# ---------------------------------------------------------------------------
-# Evaluation (brief task 2): false-positive rate on clean pages, detection per G2 condition
-# ---------------------------------------------------------------------------
 def oracle_reader(cfg: dict, pages: dict) -> Any:
-    """A 'perfect eyes' reader: returns the table the renderer actually drew in each image.
-
-    Not a defense result. Use it (a) to dry-run the whole evaluation before the GPU
-    is set up, and (b) as an upper bound: with perfect image reading, any remaining
-    misses or false alarms come from text-layer parsing alone.
-    """
-    from ..common import io
-    from ..common.config import resolve
-    from ..common.edits import apply_edit
-    from ..common.schemas import doc_id_of_page
-
     docs = io.load_docs(cfg)
     by_poison_page = {a.poison_page_id: a for a in io.load_attacks(cfg).values()}
     by_image: dict[str, dict] = {}
@@ -387,39 +283,12 @@ def oracle_reader(cfg: dict, pages: dict) -> Any:
         by_image[str(resolve(p.image_path))] = table
 
     def read(image_path: str, prompt: str) -> str:
-        import json
         return json.dumps(by_image[str(resolve(image_path))])
     return read
 
 
-def evaluate(cfg: dict, n_clean: Optional[int] = None, generator: Any = None, oracle: bool = False,
-             out_dir: str = "results/gap2", overwrite: bool = False, seed: int = 576) -> list[dict[str, Any]]:
-    """Run the checker on n clean pages per source + every Gap 2 poisoned page.
-
-    Writes (suffix _oracle in oracle mode, so real results are never overwritten):
-      checker_flags.jsonl  {"page_id", "flag", "mismatches", "kind", "attack_id", "error"}
-                           -> scripts/run_attacks.py --drop-flags for the P3 filter run
-      checker_table.md / .csv  false-positive rate (clean) and detection rate per condition, 95% CIs
-    Resumable: pages already in checker_flags.jsonl are skipped unless overwrite=True.
-    """
-    import csv
-    import random
-
-    from ..common import io
-    from ..common.config import resolve
-    from ..common.metrics import fmt_rate, rate
-    from ..common.schemas import doc_id_of_page
-
-    s = _settings(cfg)
-    n_clean = n_clean or s.get("n_clean", 100)
-    pages = io.load_pages(cfg)
+def _check_items(cfg: dict, pages: dict, n_clean: int, seed: int) -> list[tuple]:
     docs = io.load_docs(cfg)
-    try:
-        questions = {q: e.question for q, e in io.load_examples(cfg).items()}
-    except FileNotFoundError:
-        questions = {}
-
-    # what to check: (page_id, kind, attack_id, qid)
     items: list[tuple[str, str, Optional[str], Optional[str]]] = []
     rng = random.Random(seed)
     for source, kind in (("finqa", "clean_table"), ("chartqa", "clean_chart")):
@@ -429,47 +298,24 @@ def evaluate(cfg: dict, n_clean: Optional[int] = None, generator: Any = None, or
     for a in sorted(io.load_attacks(cfg, gap="G2").values(), key=lambda a: a.attack_id):
         if a.poison_page_id in pages:
             items.append((a.poison_page_id, a.attack_type, a.attack_id, a.qid))
+    return items
 
-    suffix = "_oracle" if oracle else ""
-    out = resolve(out_dir)
-    out.mkdir(parents=True, exist_ok=True)
-    flags_path = out / f"checker_flags{suffix}.jsonl"
-    done = {}
-    if flags_path.exists() and not overwrite:
-        done = {(r["page_id"], r.get("attack_id")): r for r in io.read_jsonl(flags_path)}
-    elif flags_path.exists():
-        flags_path.unlink()
-    reader = oracle_reader(cfg, pages) if oracle else generator
 
-    try:
-        from tqdm import tqdm
-    except ImportError:  # pragma: no cover
-        def tqdm(it, **_):
-            return it
-    records = list(done.values())
-    for pid, kind, aid, qid in tqdm([i for i in items if (i[0], i[2]) not in done], desc="checker"):
-        rec: dict[str, Any] = {"page_id": pid, "kind": kind, "attack_id": aid, "flag": False,
-                               "mismatches": [], "error": None}
-        try:
-            r = check_page(pid, questions.get(qid) if qid else None, cfg, reader, pages, use_cache=not oracle)
-            rec.update(flag=r["flag"], mismatches=r["mismatches"])
-        except Exception as e:  # one bad page must not stop a 300-page run
-            rec["error"] = f"{type(e).__name__}: {e}"
-        io.append_jsonl(flags_path, rec)
-        records.append(rec)
-
-    # summary table
-    kinds = ["clean_table", "clean_chart"] + [k for k in G2_ORDER if any(r["kind"] == k for r in records)]
+def _summary_rows(records: list[dict]) -> list[dict[str, Any]]:
     rows = []
-    for k in kinds:
-        ok = [r for r in records if r["kind"] == k and not r["error"]]
-        if not any(r["kind"] == k for r in records):
+    for k in ("clean_table", "clean_chart") + G2_ORDER:
+        group = [r for r in records if r["kind"] == k]
+        if not group:
             continue
+        ok = [r for r in group if not r["error"]]
         metric = "false-positive rate" if k.startswith("clean") else "detection rate"
-        rows.append({"kind": k, "metric": metric, "errors": sum(1 for r in records if r["kind"] == k and r["error"]),
-                     **rate([r["flag"] for r in ok])})
-    lines = [f"Image-text checker{' (ORACLE reader: upper bound, not a result)' if oracle else ''}", "",
-             "| pages | metric | % flagged [95% CI] (n) | errors |", "|---|---|---|---|"]
+        rows.append({"kind": k, "metric": metric, "errors": len(group) - len(ok), **rate([r["flag"] for r in ok])})
+    return rows
+
+
+def _write_summary(rows: list[dict], out, suffix: str, oracle: bool) -> None:
+    title = "Image-text checker" + (" (ORACLE reader: upper bound, not a result)" if oracle else "")
+    lines = [title, "", "| pages | metric | % flagged [95% CI] (n) | errors |", "|---|---|---|---|"]
     lines += [f"| {r['kind']} | {r['metric']} | {fmt_rate(r)} | {r['errors']} |" for r in rows]
     (out / f"checker_table{suffix}.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     with open(out / f"checker_table{suffix}.csv", "w", newline="", encoding="utf-8") as f:
@@ -477,8 +323,45 @@ def evaluate(cfg: dict, n_clean: Optional[int] = None, generator: Any = None, or
         w.writerow(["kind", "metric", "rate", "ci_low", "ci_high", "n", "errors"])
         for r in rows:
             w.writerow([r["kind"], r["metric"], r["rate"], r["ci_low"], r["ci_high"], r["n"], r["errors"]])
+
+
+def evaluate(cfg: dict, n_clean: Optional[int] = None, generator: Any = None, oracle: bool = False,
+             out_dir: str = "results/gap2", overwrite: bool = False, seed: int = 576) -> list[dict[str, Any]]:
+    s = _settings(cfg)
+    pages = io.load_pages(cfg)
+    try:
+        questions = {q: e.question for q, e in io.load_examples(cfg).items()}
+    except FileNotFoundError:
+        questions = {}
+    items = _check_items(cfg, pages, n_clean or s["n_clean"], seed)
+
+    suffix = "_oracle" if oracle else ""
+    out = resolve(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    flags_path = out / f"checker_flags{suffix}.jsonl"
+    if flags_path.exists() and overwrite:
+        flags_path.unlink()
+    done = {(r["page_id"], r.get("attack_id")): r for r in io.read_jsonl(flags_path)} if flags_path.exists() else {}
+    reader = oracle_reader(cfg, pages) if oracle else generator
+
+    try:
+        from tqdm import tqdm
+    except ImportError:
+        def tqdm(it, **_):
+            return it
+
+    records = list(done.values())
+    for pid, kind, aid, qid in tqdm([i for i in items if (i[0], i[2]) not in done], desc="checker"):
+        rec: dict[str, Any] = {"page_id": pid, "kind": kind, "attack_id": aid, "flag": False,
+                               "mismatches": [], "error": None}
+        try:
+            r = check_page(pid, questions.get(qid) if qid else None, cfg, reader, pages, use_cache=not oracle)
+            rec.update(flag=r["flag"], mismatches=r["mismatches"])
+        except Exception as e:
+            rec["error"] = f"{type(e).__name__}: {e}"
+        io.append_jsonl(flags_path, rec)
+        records.append(rec)
+
+    rows = _summary_rows(records)
+    _write_summary(rows, out, suffix, oracle)
     return rows
-
-
-G2_ORDER = ("propagate_table", "text_only_table", "image_only_table",
-            "propagate_chart", "text_only_chart", "image_only_chart")

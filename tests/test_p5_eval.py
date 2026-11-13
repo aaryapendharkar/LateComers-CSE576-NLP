@@ -1,4 +1,3 @@
-"""Person 5 (Disha): the checker evaluation runs end to end on fixtures (oracle reader, no GPU)."""
 import json
 
 from src.common import io
@@ -19,11 +18,11 @@ def test_evaluate_oracle(cfg, tmp_path):
     manifests.mkdir()
     parsed.mkdir(parents=True)
     recs = []
-    for doc_id, d in docs.items():                                 # every clean page: layers agree
+    for doc_id, d in docs.items():
         pid = f"{doc_id}__clean"
         recs.append(_page(pid, doc_id, "clean", "clean", "clean"))
         (parsed / f"{pid}.txt").write_text(doc_to_text(d.to_dict()))
-    doc = docs["finqa_ACME_2019_p12"].to_dict()                    # text_only: text layer poisoned
+    doc = docs["finqa_ACME_2019_p12"].to_dict()
     recs.append(_page(atk.poison_page_id, doc["doc_id"], atk.attack_id, "clean", "poison"))
     (parsed / f"{atk.poison_page_id}.txt").write_text(doc_to_text(apply_edit(doc, atk.edit)))
     (manifests / "pages_test.jsonl").write_text("\n".join(json.dumps(r) for r in recs))
@@ -33,11 +32,10 @@ def test_evaluate_oracle(cfg, tmp_path):
                "img_text_check": {"text_source": "docling", "cache_dir": str(tmp_path / "cache")}}
     rows = {r["kind"]: r for r in evaluate(run_cfg, n_clean=10, oracle=True, out_dir=str(tmp_path / "out"))}
 
-    assert rows["clean_table"]["rate"] == 0.0 and rows["clean_table"]["n"] == 3     # no false alarms
+    assert rows["clean_table"]["rate"] == 0.0 and rows["clean_table"]["n"] == 3
     assert rows["clean_chart"]["rate"] == 0.0
     assert rows["text_only_table"]["rate"] == 1.0 and rows["text_only_table"]["errors"] == 0
     assert (tmp_path / "out" / "checker_table_oracle.md").exists()
-    assert not (tmp_path / "cache").exists()                        # oracle never writes the VLM cache
-    # resumable: a second run re-checks nothing and gives the same table
+    assert not (tmp_path / "cache").exists()
     again = {r["kind"]: r for r in evaluate(run_cfg, n_clean=10, oracle=True, out_dir=str(tmp_path / "out"))}
     assert again["text_only_table"]["n"] == 1

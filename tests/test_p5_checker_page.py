@@ -1,7 +1,3 @@
-"""Person 5 (Disha): image/text readers and the page-level checker, without a GPU.
-
-A fake "VLM" (a plain function) stands in for the model, so these run anywhere.
-"""
 import json
 
 from src.common import io
@@ -17,7 +13,7 @@ def test_parse_reply_json_with_noise():
            '"header": ["", "2019", "2018"], "rows": [["Products", "1,204", "1,090"], ["Total", 1716]]}\n```')
     t = parse_table_reply(raw)
     assert t["header"] == ["", "2019", "2018"]
-    assert t["rows"][1] == ["Total", "1716", ""]          # numbers -> strings, row padded
+    assert t["rows"][1] == ["Total", "1716", ""]
 
 
 def test_parse_reply_markdown_fallback():
@@ -56,16 +52,16 @@ def test_check_page_end_to_end(cfg, tmp_path):
     parsed = tmp_path / "parsed" / "docling"
     parsed.mkdir(parents=True)
     (parsed / f"{clean_id}.txt").write_text(doc_to_text(doc))
-    (parsed / f"{poison_id}.txt").write_text(doc_to_text(poisoned_doc))   # text layer = poisoned
+    (parsed / f"{poison_id}.txt").write_text(doc_to_text(poisoned_doc))
     pages = {pid: Page.from_dict({"page_id": pid, "doc_id": doc["doc_id"], "variant": v,
                                   "image_version": "clean", "text_version": tv,
                                   "pdf_path": "x.pdf", "image_path": f"{pid}.png", "text_path": "x.txt"})
              for pid, v, tv in [(clean_id, "clean", "clean"), (poison_id, atk.attack_id, "poison")]}
     run_cfg = {**cfg, "paths": {**cfg["paths"], "parsed_dir": str(tmp_path / "parsed")},
                "img_text_check": {"cache_dir": str(tmp_path / "cache"), "text_source": "docling"}}
-    fake_vlm = lambda image_path, prompt: json.dumps(doc["table"])        # image shows clean values # noqa: E731
+    fake_vlm = lambda image_path, prompt: json.dumps(doc["table"])  # noqa: E731
 
     assert check_page(clean_id, cfg=run_cfg, generator=fake_vlm, pages=pages)["flag"] is False
     r = check_page(poison_id, cfg=run_cfg, generator=fake_vlm, pages=pages)
     assert r["flag"] is True and len(r["mismatches"]) == 2
-    assert (tmp_path / "cache" / f"{poison_id}.json").exists()           # image read is cached
+    assert (tmp_path / "cache" / f"{poison_id}.json").exists()
