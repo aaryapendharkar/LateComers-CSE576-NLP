@@ -29,14 +29,29 @@ class BGEM3Retriever(Retriever):
 
     @property
     def model(self):
+        """BGE-M3 dense embeddings. sentence-transformers is the default (fewer version
+        conflicts); FlagEmbedding gives the same dense vectors if you prefer it."""
         if self._model is None:
-            from FlagEmbedding import BGEM3FlagModel  # heavy import, only when needed
+            try:
+                from sentence_transformers import SentenceTransformer
 
-            self._model = BGEM3FlagModel(self.model_name, use_fp16=self.use_fp16)
+                m = SentenceTransformer(self.model_name)
+                m.max_seq_length = self.max_length
+                if self.use_fp16:
+                    m = m.half()
+                self._model, self._kind = m, "st"
+            except ImportError:
+                from FlagEmbedding import BGEM3FlagModel
+
+                self._model, self._kind = BGEM3FlagModel(self.model_name, use_fp16=self.use_fp16), "flag"
         return self._model
 
     def _encode(self, texts: list[str]) -> np.ndarray:
-        out = self.model.encode(texts, batch_size=self.bs, max_length=self.max_length)["dense_vecs"]
+        m = self.model
+        if self._kind == "st":
+            out = m.encode(texts, batch_size=self.bs, normalize_embeddings=True)
+        else:
+            out = m.encode(texts, batch_size=self.bs, max_length=self.max_length)["dense_vecs"]
         v = np.asarray(out, dtype=np.float32)
         return v / np.linalg.norm(v, axis=1, keepdims=True).clip(min=1e-12)
 

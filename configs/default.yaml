@@ -56,10 +56,10 @@ pipelines:
 
 models:
   embedder: BAAI/bge-m3
-  colpali: vidore/colpali-v1.3             # VERIFY current checkpoint on Hugging Face
-  reranker: Qwen/Qwen3-VL-Reranker-2B      # from the proposal; VERIFY id. null -> reranker off
-  generator: Qwen/Qwen3.5-9B               # from the proposal; VERIFY id. Record substitutions!
-  generator_fallback: null                 # smaller model from the same family if needed
+  colpali: vidore/colpali-v1.3             # verified Nov 12 (latest ColPali checkpoint)
+  reranker: null                           # Qwen/Qwen3-VL-Reranker-2B exists, but OFF for the Nov 15 report (allowed by the brief)
+  generator: Qwen/Qwen3.5-9B               # verified Nov 12: natively multimodal, thinking switched off in code
+  generator_fallback: null                 # Qwen/Qwen3.5-4B on GPUs < 22 GB (set in configs/local.yaml). Record substitutions!
   device: cuda
   dtype: bfloat16
   batch_size: 8
@@ -67,7 +67,7 @@ models:
 generation:
   prompt_file: configs/prompts/generator_v1.txt
   closed_book_prompt_file: configs/prompts/closed_book_v1.txt
-  max_new_tokens: 256
+  max_new_tokens: 512
   do_sample: false                         # greedy decoding
 
 metrics:
