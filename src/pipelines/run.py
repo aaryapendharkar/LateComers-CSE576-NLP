@@ -101,7 +101,8 @@ class RAGSystem:
                 m, g = self.cfg["models"], self.cfg["generation"]
                 self._generator = VLMGenerator(
                     m.get("generator_fallback") or m["generator"], g["prompt_file"],
-                    g["closed_book_prompt_file"], m["device"], m["dtype"], g["max_new_tokens"])
+                    g["closed_book_prompt_file"], m["device"], m["dtype"], g["max_new_tokens"],
+                    g.get("max_page_chars", 0), g.get("max_image_pixels", 0))
         return self._generator
 
     # -- one query ----------------------------------------------------------
