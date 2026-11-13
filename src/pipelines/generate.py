@@ -55,6 +55,8 @@ def parse_generation(raw: str, allowed_pages: Optional[list[str]] = None) -> Gen
     Handles code fences, extra prose, single quotes, a bare number, and
     "[PAGE id]" mentions when cited_pages is missing.
     """
+    raw = re.sub(r"<think>.*?</think>", "", raw, flags=re.DOTALL)   # Qwen3.5 reasoning block
+    raw = re.sub(r"^.*?</think>", "", raw, flags=re.DOTALL)           # opening tag cut off
     text = raw.strip()
     text = re.sub(r"^```(?:json)?|```$", "", text, flags=re.MULTILINE).strip()
     obj = None
@@ -97,9 +99,10 @@ def parse_generation(raw: str, allowed_pages: Optional[list[str]] = None) -> Gen
 class VLMGenerator:
     """Greedy-decoding vision-language generator.
 
-    Written for Qwen-family VLMs through ``AutoModelForImageTextToText`` and the
-    chat template. VERIFY the model id and loading class on its model card; if
-    the model needs a different class, change only ``_load``.
+    Written for Qwen3.5 (Qwen/Qwen3.5-9B, fallback Qwen/Qwen3.5-4B): natively
+    multimodal, loaded through the transformers auto classes and the chat template.
+    Qwen3.5 "thinks" by default; we switch thinking OFF (enable_thinking=False) so
+    the reply is the JSON answer, and parse_generation strips any <think> block.
     """
 
     def __init__(self, model_name: str, prompt_file: str, closed_book_prompt_file: str,
@@ -113,11 +116,24 @@ class VLMGenerator:
     def _load(self):
         if self._model is None:
             import torch
-            from transformers import AutoModelForImageTextToText, AutoProcessor
+            import transformers
+            from transformers import AutoProcessor
 
             self._proc = AutoProcessor.from_pretrained(self.name)
-            self._model = AutoModelForImageTextToText.from_pretrained(
-                self.name, torch_dtype=getattr(torch, self.dtype), device_map=self.device).eval()
+            last_err = None
+            for cls_name in ("AutoModelForImageTextToText", "AutoModelForMultimodalLM"):
+                cls = getattr(transformers, cls_name, None)
+                if cls is None:
+                    continue
+                try:
+                    self._model = cls.from_pretrained(
+                        self.name, dtype=getattr(torch, self.dtype), device_map=self.device).eval()
+                    break
+                except (ValueError, TypeError) as e:  # model type not registered for this auto class
+                    last_err = e
+            if self._model is None:
+                raise RuntimeError(f"could not load {self.name}; upgrade transformers "
+                                   f"(pip install -U transformers). Last error: {last_err}")
         return self._model, self._proc
 
     def _messages(self, question: str, pages: list[PageInput]) -> tuple[list[dict], list]:
@@ -144,7 +160,8 @@ class VLMGenerator:
 
         model, proc = self._load()
         messages, images = self._messages(question, pages)
-        prompt = proc.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
+        prompt = proc.apply_chat_template(messages, add_generation_prompt=True, tokenize=False,
+                                          enable_thinking=False)
         inputs = proc(text=[prompt], images=images or None, return_tensors="pt").to(model.device)
         with torch.no_grad():
             out = model.generate(**inputs, max_new_tokens=self.max_new_tokens, do_sample=False)

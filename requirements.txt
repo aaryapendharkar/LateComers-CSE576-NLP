@@ -2,9 +2,9 @@
 #   pip freeze > requirements.lock.txt   (and commit that file)
 -r requirements-core.txt
 torch
-transformers
+transformers           # needs a recent version with Qwen3.5 support
 accelerate
 datasets
-FlagEmbedding          # BGE-M3 (P1)
+sentence-transformers  # BGE-M3 dense embeddings (P1)
 colpali-engine         # ColPali (P2)
 docling                # PDF parsing, OCR off (P1)
