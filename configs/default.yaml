@@ -59,7 +59,8 @@ models:
   colpali: vidore/colpali-v1.3             # verified Nov 12 (latest ColPali checkpoint)
   reranker: null                           # Qwen/Qwen3-VL-Reranker-2B exists, but OFF for the Nov 15 report (allowed by the brief)
   generator: Qwen/Qwen3.5-9B               # verified Nov 12: natively multimodal, thinking switched off in code
-  generator_fallback: null                 # Qwen/Qwen3.5-4B on GPUs < 22 GB (set in configs/local.yaml). Record substitutions!
+  generator_fallback: null                 # set in configs/local.yaml. Colab T4: Qwen/Qwen3-VL-4B-Instruct (Qwen3.5 needs
+                                           # flash-linear-attention kernels; without them ~5 min/question on a T4). Record it!
   device: cuda
   dtype: bfloat16
   batch_size: 8
@@ -67,7 +68,9 @@ models:
 generation:
   prompt_file: configs/prompts/generator_v1.txt
   closed_book_prompt_file: configs/prompts/closed_book_v1.txt
-  max_new_tokens: 512
+  max_new_tokens: 128                      # answer is a short JSON (thinking is off)
+  max_page_chars: 4000                     # per page (median page ~3,900); tables are never cut, only surrounding prose
+  max_image_pixels: 600000                 # page images downscaled to fit GPU memory (~600 visual tokens)
   do_sample: false                         # greedy decoding
 
 metrics:
