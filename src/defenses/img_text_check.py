@@ -151,12 +151,334 @@ def compare_tables(img_table: dict[str, Any], text_table: dict[str, Any], rel_to
 
 
 # ---------------------------------------------------------------------------
-# Steps 1-2 and the page-level entry point (Friday, once real pages exist)
+# Shared cleanup for anything that should become a table
 # ---------------------------------------------------------------------------
-def extract_table_from_image(image_path: str, generator: Any) -> dict[str, Any]:
+def _normalise_table(t: dict[str, Any]) -> dict[str, Any]:
+    """Coerce to the shared Table shape: strings everywhere, rows padded to header width."""
+    header = [str(h if h is not None else "") for h in (t.get("header") or [])]
+    rows = [[str(c if c is not None else "") for c in r] for r in (t.get("rows") or []) if r]
+    width = max([len(header)] + [len(r) for r in rows]) if (header or rows) else 0
+    header = header + [""] * (width - len(header))
+    rows = [r + [""] * (width - len(r)) for r in rows]
+    return {"title": str(t.get("title") or ""), "unit_note": str(t.get("unit_note") or ""),
+            "header": header, "rows": rows}
+
+
+_NUM_TOKEN = re.compile(r"^\(?[-−$]?\$?\d[\d,]*\.?\d*%?\)?\*?$")
+
+
+def _is_num_token(tok: str) -> bool:
+    return bool(_NUM_TOKEN.match(tok)) or tok in {"-", "—", "–"}
+
+
+# ---------------------------------------------------------------------------
+# Step 1: page IMAGE -> table (VLM)
+# ---------------------------------------------------------------------------
+def _vlm_complete(generator: Any, image_path: str, prompt: str, max_new_tokens: int = 1024) -> str:
+    """Run one image + prompt through the model and return the raw reply.
+
+    ``generator`` is Person 1's VLMGenerator (same model as the pipelines, so no
+    extra setup), OR any callable ``f(image_path, prompt) -> str`` -- used by
+    tests, and the hook for a backup reader (OCR / hosted API) if the GPU is out.
+    """
+    if not hasattr(generator, "_load"):
+        if callable(generator):
+            return generator(image_path, prompt)
+        raise TypeError("generator must be a VLMGenerator or a callable(image_path, prompt) -> str")
+    import torch
+    from PIL import Image
+
+    model, proc = generator._load()
+    messages = [{"role": "user", "content": [{"type": "image"}, {"type": "text", "text": prompt}]}]
+    text = proc.apply_chat_template(messages, add_generation_prompt=True, tokenize=False,
+                                    enable_thinking=False)
+    image = Image.open(image_path).convert("RGB")
+    inputs = proc(text=[text], images=[image], return_tensors="pt").to(model.device)
+    with torch.no_grad():
+        out = model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
+    return proc.batch_decode(out[:, inputs["input_ids"].shape[1]:], skip_special_tokens=True)[0]
+
+
+def parse_table_reply(raw: str) -> dict[str, Any]:
+    """Model reply -> table. Accepts JSON (with code fences / <think> / extra prose) or a markdown table."""
+    from ..common.tables import rows_to_table, split_markdown_context
+
+    text = re.sub(r"<think>.*?</think>", "", raw or "", flags=re.DOTALL)
+    text = re.sub(r"^.*?</think>", "", text, flags=re.DOTALL)
+    text = re.sub(r"```(?:json)?", "", text).strip()
+    start, end = text.find("{"), text.rfind("}")
+    if start != -1 and end > start:
+        import json
+        for candidate in (text[start:end + 1], text[start:end + 1].replace("'", '"')):
+            try:
+                obj = json.loads(candidate)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(obj, dict) and ("rows" in obj or "header" in obj):
+                return _normalise_table(obj)
+    pre, rows, _ = split_markdown_context(text)
+    if rows:
+        return _normalise_table(rows_to_table(rows, pre_text=pre))
+    raise ValueError(f"could not read a table from the model reply: {raw[:200]!r}")
+
+
+def extract_table_from_image(image_path: str, generator: Any, prompt_file: Optional[str] = None,
+                             max_new_tokens: int = 1024) -> dict[str, Any]:
     """VLM prompt -> table JSON. Save the prompt in configs/prompts/ (e.g. img_extract_v1.txt)."""
-    raise NotImplementedError("Person 5: extract_table_from_image")
+    from ..common.config import resolve
+
+    prompt = resolve(prompt_file or "configs/prompts/img_extract_v1.txt").read_text(encoding="utf-8")
+    return parse_table_reply(_vlm_complete(generator, image_path, prompt, max_new_tokens))
 
 
-def check_page(page_id: str, question: Optional[str] = None, cfg: Optional[dict] = None) -> CheckResult:
-    raise NotImplementedError("Person 5: check_page")
+# ---------------------------------------------------------------------------
+# Step 2: page TEXT layer -> table
+# ---------------------------------------------------------------------------
+_PAIR = re.compile(r"([^,;:]+?)\s*[:=]\s*(\(?[-−]?\$?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?\)?)")
+
+
+def parse_text_layer(text: str) -> dict[str, Any]:
+    """Text the pipeline sees (Docling markdown or pdfplumber plain text) -> table.
+
+    Tries, in order:
+      1. a markdown table (Docling exports tables this way)
+      2. a chart "Source data: <label>: <value>, ..." note
+      3. plain-text rows "<label> <num> <num> ..." (pdfplumber fallback)
+    """
+    from ..common.tables import guess_unit_note, rows_to_table, split_markdown_context
+
+    pre, rows, post = split_markdown_context(text or "")
+    if rows:
+        t = rows_to_table(rows, pre_text=pre)
+        if not t["unit_note"]:
+            t["unit_note"] = guess_unit_note(text)
+        return _normalise_table(t)
+
+    m = re.search(r"source data\s*:\s*(.+)", text or "", flags=re.IGNORECASE)
+    if m:
+        pairs = _PAIR.findall(m.group(1))
+        if pairs:
+            return _normalise_table({"header": ["", "value"], "rows": [[k.strip(), v] for k, v in pairs],
+                                     "unit_note": guess_unit_note(text)})
+
+    return _normalise_table(_plain_text_rows(text or ""))
+
+
+def _plain_text_rows(text: str) -> dict[str, Any]:
+    from collections import Counter
+
+    from ..common.tables import guess_unit_note
+
+    parsed = []   # (line_no, label, values)
+    lines = text.splitlines()
+    for i, ln in enumerate(lines):
+        toks = ln.split()
+        k = len(toks)
+        while k > 0 and _is_num_token(toks[k - 1]):
+            k -= 1
+        vals = toks[k:]
+        if vals and k > 0:
+            parsed.append((i, " ".join(toks[:k]), vals))
+    if not parsed:
+        return {"header": [], "rows": [], "unit_note": guess_unit_note(text)}
+    width = Counter(len(v) for _, _, v in parsed).most_common(1)[0][0]
+    body = [(i, lab, v) for i, lab, v in parsed if len(v) == width]
+    header = [""] + [f"col{j + 1}" for j in range(width)]
+    first = body[0][0]
+    if first > 0:                       # header line right above the first row, e.g. "2019 2018"
+        htoks = lines[first - 1].split()
+        if len(htoks) >= width:
+            header = [" ".join(htoks[:-width])] + htoks[-width:]
+    return {"header": header, "rows": [[lab] + v for _, lab, v in body],
+            "unit_note": guess_unit_note(text)}
+
+
+# ---------------------------------------------------------------------------
+# Page-level entry point
+# ---------------------------------------------------------------------------
+def _settings(cfg: dict) -> dict[str, Any]:
+    s = {"rel_tol": 0.01, "only_question_rows": False, "prompt_file": "configs/prompts/img_extract_v1.txt",
+         "max_new_tokens": 1024, "text_source": None, "cache_dir": "data/parsed/img_tables"}
+    s.update(cfg.get("img_text_check") or {})
+    if not s["text_source"]:
+        src = (cfg.get("pipelines") or {}).get("p1_text_source")
+        s["text_source"] = src if src in ("docling", "pdfplumber") else "docling"
+    return s
+
+
+def page_text(page_id: str, cfg: dict) -> str:
+    """The text layer exactly as P1 sees it: data/parsed/<text_source>/<page_id>.txt."""
+    from ..common.config import resolve
+
+    s = _settings(cfg)
+    path = resolve(cfg["paths"].get("parsed_dir", "data/parsed")) / s["text_source"] / f"{page_id}.txt"
+    if not path.exists():
+        raise FileNotFoundError(f"{path} missing: run scripts/build_indexes.py --parse {s['text_source']}")
+    return path.read_text(encoding="utf-8")
+
+
+def image_table(page_id: str, image_path: str, cfg: dict, generator: Any = None,
+                use_cache: bool = True) -> dict[str, Any]:
+    """Step 1 with a cache: each page image is read by the model only once."""
+    import json
+
+    from ..common.config import resolve
+
+    s = _settings(cfg)
+    cache = resolve(s["cache_dir"]) / f"{page_id}.json"
+    if use_cache and cache.exists():
+        return json.loads(cache.read_text(encoding="utf-8"))
+    if generator is None:
+        from ..pipelines.run import get_system
+        generator = get_system().generator
+    table = extract_table_from_image(str(resolve(image_path)), generator, s["prompt_file"],
+                                     s["max_new_tokens"])
+    if use_cache:
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        cache.write_text(json.dumps(table), encoding="utf-8")
+    return table
+
+
+def check_page(page_id: str, question: Optional[str] = None, cfg: Optional[dict] = None,
+               generator: Any = None, pages: Optional[dict] = None, use_cache: bool = True) -> CheckResult:
+    """Full checker for one rendered page: image -> table, text layer -> table, compare.
+
+    generator: VLMGenerator or callable(image_path, prompt) -> str (default: the pipelines' generator).
+    pages: preloaded io.load_pages(cfg) (pass it when checking many pages).
+    use_cache: False for test readers (e.g. the oracle) so they never overwrite real VLM reads.
+    """
+    from ..common import io
+    from ..common.config import get_config
+
+    cfg = cfg or get_config()
+    s = _settings(cfg)
+    pages = pages if pages is not None else io.load_pages(cfg)
+    if page_id not in pages:
+        raise KeyError(f"page {page_id!r} is not in data/manifests/pages_*.jsonl")
+    img_t = image_table(page_id, pages[page_id].image_path, cfg, generator, use_cache)
+    txt_t = parse_text_layer(page_text(page_id, cfg))
+    only = rows_named_in_question(txt_t, question) if (question and s["only_question_rows"]) else None
+    return compare_tables(img_t, txt_t, rel_tol=s["rel_tol"], only_rows=only)
+
+
+# ---------------------------------------------------------------------------
+# Evaluation (brief task 2): false-positive rate on clean pages, detection per G2 condition
+# ---------------------------------------------------------------------------
+def oracle_reader(cfg: dict, pages: dict) -> Any:
+    """A 'perfect eyes' reader: returns the table the renderer actually drew in each image.
+
+    Not a defense result. Use it (a) to dry-run the whole evaluation before the GPU
+    is set up, and (b) as an upper bound: with perfect image reading, any remaining
+    misses or false alarms come from text-layer parsing alone.
+    """
+    from ..common import io
+    from ..common.config import resolve
+    from ..common.edits import apply_edit
+    from ..common.schemas import doc_id_of_page
+
+    docs = io.load_docs(cfg)
+    by_poison_page = {a.poison_page_id: a for a in io.load_attacks(cfg).values()}
+    by_image: dict[str, dict] = {}
+    for pid, p in pages.items():
+        doc = docs[doc_id_of_page(pid)].to_dict()
+        table = doc["table"]
+        if p.image_version == "poison" and pid in by_poison_page:
+            table = apply_edit(doc, by_poison_page[pid].edit)["table"]
+        by_image[str(resolve(p.image_path))] = table
+
+    def read(image_path: str, prompt: str) -> str:
+        import json
+        return json.dumps(by_image[str(resolve(image_path))])
+    return read
+
+
+def evaluate(cfg: dict, n_clean: Optional[int] = None, generator: Any = None, oracle: bool = False,
+             out_dir: str = "results/gap2", overwrite: bool = False, seed: int = 576) -> list[dict[str, Any]]:
+    """Run the checker on n clean pages per source + every Gap 2 poisoned page.
+
+    Writes (suffix _oracle in oracle mode, so real results are never overwritten):
+      checker_flags.jsonl  {"page_id", "flag", "mismatches", "kind", "attack_id", "error"}
+                           -> scripts/run_attacks.py --drop-flags for the P3 filter run
+      checker_table.md / .csv  false-positive rate (clean) and detection rate per condition, 95% CIs
+    Resumable: pages already in checker_flags.jsonl are skipped unless overwrite=True.
+    """
+    import csv
+    import random
+
+    from ..common import io
+    from ..common.config import resolve
+    from ..common.metrics import fmt_rate, rate
+    from ..common.schemas import doc_id_of_page
+
+    s = _settings(cfg)
+    n_clean = n_clean or s.get("n_clean", 100)
+    pages = io.load_pages(cfg)
+    docs = io.load_docs(cfg)
+    try:
+        questions = {q: e.question for q, e in io.load_examples(cfg).items()}
+    except FileNotFoundError:
+        questions = {}
+
+    # what to check: (page_id, kind, attack_id, qid)
+    items: list[tuple[str, str, Optional[str], Optional[str]]] = []
+    rng = random.Random(seed)
+    for source, kind in (("finqa", "clean_table"), ("chartqa", "clean_chart")):
+        ids = sorted(pid for pid, p in pages.items() if p.variant == "clean"
+                     and doc_id_of_page(pid) in docs and docs[doc_id_of_page(pid)].source == source)
+        items += [(pid, kind, None, None) for pid in sorted(rng.sample(ids, min(n_clean, len(ids))))]
+    for a in sorted(io.load_attacks(cfg, gap="G2").values(), key=lambda a: a.attack_id):
+        if a.poison_page_id in pages:
+            items.append((a.poison_page_id, a.attack_type, a.attack_id, a.qid))
+
+    suffix = "_oracle" if oracle else ""
+    out = resolve(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    flags_path = out / f"checker_flags{suffix}.jsonl"
+    done = {}
+    if flags_path.exists() and not overwrite:
+        done = {(r["page_id"], r.get("attack_id")): r for r in io.read_jsonl(flags_path)}
+    elif flags_path.exists():
+        flags_path.unlink()
+    reader = oracle_reader(cfg, pages) if oracle else generator
+
+    try:
+        from tqdm import tqdm
+    except ImportError:  # pragma: no cover
+        def tqdm(it, **_):
+            return it
+    records = list(done.values())
+    for pid, kind, aid, qid in tqdm([i for i in items if (i[0], i[2]) not in done], desc="checker"):
+        rec: dict[str, Any] = {"page_id": pid, "kind": kind, "attack_id": aid, "flag": False,
+                               "mismatches": [], "error": None}
+        try:
+            r = check_page(pid, questions.get(qid) if qid else None, cfg, reader, pages, use_cache=not oracle)
+            rec.update(flag=r["flag"], mismatches=r["mismatches"])
+        except Exception as e:  # one bad page must not stop a 300-page run
+            rec["error"] = f"{type(e).__name__}: {e}"
+        io.append_jsonl(flags_path, rec)
+        records.append(rec)
+
+    # summary table
+    kinds = ["clean_table", "clean_chart"] + [k for k in G2_ORDER if any(r["kind"] == k for r in records)]
+    rows = []
+    for k in kinds:
+        ok = [r for r in records if r["kind"] == k and not r["error"]]
+        if not any(r["kind"] == k for r in records):
+            continue
+        metric = "false-positive rate" if k.startswith("clean") else "detection rate"
+        rows.append({"kind": k, "metric": metric, "errors": sum(1 for r in records if r["kind"] == k and r["error"]),
+                     **rate([r["flag"] for r in ok])})
+    lines = [f"Image-text checker{' (ORACLE reader: upper bound, not a result)' if oracle else ''}", "",
+             "| pages | metric | % flagged [95% CI] (n) | errors |", "|---|---|---|---|"]
+    lines += [f"| {r['kind']} | {r['metric']} | {fmt_rate(r)} | {r['errors']} |" for r in rows]
+    (out / f"checker_table{suffix}.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    with open(out / f"checker_table{suffix}.csv", "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["kind", "metric", "rate", "ci_low", "ci_high", "n", "errors"])
+        for r in rows:
+            w.writerow([r["kind"], r["metric"], r["rate"], r["ci_low"], r["ci_high"], r["n"], r["errors"]])
+    return rows
+
+
+G2_ORDER = ("propagate_table", "text_only_table", "image_only_table",
+            "propagate_chart", "text_only_chart", "image_only_chart")
