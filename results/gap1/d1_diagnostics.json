@@ -1,0 +1,214 @@
+{
+  "d1_version": "0.2.0",
+  "clean_flag_triage": {
+    "note": "automatic buckets, not human-reviewed",
+    "n_flagged": 51,
+    "buckets": {
+      "headerless_table": 17,
+      "other": 16,
+      "dash_artifact": 10,
+      "non_additive": 8
+    },
+    "pages": {
+      "dash_artifact": [
+        "finqa_ABMD_2006_p43",
+        "finqa_ABMD_2007_p52",
+        "finqa_ABMD_2009_p56",
+        "finqa_ANSS_2013_p55",
+        "finqa_ANSS_2016_p47",
+        "finqa_AOS_2004_p11",
+        "finqa_C_2008_p65",
+        "finqa_GIS_2017_p31",
+        "finqa_HOLX_2008_p84",
+        "finqa_MAR_2018_p43"
+      ],
+      "headerless_table": [
+        "finqa_AAL_2013_p172",
+        "finqa_AES_2001_p85",
+        "finqa_AMT_2003_p102",
+        "finqa_AMT_2006_p104",
+        "finqa_AMT_2008_p94",
+        "finqa_AMT_2014_p160",
+        "finqa_ANET_2015_p156",
+        "finqa_DISH_2010_p117",
+        "finqa_DRE_2007_p59",
+        "finqa_EW_2017_p82",
+        "finqa_GPN_2013_p92",
+        "finqa_HOLX_2009_p127",
+        "finqa_HOLX_2010_p124",
+        "finqa_IPG_2006_p77",
+        "finqa_NWS_2017_p119",
+        "finqa_UNP_2007_p65",
+        "finqa_VRTX_2003_p71"
+      ],
+      "non_additive": [
+        "finqa_ADI_2019_p29",
+        "finqa_AMT_2012_p50",
+        "finqa_HOLX_2003_p52",
+        "finqa_HOLX_2006_p71",
+        "finqa_HOLX_2007_p93",
+        "finqa_UNP_2010_p21",
+        "finqa_UNP_2011_p21",
+        "finqa_UNP_2014_p25"
+      ],
+      "other": [
+        "finqa_AAL_2013_p18",
+        "finqa_APD_2016_p96",
+        "finqa_CB_2010_p103",
+        "finqa_C_2008_p44",
+        "finqa_ECL_2017_p79",
+        "finqa_GS_2014_p40",
+        "finqa_GS_2014_p51",
+        "finqa_GS_2017_p179",
+        "finqa_JPM_2010_p120",
+        "finqa_JPM_2012_p140",
+        "finqa_JPM_2014_p122",
+        "finqa_JPM_2014_p70",
+        "finqa_JPM_2015_p82",
+        "finqa_MO_2014_p39",
+        "finqa_MRO_2013_p19",
+        "finqa_UAA_2016_p42"
+      ]
+    }
+  },
+  "input_problems": {
+    "headerless_table": {
+      "docs": 42,
+      "gold_docs": 15,
+      "attacks": 17,
+      "examples": [
+        "finqa_AAL_2013_p172",
+        "finqa_AAPL_2003_p48",
+        "finqa_AAPL_2004_p68",
+        "finqa_ABMD_2008_p86",
+        "finqa_ADBE_2008_p89"
+      ]
+    },
+    "dash_artifact": {
+      "docs": 18,
+      "gold_docs": 9,
+      "attacks": 2,
+      "cells": 58,
+      "examples": [
+        "finqa_ABMD_2006_p43",
+        "finqa_ABMD_2007_p52",
+        "finqa_ABMD_2009_p56",
+        "finqa_ANSS_2013_p55",
+        "finqa_ANSS_2016_p47"
+      ]
+    }
+  },
+  "what_if_input_repair": {
+    "as_is": {
+      "clean_fpr": {
+        "rate": 0.102,
+        "ci_low": 0.078,
+        "ci_high": 0.13,
+        "n": 500
+      },
+      "coverage": {
+        "rate": 0.344,
+        "ci_low": 0.304,
+        "ci_high": 0.38204999999999995,
+        "n": 500
+      },
+      "newly_flagged": {
+        "consistent_cell": "0/38",
+        "header": "0/15",
+        "naive_cell": "4/38",
+        "unit": "0/8"
+      }
+    },
+    "header_repair": {
+      "clean_fpr": {
+        "rate": 0.07,
+        "ci_low": 0.048,
+        "ci_high": 0.094,
+        "n": 500
+      },
+      "coverage": {
+        "rate": 0.348,
+        "ci_low": 0.308,
+        "ci_high": 0.39,
+        "n": 500
+      },
+      "newly_flagged": {
+        "consistent_cell": "5/38",
+        "header": "0/15",
+        "naive_cell": "9/38",
+        "unit": "0/8"
+      }
+    },
+    "dash_repair": {
+      "clean_fpr": {
+        "rate": 0.082,
+        "ci_low": 0.06,
+        "ci_high": 0.108,
+        "n": 500
+      },
+      "coverage": {
+        "rate": 0.344,
+        "ci_low": 0.304,
+        "ci_high": 0.38204999999999995,
+        "n": 500
+      },
+      "newly_flagged": {
+        "consistent_cell": "0/38",
+        "header": "0/15",
+        "naive_cell": "4/38",
+        "unit": "0/8"
+      }
+    },
+    "both_repairs": {
+      "clean_fpr": {
+        "rate": 0.05,
+        "ci_low": 0.032,
+        "ci_high": 0.07,
+        "n": 500
+      },
+      "coverage": {
+        "rate": 0.348,
+        "ci_low": 0.308,
+        "ci_high": 0.39,
+        "n": 500
+      },
+      "newly_flagged": {
+        "consistent_cell": "5/38",
+        "header": "0/15",
+        "naive_cell": "9/38",
+        "unit": "0/8"
+      },
+      "consistent_edits_that_break_a_total": [
+        "G1_consistent_cell_q0005",
+        "G1_consistent_cell_q0095",
+        "G1_consistent_cell_q0098",
+        "G1_consistent_cell_q0167",
+        "G1_consistent_cell_q0194"
+      ]
+    }
+  },
+  "filter_cost_on_clean_run": {
+    "run": "P1_R2_finqa.jsonl",
+    "n_questions": 200,
+    "any_top5_page_dropped": {
+      "rate": 0.325,
+      "ci_low": 0.26,
+      "ci_high": 0.385,
+      "n": 200
+    },
+    "mean_pages_dropped_per_question": 0.56,
+    "gold_page_dropped_all_questions": {
+      "rate": 0.095,
+      "ci_low": 0.055,
+      "ci_high": 0.13012499999999988,
+      "n": 200
+    },
+    "gold_page_dropped_r2_correct_questions": {
+      "rate": 0.1111111111111111,
+      "ci_low": 0.041666666666666664,
+      "ci_high": 0.19444444444444445,
+      "n": 72
+    },
+    "n_r2_correct_questions_losing_gold_page": 8
+  }
+}

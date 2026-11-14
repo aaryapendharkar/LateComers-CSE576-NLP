@@ -1,0 +1,1131 @@
+..FFFFFFFFFFFFFFFF.FFFFFFFFFFFFFFFFFFFFFFF.FFFFFFFFF.                    [100%]
+=================================== FAILURES ===================================
+___________ test_prose_sign_conflict_is_a_contradiction[Revenue-100] ___________
+
+label = 'Revenue', value = '100'
+
+    @pytest.mark.parametrize("label,value", [("Revenue", "100"), ("Operating income", "2,340"), ("Segment profit", "57.5")])
+    def test_prose_sign_conflict_is_a_contradiction(label, value):
+        res = diagnose(_page(["", "2021"], [[label, f"({value})"]], prose=f"{label} was ${value} million in 2021."))
+>       assert res.status == CONTRADICTION
+E       AssertionError: assert 'checks_passed' == 'contradiction'
+E         
+E         - contradiction
+E         + checks_passed
+
+tests/test_reconcile.py:166: AssertionError
+_____ test_prose_sign_conflict_is_a_contradiction[Operating income-2,340] ______
+
+label = 'Operating income', value = '2,340'
+
+    @pytest.mark.parametrize("label,value", [("Revenue", "100"), ("Operating income", "2,340"), ("Segment profit", "57.5")])
+    def test_prose_sign_conflict_is_a_contradiction(label, value):
+        res = diagnose(_page(["", "2021"], [[label, f"({value})"]], prose=f"{label} was ${value} million in 2021."))
+>       assert res.status == CONTRADICTION
+E       AssertionError: assert 'checks_passed' == 'contradiction'
+E         
+E         - contradiction
+E         + checks_passed
+
+tests/test_reconcile.py:166: AssertionError
+_______ test_prose_sign_conflict_is_a_contradiction[Segment profit-57.5] _______
+
+label = 'Segment profit', value = '57.5'
+
+    @pytest.mark.parametrize("label,value", [("Revenue", "100"), ("Operating income", "2,340"), ("Segment profit", "57.5")])
+    def test_prose_sign_conflict_is_a_contradiction(label, value):
+        res = diagnose(_page(["", "2021"], [[label, f"({value})"]], prose=f"{label} was ${value} million in 2021."))
+>       assert res.status == CONTRADICTION
+E       AssertionError: assert 'checks_passed' == 'contradiction'
+E         
+E         - contradiction
+E         + checks_passed
+
+tests/test_reconcile.py:166: AssertionError
+___ test_prose_consistent_negative_passes_with_signed_values[$(75) million] ____
+
+prose_amount = '$(75) million'
+
+    @pytest.mark.parametrize("prose_amount", ["$(75) million", "-$75 million", "$-75 million", "−$75 million"])
+    def test_prose_consistent_negative_passes_with_signed_values(prose_amount):
+        res = diagnose(_page(["", "2020"], [["Other income", "(75)"]], prose=f"Other income was {prose_amount} in 2020."))
+>       assert res.status == CHECKS_PASSED
+E       AssertionError: assert 'uncheckable' == 'checks_passed'
+E         
+E         - checks_passed
+E         + uncheckable
+
+tests/test_reconcile.py:174: AssertionError
+____ test_prose_consistent_negative_passes_with_signed_values[-$75 million] ____
+
+prose_amount = '-$75 million'
+
+    @pytest.mark.parametrize("prose_amount", ["$(75) million", "-$75 million", "$-75 million", "−$75 million"])
+    def test_prose_consistent_negative_passes_with_signed_values(prose_amount):
+        res = diagnose(_page(["", "2020"], [["Other income", "(75)"]], prose=f"Other income was {prose_amount} in 2020."))
+        assert res.status == CHECKS_PASSED
+        (check,) = res.checks
+>       assert check.expected == check.observed == "-75,000,000"
+E       AssertionError: assert '75,000,000' == '-75,000,000'
+E         
+E         - -75,000,000
+E         ? -
+E         + 75,000,000
+
+tests/test_reconcile.py:176: AssertionError
+____ test_prose_consistent_negative_passes_with_signed_values[$-75 million] ____
+
+prose_amount = '$-75 million'
+
+    @pytest.mark.parametrize("prose_amount", ["$(75) million", "-$75 million", "$-75 million", "−$75 million"])
+    def test_prose_consistent_negative_passes_with_signed_values(prose_amount):
+        res = diagnose(_page(["", "2020"], [["Other income", "(75)"]], prose=f"Other income was {prose_amount} in 2020."))
+        assert res.status == CHECKS_PASSED
+        (check,) = res.checks
+>       assert check.expected == check.observed == "-75,000,000"
+E       AssertionError: assert '75,000,000' == '-75,000,000'
+E         
+E         - -75,000,000
+E         ? -
+E         + 75,000,000
+
+tests/test_reconcile.py:176: AssertionError
+_ test_prose_consistent_negative_passes_with_signed_values[\u2212$75 million] __
+
+prose_amount = '−$75 million'
+
+    @pytest.mark.parametrize("prose_amount", ["$(75) million", "-$75 million", "$-75 million", "−$75 million"])
+    def test_prose_consistent_negative_passes_with_signed_values(prose_amount):
+        res = diagnose(_page(["", "2020"], [["Other income", "(75)"]], prose=f"Other income was {prose_amount} in 2020."))
+        assert res.status == CHECKS_PASSED
+        (check,) = res.checks
+>       assert check.expected == check.observed == "-75,000,000"
+E       AssertionError: assert '75,000,000' == '-75,000,000'
+E         
+E         - -75,000,000
+E         ? -
+E         + 75,000,000
+
+tests/test_reconcile.py:176: AssertionError
+_______ test_prose_explicit_negative_vs_positive_cell_is_a_contradiction _______
+
+    def test_prose_explicit_negative_vs_positive_cell_is_a_contradiction():
+        res = diagnose(_page(["", "2020"], [["Other income", "75"]], prose="Other income was $(75) million in 2020."))
+>       assert res.status == CONTRADICTION
+E       AssertionError: assert 'uncheckable' == 'contradiction'
+E         
+E         - contradiction
+E         + uncheckable
+
+tests/test_reconcile.py:181: AssertionError
+_ test_unsigned_magnitude_wording_is_reported_not_compared[Foreign exchange loss-Foreign exchange loss was $150 million in 2019.] _
+
+label = 'Foreign exchange loss'
+prose = 'Foreign exchange loss was $150 million in 2019.'
+
+    @pytest.mark.parametrize("label,prose", [
+        ("Foreign exchange loss", "Foreign exchange loss was $150 million in 2019."),
+        ("Other items", "Other items reflected a loss of $150 million in 2019."),
+        ("Cash flows from investing activities", "Cash flows from investing activities used $150 million in 2019."),
+    ])
+    def test_unsigned_magnitude_wording_is_reported_not_compared(label, prose):
+        res = diagnose(_page(["", "2019"], [[label, "(150)"]], prose=prose))
+>       assert not [c for c in res.checks if c.kind == "prose"]
+E       assert not [Check(kind='prose', passed=True, relationship="prose claim for row 'Foreign exchange loss', column '2019'", cells=['F...solute units); discrepancy 0 within tolerance 1,000,000. Sentence: 'Foreign exchange loss was $150 million in 2019.'")]
+
+tests/test_reconcile.py:191: AssertionError
+_ test_unsigned_magnitude_wording_is_reported_not_compared[Other items-Other items reflected a loss of $150 million in 2019.] _
+
+label = 'Other items'
+prose = 'Other items reflected a loss of $150 million in 2019.'
+
+    @pytest.mark.parametrize("label,prose", [
+        ("Foreign exchange loss", "Foreign exchange loss was $150 million in 2019."),
+        ("Other items", "Other items reflected a loss of $150 million in 2019."),
+        ("Cash flows from investing activities", "Cash flows from investing activities used $150 million in 2019."),
+    ])
+    def test_unsigned_magnitude_wording_is_reported_not_compared(label, prose):
+        res = diagnose(_page(["", "2019"], [[label, "(150)"]], prose=prose))
+>       assert not [c for c in res.checks if c.kind == "prose"]
+E       assert not [Check(kind='prose', passed=True, relationship="prose claim for row 'Other items', column '2019'", cells=['Other items... units); discrepancy 0 within tolerance 1,000,000. Sentence: 'Other items reflected a loss of $150 million in 2019.'")]
+
+tests/test_reconcile.py:191: AssertionError
+_ test_unsigned_magnitude_wording_is_reported_not_compared[Cash flows from investing activities-Cash flows from investing activities used $150 million in 2019.] _
+
+label = 'Cash flows from investing activities'
+prose = 'Cash flows from investing activities used $150 million in 2019.'
+
+    @pytest.mark.parametrize("label,prose", [
+        ("Foreign exchange loss", "Foreign exchange loss was $150 million in 2019."),
+        ("Other items", "Other items reflected a loss of $150 million in 2019."),
+        ("Cash flows from investing activities", "Cash flows from investing activities used $150 million in 2019."),
+    ])
+    def test_unsigned_magnitude_wording_is_reported_not_compared(label, prose):
+        res = diagnose(_page(["", "2019"], [[label, "(150)"]], prose=prose))
+>       assert not [c for c in res.checks if c.kind == "prose"]
+E       assert not [Check(kind='prose', passed=True, relationship="prose claim for row 'Cash flows from investing activities', column '20...iscrepancy 0 within tolerance 1,000,000. Sentence: 'Cash flows from investing activities used $150 million in 2019.'")]
+
+tests/test_reconcile.py:191: AssertionError
+____ test_arithmetic_respects_currency_identity[$-\u20ac-currency_mismatch] ____
+
+cur_a = '$', cur_b = '€', code = 'currency_mismatch'
+
+    @pytest.mark.parametrize("cur_a,cur_b,code", [
+        ("$", "€", "currency_mismatch"), ("£", "$", "currency_mismatch"), ("€", "£", "currency_mismatch"),
+        ("US$", "$", "currency_ambiguous"), ("EUR ", "€", None),
+    ])
+    def test_arithmetic_respects_currency_identity(cur_a, cur_b, code):
+        rows = [["Product revenue", f"{cur_a}120"], ["Service revenue", f"{cur_b}30"], ["Total revenue", f"{cur_a}150"]]
+        res = diagnose(_page(["", "2019"], rows))
+        if code is None:  # same currency written two ways
+            assert res.status == CHECKS_PASSED and len(res.checks) == 1
+        else:
+>           assert not res.checks and code in _codes(res)
+E           assert (not [Check(kind='arithmetic', passed=True, relationship="row 'Total revenue' = sum of rows ['Product revenue', 'Service re...[contiguous rows above]: components sum to 150; the table shows '$150'; discrepancy 0 within rounding tolerance 1.5.")])
+E            +  where [Check(kind='arithmetic', passed=True, relationship="row 'Total revenue' = sum of rows ['Product revenue', 'Service re...[contiguous rows above]: components sum to 150; the table shows '$150'; discrepancy 0 within rounding tolerance 1.5.")] = D1Result(config=D1Config(check_arithmetic=True, check_prose=True, dash_as_zero=False), checks=[Check(kind='arithmetic'...to 150; the table shows '$150'; discrepancy 0 within rounding tolerance 1.5.")], skipped=[], unaligned_prose_numbers=0).checks
+
+tests/test_reconcile.py:208: AssertionError
+_____ test_arithmetic_respects_currency_identity[\xa3-$-currency_mismatch] _____
+
+cur_a = '£', cur_b = '$', code = 'currency_mismatch'
+
+    @pytest.mark.parametrize("cur_a,cur_b,code", [
+        ("$", "€", "currency_mismatch"), ("£", "$", "currency_mismatch"), ("€", "£", "currency_mismatch"),
+        ("US$", "$", "currency_ambiguous"), ("EUR ", "€", None),
+    ])
+    def test_arithmetic_respects_currency_identity(cur_a, cur_b, code):
+        rows = [["Product revenue", f"{cur_a}120"], ["Service revenue", f"{cur_b}30"], ["Total revenue", f"{cur_a}150"]]
+        res = diagnose(_page(["", "2019"], rows))
+        if code is None:  # same currency written two ways
+            assert res.status == CHECKS_PASSED and len(res.checks) == 1
+        else:
+>           assert not res.checks and code in _codes(res)
+E           assert (not [Check(kind='arithmetic', passed=True, relationship="row 'Total revenue' = sum of rows ['Product revenue', 'Service re...[contiguous rows above]: components sum to 150; the table shows '£150'; discrepancy 0 within rounding tolerance 1.5.")])
+E            +  where [Check(kind='arithmetic', passed=True, relationship="row 'Total revenue' = sum of rows ['Product revenue', 'Service re...[contiguous rows above]: components sum to 150; the table shows '£150'; discrepancy 0 within rounding tolerance 1.5.")] = D1Result(config=D1Config(check_arithmetic=True, check_prose=True, dash_as_zero=False), checks=[Check(kind='arithmetic'...to 150; the table shows '£150'; discrepancy 0 within rounding tolerance 1.5.")], skipped=[], unaligned_prose_numbers=0).checks
+
+tests/test_reconcile.py:208: AssertionError
+__ test_arithmetic_respects_currency_identity[\u20ac-\xa3-currency_mismatch] ___
+
+cur_a = '€', cur_b = '£', code = 'currency_mismatch'
+
+    @pytest.mark.parametrize("cur_a,cur_b,code", [
+        ("$", "€", "currency_mismatch"), ("£", "$", "currency_mismatch"), ("€", "£", "currency_mismatch"),
+        ("US$", "$", "currency_ambiguous"), ("EUR ", "€", None),
+    ])
+    def test_arithmetic_respects_currency_identity(cur_a, cur_b, code):
+        rows = [["Product revenue", f"{cur_a}120"], ["Service revenue", f"{cur_b}30"], ["Total revenue", f"{cur_a}150"]]
+        res = diagnose(_page(["", "2019"], rows))
+        if code is None:  # same currency written two ways
+            assert res.status == CHECKS_PASSED and len(res.checks) == 1
+        else:
+>           assert not res.checks and code in _codes(res)
+E           assert (not [Check(kind='arithmetic', passed=True, relationship="row 'Total revenue' = sum of rows ['Product revenue', 'Service re...[contiguous rows above]: components sum to 150; the table shows '€150'; discrepancy 0 within rounding tolerance 1.5.")])
+E            +  where [Check(kind='arithmetic', passed=True, relationship="row 'Total revenue' = sum of rows ['Product revenue', 'Service re...[contiguous rows above]: components sum to 150; the table shows '€150'; discrepancy 0 within rounding tolerance 1.5.")] = D1Result(config=D1Config(check_arithmetic=True, check_prose=True, dash_as_zero=False), checks=[Check(kind='arithmetic'...to 150; the table shows '€150'; discrepancy 0 within rounding tolerance 1.5.")], skipped=[], unaligned_prose_numbers=0).checks
+
+tests/test_reconcile.py:208: AssertionError
+_____ test_arithmetic_respects_currency_identity[US$-$-currency_ambiguous] _____
+
+cur_a = 'US$', cur_b = '$', code = 'currency_ambiguous'
+
+    @pytest.mark.parametrize("cur_a,cur_b,code", [
+        ("$", "€", "currency_mismatch"), ("£", "$", "currency_mismatch"), ("€", "£", "currency_mismatch"),
+        ("US$", "$", "currency_ambiguous"), ("EUR ", "€", None),
+    ])
+    def test_arithmetic_respects_currency_identity(cur_a, cur_b, code):
+        rows = [["Product revenue", f"{cur_a}120"], ["Service revenue", f"{cur_b}30"], ["Total revenue", f"{cur_a}150"]]
+        res = diagnose(_page(["", "2019"], rows))
+        if code is None:  # same currency written two ways
+            assert res.status == CHECKS_PASSED and len(res.checks) == 1
+        else:
+>           assert not res.checks and code in _codes(res)
+E           assert (not [] and 'currency_ambiguous' in {'total_not_numeric'})
+E            +  where [] = D1Result(config=D1Config(check_arithmetic=True, check_prose=True, dash_as_zero=False), checks=[], skipped=[Skip(kind='...otal_not_numeric', detail="'Total revenue' in column '2019': total cell 'US$150' is text")], unaligned_prose_numbers=0).checks
+E            +  and   {'total_not_numeric'} = _codes(D1Result(config=D1Config(check_arithmetic=True, check_prose=True, dash_as_zero=False), checks=[], skipped=[Skip(kind='...otal_not_numeric', detail="'Total revenue' in column '2019': total cell 'US$150' is text")], unaligned_prose_numbers=0))
+
+tests/test_reconcile.py:208: AssertionError
+_________ test_arithmetic_respects_currency_identity[EUR -\u20ac-None] _________
+
+cur_a = 'EUR ', cur_b = '€', code = None
+
+    @pytest.mark.parametrize("cur_a,cur_b,code", [
+        ("$", "€", "currency_mismatch"), ("£", "$", "currency_mismatch"), ("€", "£", "currency_mismatch"),
+        ("US$", "$", "currency_ambiguous"), ("EUR ", "€", None),
+    ])
+    def test_arithmetic_respects_currency_identity(cur_a, cur_b, code):
+        rows = [["Product revenue", f"{cur_a}120"], ["Service revenue", f"{cur_b}30"], ["Total revenue", f"{cur_a}150"]]
+        res = diagnose(_page(["", "2019"], rows))
+        if code is None:  # same currency written two ways
+>           assert res.status == CHECKS_PASSED and len(res.checks) == 1
+E           AssertionError: assert ('uncheckable' == 'checks_passed'
+E             
+E             - checks_passed
+E             + uncheckable)
+
+tests/test_reconcile.py:206: AssertionError
+_ test_prose_respects_currency_identity[\u20ac1,500-Revenue was $1.5 billion in 2019.-currency_mismatch] _
+
+cell = '€1,500', prose = 'Revenue was $1.5 billion in 2019.'
+code = 'currency_mismatch'
+
+    @pytest.mark.parametrize("cell,prose,code", [
+        ("€1,500", "Revenue was $1.5 billion in 2019.", "currency_mismatch"),
+        ("$1,500", "Revenue was €1.5 billion in 2019.", "currency_mismatch"),
+        ("1,500", "Revenue was £1.5 billion in 2019.", "currency_mismatch"),  # table title declares euros
+        ("$1,500", "Revenue was 1.5 billion euros in 2019.", "currency_mismatch"),
+        ("US$1,500", "Revenue was $1.5 billion in 2019.", "currency_ambiguous"),
+    ])
+    def test_prose_respects_currency_identity(cell, prose, code):
+        title = "Amounts in millions of euros" if cell == "1,500" else "Amounts in millions"
+        res = diagnose(_page(["", "2019"], [["Revenue", cell]], title=title, prose=prose))
+>       assert not res.checks and code in _codes(res)
+E       assert (not [Check(kind='prose', passed=True, relationship="prose claim for row 'Revenue', column '2019'", cells=['Revenue|2019=€1...0,000,000 (absolute units); discrepancy 0 within tolerance 50,500,000. Sentence: 'Revenue was $1.5 billion in 2019.'")])
+E        +  where [Check(kind='prose', passed=True, relationship="prose claim for row 'Revenue', column '2019'", cells=['Revenue|2019=€1...0,000,000 (absolute units); discrepancy 0 within tolerance 50,500,000. Sentence: 'Revenue was $1.5 billion in 2019.'")] = D1Result(config=D1Config(check_arithmetic=True, check_prose=True, dash_as_zero=False), checks=[Check(kind='prose', pas...0 within tolerance 50,500,000. Sentence: 'Revenue was $1.5 billion in 2019.'")], skipped=[], unaligned_prose_numbers=0).checks
+
+tests/test_reconcile.py:227: AssertionError
+_ test_prose_respects_currency_identity[$1,500-Revenue was \u20ac1.5 billion in 2019.-currency_mismatch] _
+
+cell = '$1,500', prose = 'Revenue was €1.5 billion in 2019.'
+code = 'currency_mismatch'
+
+    @pytest.mark.parametrize("cell,prose,code", [
+        ("€1,500", "Revenue was $1.5 billion in 2019.", "currency_mismatch"),
+        ("$1,500", "Revenue was €1.5 billion in 2019.", "currency_mismatch"),
+        ("1,500", "Revenue was £1.5 billion in 2019.", "currency_mismatch"),  # table title declares euros
+        ("$1,500", "Revenue was 1.5 billion euros in 2019.", "currency_mismatch"),
+        ("US$1,500", "Revenue was $1.5 billion in 2019.", "currency_ambiguous"),
+    ])
+    def test_prose_respects_currency_identity(cell, prose, code):
+        title = "Amounts in millions of euros" if cell == "1,500" else "Amounts in millions"
+        res = diagnose(_page(["", "2019"], [["Revenue", cell]], title=title, prose=prose))
+>       assert not res.checks and code in _codes(res)
+E       assert (not [Check(kind='prose', passed=True, relationship="prose claim for row 'Revenue', column '2019'", cells=['Revenue|2019=$1...0,000,000 (absolute units); discrepancy 0 within tolerance 50,500,000. Sentence: 'Revenue was €1.5 billion in 2019.'")])
+E        +  where [Check(kind='prose', passed=True, relationship="prose claim for row 'Revenue', column '2019'", cells=['Revenue|2019=$1...0,000,000 (absolute units); discrepancy 0 within tolerance 50,500,000. Sentence: 'Revenue was €1.5 billion in 2019.'")] = D1Result(config=D1Config(check_arithmetic=True, check_prose=True, dash_as_zero=False), checks=[Check(kind='prose', pas...0 within tolerance 50,500,000. Sentence: 'Revenue was €1.5 billion in 2019.'")], skipped=[], unaligned_prose_numbers=0).checks
+
+tests/test_reconcile.py:227: AssertionError
+_ test_prose_respects_currency_identity[1,500-Revenue was \xa31.5 billion in 2019.-currency_mismatch] _
+
+cell = '1,500', prose = 'Revenue was £1.5 billion in 2019.'
+code = 'currency_mismatch'
+
+    @pytest.mark.parametrize("cell,prose,code", [
+        ("€1,500", "Revenue was $1.5 billion in 2019.", "currency_mismatch"),
+        ("$1,500", "Revenue was €1.5 billion in 2019.", "currency_mismatch"),
+        ("1,500", "Revenue was £1.5 billion in 2019.", "currency_mismatch"),  # table title declares euros
+        ("$1,500", "Revenue was 1.5 billion euros in 2019.", "currency_mismatch"),
+        ("US$1,500", "Revenue was $1.5 billion in 2019.", "currency_ambiguous"),
+    ])
+    def test_prose_respects_currency_identity(cell, prose, code):
+        title = "Amounts in millions of euros" if cell == "1,500" else "Amounts in millions"
+        res = diagnose(_page(["", "2019"], [["Revenue", cell]], title=title, prose=prose))
+>       assert not res.checks and code in _codes(res)
+E       assert (not [Check(kind='prose', passed=True, relationship="prose claim for row 'Revenue', column '2019'", cells=['Revenue|2019=1,...0,000,000 (absolute units); discrepancy 0 within tolerance 50,500,000. Sentence: 'Revenue was £1.5 billion in 2019.'")])
+E        +  where [Check(kind='prose', passed=True, relationship="prose claim for row 'Revenue', column '2019'", cells=['Revenue|2019=1,...0,000,000 (absolute units); discrepancy 0 within tolerance 50,500,000. Sentence: 'Revenue was £1.5 billion in 2019.'")] = D1Result(config=D1Config(check_arithmetic=True, check_prose=True, dash_as_zero=False), checks=[Check(kind='prose', pas...0 within tolerance 50,500,000. Sentence: 'Revenue was £1.5 billion in 2019.'")], skipped=[], unaligned_prose_numbers=0).checks
+
+tests/test_reconcile.py:227: AssertionError
+_ test_prose_respects_currency_identity[$1,500-Revenue was 1.5 billion euros in 2019.-currency_mismatch] _
+
+cell = '$1,500', prose = 'Revenue was 1.5 billion euros in 2019.'
+code = 'currency_mismatch'
+
+    @pytest.mark.parametrize("cell,prose,code", [
+        ("€1,500", "Revenue was $1.5 billion in 2019.", "currency_mismatch"),
+        ("$1,500", "Revenue was €1.5 billion in 2019.", "currency_mismatch"),
+        ("1,500", "Revenue was £1.5 billion in 2019.", "currency_mismatch"),  # table title declares euros
+        ("$1,500", "Revenue was 1.5 billion euros in 2019.", "currency_mismatch"),
+        ("US$1,500", "Revenue was $1.5 billion in 2019.", "currency_ambiguous"),
+    ])
+    def test_prose_respects_currency_identity(cell, prose, code):
+        title = "Amounts in millions of euros" if cell == "1,500" else "Amounts in millions"
+        res = diagnose(_page(["", "2019"], [["Revenue", cell]], title=title, prose=prose))
+>       assert not res.checks and code in _codes(res)
+E       assert (not [Check(kind='prose', passed=True, relationship="prose claim for row 'Revenue', column '2019'", cells=['Revenue|2019=$1...,000 (absolute units); discrepancy 0 within tolerance 50,500,000. Sentence: 'Revenue was 1.5 billion euros in 2019.'")])
+E        +  where [Check(kind='prose', passed=True, relationship="prose claim for row 'Revenue', column '2019'", cells=['Revenue|2019=$1...,000 (absolute units); discrepancy 0 within tolerance 50,500,000. Sentence: 'Revenue was 1.5 billion euros in 2019.'")] = D1Result(config=D1Config(check_arithmetic=True, check_prose=True, dash_as_zero=False), checks=[Check(kind='prose', pas...hin tolerance 50,500,000. Sentence: 'Revenue was 1.5 billion euros in 2019.'")], skipped=[], unaligned_prose_numbers=0).checks
+
+tests/test_reconcile.py:227: AssertionError
+_ test_prose_respects_currency_identity[US$1,500-Revenue was $1.5 billion in 2019.-currency_ambiguous] _
+
+cell = 'US$1,500', prose = 'Revenue was $1.5 billion in 2019.'
+code = 'currency_ambiguous'
+
+    @pytest.mark.parametrize("cell,prose,code", [
+        ("€1,500", "Revenue was $1.5 billion in 2019.", "currency_mismatch"),
+        ("$1,500", "Revenue was €1.5 billion in 2019.", "currency_mismatch"),
+        ("1,500", "Revenue was £1.5 billion in 2019.", "currency_mismatch"),  # table title declares euros
+        ("$1,500", "Revenue was 1.5 billion euros in 2019.", "currency_mismatch"),
+        ("US$1,500", "Revenue was $1.5 billion in 2019.", "currency_ambiguous"),
+    ])
+    def test_prose_respects_currency_identity(cell, prose, code):
+        title = "Amounts in millions of euros" if cell == "1,500" else "Amounts in millions"
+        res = diagnose(_page(["", "2019"], [["Revenue", cell]], title=title, prose=prose))
+>       assert not res.checks and code in _codes(res)
+E       AssertionError: assert (not [] and 'currency_ambiguous' in {'no_numeric_cells'})
+E        +  where [] = D1Result(config=D1Config(check_arithmetic=True, check_prose=True, dash_as_zero=False), checks=[], skipped=[Skip(kind='table', code='no_numeric_cells', detail='no value cell could be parsed as a number')], unaligned_prose_numbers=0).checks
+E        +  and   {'no_numeric_cells'} = _codes(D1Result(config=D1Config(check_arithmetic=True, check_prose=True, dash_as_zero=False), checks=[], skipped=[Skip(kind='table', code='no_numeric_cells', detail='no value cell could be parsed as a number')], unaligned_prose_numbers=0))
+
+tests/test_reconcile.py:227: AssertionError
+_ test_grand_total_scope_does_not_follow_values[Total current assets-Total assets-0] _
+
+seed = 0, sub_label = 'Total current assets', grand_label = 'Total assets'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total a...s rows above]" == "row 'Total a...nts excluded]"
+E         
+E         - row 'Total assets' = sum of rows ['Total current assets', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total assets' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_ test_grand_total_scope_does_not_follow_values[Total current assets-Total assets-1] _
+
+seed = 1, sub_label = 'Total current assets', grand_label = 'Total assets'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total a...s rows above]" == "row 'Total a...nts excluded]"
+E         
+E         - row 'Total assets' = sum of rows ['Total current assets', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total assets' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_ test_grand_total_scope_does_not_follow_values[Total current assets-Total assets-2] _
+
+seed = 2, sub_label = 'Total current assets', grand_label = 'Total assets'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total a...s rows above]" == "row 'Total a...nts excluded]"
+E         
+E         - row 'Total assets' = sum of rows ['Total current assets', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total assets' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_ test_grand_total_scope_does_not_follow_values[Total current assets-Total assets-3] _
+
+seed = 3, sub_label = 'Total current assets', grand_label = 'Total assets'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total a...s rows above]" == "row 'Total a...nts excluded]"
+E         
+E         - row 'Total assets' = sum of rows ['Total current assets', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total assets' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_ test_grand_total_scope_does_not_follow_values[Total current assets-Total assets-4] _
+
+seed = 4, sub_label = 'Total current assets', grand_label = 'Total assets'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total a...s rows above]" == "row 'Total a...nts excluded]"
+E         
+E         - row 'Total assets' = sum of rows ['Total current assets', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total assets' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_______ test_grand_total_scope_does_not_follow_values[Subtotal-Total-0] ________
+
+seed = 0, sub_label = 'Subtotal', grand_label = 'Total'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total' ...s rows above]" == "row 'Total' ...nts excluded]"
+E         
+E         - row 'Total' = sum of rows ['Subtotal', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_______ test_grand_total_scope_does_not_follow_values[Subtotal-Total-1] ________
+
+seed = 1, sub_label = 'Subtotal', grand_label = 'Total'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total' ...s rows above]" == "row 'Total' ...nts excluded]"
+E         
+E         - row 'Total' = sum of rows ['Subtotal', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_______ test_grand_total_scope_does_not_follow_values[Subtotal-Total-2] ________
+
+seed = 2, sub_label = 'Subtotal', grand_label = 'Total'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total' ...s rows above]" == "row 'Total' ...nts excluded]"
+E         
+E         - row 'Total' = sum of rows ['Subtotal', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_______ test_grand_total_scope_does_not_follow_values[Subtotal-Total-3] ________
+
+seed = 3, sub_label = 'Subtotal', grand_label = 'Total'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total' ...s rows above]" == "row 'Total' ...nts excluded]"
+E         
+E         - row 'Total' = sum of rows ['Subtotal', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_______ test_grand_total_scope_does_not_follow_values[Subtotal-Total-4] ________
+
+seed = 4, sub_label = 'Subtotal', grand_label = 'Total'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total' ...s rows above]" == "row 'Total' ...nts excluded]"
+E         
+E         - row 'Total' = sum of rows ['Subtotal', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_ test_grand_total_scope_does_not_follow_values[Total current liabilities-Total liabilities-0] _
+
+seed = 0, sub_label = 'Total current liabilities'
+grand_label = 'Total liabilities'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total l...s rows above]" == "row 'Total l...nts excluded]"
+E         
+E         - row 'Total liabilities' = sum of rows ['Total current liabilities', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total liabilities' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_ test_grand_total_scope_does_not_follow_values[Total current liabilities-Total liabilities-1] _
+
+seed = 1, sub_label = 'Total current liabilities'
+grand_label = 'Total liabilities'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total l...s rows above]" == "row 'Total l...nts excluded]"
+E         
+E         - row 'Total liabilities' = sum of rows ['Total current liabilities', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total liabilities' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_ test_grand_total_scope_does_not_follow_values[Total current liabilities-Total liabilities-2] _
+
+seed = 2, sub_label = 'Total current liabilities'
+grand_label = 'Total liabilities'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total l...s rows above]" == "row 'Total l...nts excluded]"
+E         
+E         - row 'Total liabilities' = sum of rows ['Total current liabilities', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total liabilities' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_ test_grand_total_scope_does_not_follow_values[Total current liabilities-Total liabilities-3] _
+
+seed = 3, sub_label = 'Total current liabilities'
+grand_label = 'Total liabilities'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total l...s rows above]" == "row 'Total l...nts excluded]"
+E         
+E         - row 'Total liabilities' = sum of rows ['Total current liabilities', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total liabilities' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+_ test_grand_total_scope_does_not_follow_values[Total current liabilities-Total liabilities-4] _
+
+seed = 4, sub_label = 'Total current liabilities'
+grand_label = 'Total liabilities'
+
+    @pytest.mark.parametrize("seed", range(5))
+    @pytest.mark.parametrize("sub_label,grand_label", [("Total current assets", "Total assets"),
+                                                       ("Subtotal", "Total"),
+                                                       ("Total current liabilities", "Total liabilities")])
+    def test_grand_total_scope_does_not_follow_values(seed, sub_label, grand_label):
+        rows = _nested_rows(random.Random(seed), sub_label, grand_label)
+        clean = diagnose(_page(["", "2019"], rows))
+        # Change only the grand total so that it equals the rows after the subtotal.
+        changed_rows = [r[:] for r in rows]
+        changed_rows[5][1] = str(int(rows[3][1]) + int(rows[4][1]))
+        changed = diagnose(_page(["", "2019"], changed_rows))
+    
+        def grand(res):
+            return next(c for c in res.checks if c.relationship.startswith(f"row '{grand_label}'"))
+    
+        assert clean.status == CHECKS_PASSED
+>       assert grand(changed).relationship == grand(clean).relationship
+E       assert "row 'Total l...s rows above]" == "row 'Total l...nts excluded]"
+E         
+E         - row 'Total liabilities' = sum of rows ['Total current liabilities', 'Property and equipment', 'Goodwill'] in column '2019' [nested: earlier subtotals counted once, their components excluded]
+E         + row 'Total liabilities' = sum of rows ['Property and equipment', 'Goodwill'] in column '2019' [contiguous rows above]
+
+tests/test_reconcile.py:254: AssertionError
+___________ test_sibling_subtotals_are_not_merged_to_make_a_sum_pass ___________
+
+    def test_sibling_subtotals_are_not_merged_to_make_a_sum_pass():
+        # 'Total services' is a sibling group of 'Total products'; it must be checked against
+        # its own rows even though adding the products subtotal would make it pass.
+        rows = [["Hardware", "10"], ["Software", "20"], ["Total products", "30"],
+                ["Consulting", "5"], ["Support", "25"], ["Total services", "60"]]
+        res = diagnose(_page(["", "2019"], rows))
+>       assert res.status == CONTRADICTION
+E       AssertionError: assert 'checks_passed' == 'contradiction'
+E         
+E         - contradiction
+E         + checks_passed
+
+tests/test_reconcile.py:264: AssertionError
+_________ test_unresolvable_total_scope_is_reported_as_ambiguous[100] __________
+
+grand_value = '100'
+
+    @pytest.mark.parametrize("grand_value", ["100", "130"])
+    def test_unresolvable_total_scope_is_reported_as_ambiguous(grand_value):
+        rows = [["Salaries", "40"], ["Rent", "60"], ["Total operating expenses", "100"],
+                ["Interest", "10"], ["Fees", "20"], ["Total other expenses", grand_value]]
+        res = diagnose(_page(["", "2019"], rows))
+>       assert not any(c.relationship.startswith("row 'Total other expenses'") for c in res.checks)
+E       assert not True
+E        +  where True = any(<generator object test_unresolvable_total_scope_is_reported_as_ambiguous.<locals>.<genexpr> at 0x10af0c790>)
+
+tests/test_reconcile.py:274: AssertionError
+_________ test_unresolvable_total_scope_is_reported_as_ambiguous[130] __________
+
+grand_value = '130'
+
+    @pytest.mark.parametrize("grand_value", ["100", "130"])
+    def test_unresolvable_total_scope_is_reported_as_ambiguous(grand_value):
+        rows = [["Salaries", "40"], ["Rent", "60"], ["Total operating expenses", "100"],
+                ["Interest", "10"], ["Fees", "20"], ["Total other expenses", grand_value]]
+        res = diagnose(_page(["", "2019"], rows))
+>       assert not any(c.relationship.startswith("row 'Total other expenses'") for c in res.checks)
+E       assert not True
+E        +  where True = any(<generator object test_unresolvable_total_scope_is_reported_as_ambiguous.<locals>.<genexpr> at 0x10ae912f0>)
+
+tests/test_reconcile.py:274: AssertionError
+________ test_stealth_rejects_invalid_input[<lambda>-duplicate rating] _________
+
+mutate = <function <lambda> at 0x10ae0cf40>, message = 'duplicate rating'
+
+    @pytest.mark.parametrize("mutate,message", [
+        (lambda r, k: (r + [dict(r[0])], k), "duplicate rating"),
+        (lambda r, k: ([dict(x, rater_id="r1") for x in r], k), "distinct raters"),
+        (lambda r, k: (r, k + [dict(k[0])]), "duplicate item_id in answer key"),
+        (lambda r, k: ([x for x in r if x["item_id"] != "i1"], k), "no ratings"),
+        (lambda r, k: ([x for x in r if not (x["item_id"] == "i1" and x["rater_id"] == "r3")], k), "distinct raters"),
+        (lambda r, k: ([], k), "empty"),
+        (lambda r, k: (r, []), "empty"),
+        (lambda r, k: ([{kk: v for kk, v in x.items() if kk != "rater_id"} for x in r], k), "missing field"),
+        (lambda r, k: (r, [dict(x, is_poisoned="yes") for x in k]), "is_poisoned"),
+        (lambda r, k: ([dict(x, rating="unsure") for x in r], k), "invalid rating"),
+    ])
+    def test_stealth_rejects_invalid_input(mutate, message):
+        ratings, key = mutate(*_sheet())
+>       with pytest.raises(ValueError, match=message):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'duplicate rating'
+E         Actual message: 'each item needs the same number (>=2) of ratings'
+
+tests/test_analysis.py:98: AssertionError
+________ test_stealth_rejects_invalid_input[<lambda>-distinct raters0] _________
+
+mutate = <function <lambda> at 0x10ae0cfe0>, message = 'distinct raters'
+
+    @pytest.mark.parametrize("mutate,message", [
+        (lambda r, k: (r + [dict(r[0])], k), "duplicate rating"),
+        (lambda r, k: ([dict(x, rater_id="r1") for x in r], k), "distinct raters"),
+        (lambda r, k: (r, k + [dict(k[0])]), "duplicate item_id in answer key"),
+        (lambda r, k: ([x for x in r if x["item_id"] != "i1"], k), "no ratings"),
+        (lambda r, k: ([x for x in r if not (x["item_id"] == "i1" and x["rater_id"] == "r3")], k), "distinct raters"),
+        (lambda r, k: ([], k), "empty"),
+        (lambda r, k: (r, []), "empty"),
+        (lambda r, k: ([{kk: v for kk, v in x.items() if kk != "rater_id"} for x in r], k), "missing field"),
+        (lambda r, k: (r, [dict(x, is_poisoned="yes") for x in k]), "is_poisoned"),
+        (lambda r, k: ([dict(x, rating="unsure") for x in r], k), "invalid rating"),
+    ])
+    def test_stealth_rejects_invalid_input(mutate, message):
+        ratings, key = mutate(*_sheet())
+>       with pytest.raises(ValueError, match=message):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_analysis.py:98: Failed
+_ test_stealth_rejects_invalid_input[<lambda>-duplicate item_id in answer key] _
+
+mutate = <function <lambda> at 0x10ae0d080>
+message = 'duplicate item_id in answer key'
+
+    @pytest.mark.parametrize("mutate,message", [
+        (lambda r, k: (r + [dict(r[0])], k), "duplicate rating"),
+        (lambda r, k: ([dict(x, rater_id="r1") for x in r], k), "distinct raters"),
+        (lambda r, k: (r, k + [dict(k[0])]), "duplicate item_id in answer key"),
+        (lambda r, k: ([x for x in r if x["item_id"] != "i1"], k), "no ratings"),
+        (lambda r, k: ([x for x in r if not (x["item_id"] == "i1" and x["rater_id"] == "r3")], k), "distinct raters"),
+        (lambda r, k: ([], k), "empty"),
+        (lambda r, k: (r, []), "empty"),
+        (lambda r, k: ([{kk: v for kk, v in x.items() if kk != "rater_id"} for x in r], k), "missing field"),
+        (lambda r, k: (r, [dict(x, is_poisoned="yes") for x in k]), "is_poisoned"),
+        (lambda r, k: ([dict(x, rating="unsure") for x in r], k), "invalid rating"),
+    ])
+    def test_stealth_rejects_invalid_input(mutate, message):
+        ratings, key = mutate(*_sheet())
+>       with pytest.raises(ValueError, match=message):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_analysis.py:98: Failed
+___________ test_stealth_rejects_invalid_input[<lambda>-no ratings] ____________
+
+mutate = <function <lambda> at 0x10ae0d120>, message = 'no ratings'
+
+    @pytest.mark.parametrize("mutate,message", [
+        (lambda r, k: (r + [dict(r[0])], k), "duplicate rating"),
+        (lambda r, k: ([dict(x, rater_id="r1") for x in r], k), "distinct raters"),
+        (lambda r, k: (r, k + [dict(k[0])]), "duplicate item_id in answer key"),
+        (lambda r, k: ([x for x in r if x["item_id"] != "i1"], k), "no ratings"),
+        (lambda r, k: ([x for x in r if not (x["item_id"] == "i1" and x["rater_id"] == "r3")], k), "distinct raters"),
+        (lambda r, k: ([], k), "empty"),
+        (lambda r, k: (r, []), "empty"),
+        (lambda r, k: ([{kk: v for kk, v in x.items() if kk != "rater_id"} for x in r], k), "missing field"),
+        (lambda r, k: (r, [dict(x, is_poisoned="yes") for x in k]), "is_poisoned"),
+        (lambda r, k: ([dict(x, rating="unsure") for x in r], k), "invalid rating"),
+    ])
+    def test_stealth_rejects_invalid_input(mutate, message):
+        ratings, key = mutate(*_sheet())
+>       with pytest.raises(ValueError, match=message):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_analysis.py:98: Failed
+________ test_stealth_rejects_invalid_input[<lambda>-distinct raters1] _________
+
+mutate = <function <lambda> at 0x10ae0d1c0>, message = 'distinct raters'
+
+    @pytest.mark.parametrize("mutate,message", [
+        (lambda r, k: (r + [dict(r[0])], k), "duplicate rating"),
+        (lambda r, k: ([dict(x, rater_id="r1") for x in r], k), "distinct raters"),
+        (lambda r, k: (r, k + [dict(k[0])]), "duplicate item_id in answer key"),
+        (lambda r, k: ([x for x in r if x["item_id"] != "i1"], k), "no ratings"),
+        (lambda r, k: ([x for x in r if not (x["item_id"] == "i1" and x["rater_id"] == "r3")], k), "distinct raters"),
+        (lambda r, k: ([], k), "empty"),
+        (lambda r, k: (r, []), "empty"),
+        (lambda r, k: ([{kk: v for kk, v in x.items() if kk != "rater_id"} for x in r], k), "missing field"),
+        (lambda r, k: (r, [dict(x, is_poisoned="yes") for x in k]), "is_poisoned"),
+        (lambda r, k: ([dict(x, rating="unsure") for x in r], k), "invalid rating"),
+    ])
+    def test_stealth_rejects_invalid_input(mutate, message):
+        ratings, key = mutate(*_sheet())
+>       with pytest.raises(ValueError, match=message):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'distinct raters'
+E         Actual message: 'each item needs the same number (>=2) of ratings'
+
+tests/test_analysis.py:98: AssertionError
+_____________ test_stealth_rejects_invalid_input[<lambda>-empty0] ______________
+
+mutate = <function <lambda> at 0x10ae0d260>, message = 'empty'
+
+    @pytest.mark.parametrize("mutate,message", [
+        (lambda r, k: (r + [dict(r[0])], k), "duplicate rating"),
+        (lambda r, k: ([dict(x, rater_id="r1") for x in r], k), "distinct raters"),
+        (lambda r, k: (r, k + [dict(k[0])]), "duplicate item_id in answer key"),
+        (lambda r, k: ([x for x in r if x["item_id"] != "i1"], k), "no ratings"),
+        (lambda r, k: ([x for x in r if not (x["item_id"] == "i1" and x["rater_id"] == "r3")], k), "distinct raters"),
+        (lambda r, k: ([], k), "empty"),
+        (lambda r, k: (r, []), "empty"),
+        (lambda r, k: ([{kk: v for kk, v in x.items() if kk != "rater_id"} for x in r], k), "missing field"),
+        (lambda r, k: (r, [dict(x, is_poisoned="yes") for x in k]), "is_poisoned"),
+        (lambda r, k: ([dict(x, rating="unsure") for x in r], k), "invalid rating"),
+    ])
+    def test_stealth_rejects_invalid_input(mutate, message):
+        ratings, key = mutate(*_sheet())
+        with pytest.raises(ValueError, match=message):
+>           analyze(ratings, key)
+
+tests/test_analysis.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/analysis/stealth.py:84: in analyze
+    "fleiss_kappa": fleiss_kappa(counts),
+                    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+counts = []
+
+    def fleiss_kappa(counts: list[list[int]]) -> float:
+        """Fleiss' kappa. counts[i][j] = raters assigning item i to category j.
+    
+        Every item must have the same number of raters.
+        """
+        n_items = len(counts)
+>       n_raters = sum(counts[0])
+                       ^^^^^^^^^
+E       IndexError: list index out of range
+
+src/analysis/stealth.py:28: IndexError
+_____________ test_stealth_rejects_invalid_input[<lambda>-empty1] ______________
+
+mutate = <function <lambda> at 0x10ae0d300>, message = 'empty'
+
+    @pytest.mark.parametrize("mutate,message", [
+        (lambda r, k: (r + [dict(r[0])], k), "duplicate rating"),
+        (lambda r, k: ([dict(x, rater_id="r1") for x in r], k), "distinct raters"),
+        (lambda r, k: (r, k + [dict(k[0])]), "duplicate item_id in answer key"),
+        (lambda r, k: ([x for x in r if x["item_id"] != "i1"], k), "no ratings"),
+        (lambda r, k: ([x for x in r if not (x["item_id"] == "i1" and x["rater_id"] == "r3")], k), "distinct raters"),
+        (lambda r, k: ([], k), "empty"),
+        (lambda r, k: (r, []), "empty"),
+        (lambda r, k: ([{kk: v for kk, v in x.items() if kk != "rater_id"} for x in r], k), "missing field"),
+        (lambda r, k: (r, [dict(x, is_poisoned="yes") for x in k]), "is_poisoned"),
+        (lambda r, k: ([dict(x, rating="unsure") for x in r], k), "invalid rating"),
+    ])
+    def test_stealth_rejects_invalid_input(mutate, message):
+        ratings, key = mutate(*_sheet())
+>       with pytest.raises(ValueError, match=message):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'empty'
+E         Actual message: 'rating for unknown item i0'
+
+tests/test_analysis.py:98: AssertionError
+__________ test_stealth_rejects_invalid_input[<lambda>-missing field] __________
+
+mutate = <function <lambda> at 0x10ae0d3a0>, message = 'missing field'
+
+    @pytest.mark.parametrize("mutate,message", [
+        (lambda r, k: (r + [dict(r[0])], k), "duplicate rating"),
+        (lambda r, k: ([dict(x, rater_id="r1") for x in r], k), "distinct raters"),
+        (lambda r, k: (r, k + [dict(k[0])]), "duplicate item_id in answer key"),
+        (lambda r, k: ([x for x in r if x["item_id"] != "i1"], k), "no ratings"),
+        (lambda r, k: ([x for x in r if not (x["item_id"] == "i1" and x["rater_id"] == "r3")], k), "distinct raters"),
+        (lambda r, k: ([], k), "empty"),
+        (lambda r, k: (r, []), "empty"),
+        (lambda r, k: ([{kk: v for kk, v in x.items() if kk != "rater_id"} for x in r], k), "missing field"),
+        (lambda r, k: (r, [dict(x, is_poisoned="yes") for x in k]), "is_poisoned"),
+        (lambda r, k: ([dict(x, rating="unsure") for x in r], k), "invalid rating"),
+    ])
+    def test_stealth_rejects_invalid_input(mutate, message):
+        ratings, key = mutate(*_sheet())
+        with pytest.raises(ValueError, match=message):
+>           analyze(ratings, key)
+
+tests/test_analysis.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+ratings = [{'item_id': 'i0', 'rating': 'looks_edited'}, {'item_id': 'i0', 'rating': 'looks_edited'}, {'item_id': 'i0', 'rating':...', 'rating': 'looks_normal'}, {'item_id': 'i1', 'rating': 'looks_normal'}, {'item_id': 'i1', 'rating': 'looks_normal'}]
+key = [{'item_id': 'i0', 'is_poisoned': True, 'condition': 'c', 'doc_id': 'd0'}, {'item_id': 'i1', 'is_poisoned': False, 'condition': 'c', 'doc_id': 'd1'}]
+
+    def analyze(ratings: list[dict], key: list[dict]) -> dict:
+        """ratings: {rater_id, item_id, rating}; key: {item_id, is_poisoned (bool), condition, doc_id}."""
+        truth = {k["item_id"]: k for k in key}
+        by_item: dict[str, list[str]] = defaultdict(list)
+        for r in ratings:
+            if r["item_id"] not in truth:
+                raise ValueError(f"rating for unknown item {r['item_id']}")
+            if r["rating"] not in CATEGORIES:
+                raise ValueError(f"invalid rating {r['rating']!r}")
+            by_item[r["item_id"]].append(r["rating"])
+        counts = [[Counter(v)[c] for c in CATEGORIES] for v in by_item.values()]
+    
+        page_correct = 0
+        for item, votes in by_item.items():
+            majority_edited = Counter(votes)[EDITED] * 2 > len(votes)
+            page_correct += majority_edited == bool(truth[item]["is_poisoned"])
+        n_pages = len(by_item)
+    
+        per_rater = defaultdict(lambda: {"tp": 0, "fn": 0, "tn": 0, "fp": 0})
+        for r in ratings:
+            poisoned, said_edited = bool(truth[r["item_id"]]["is_poisoned"]), r["rating"] == EDITED
+            cell = ("tp" if said_edited else "fn") if poisoned else ("fp" if said_edited else "tn")
+>           per_rater[r["rater_id"]][cell] += 1
+                      ^^^^^^^^^^^^^
+E           KeyError: 'rater_id'
+
+src/analysis/stealth.py:79: KeyError
+___________ test_stealth_rejects_invalid_input[<lambda>-is_poisoned] ___________
+
+mutate = <function <lambda> at 0x10ae0d440>, message = 'is_poisoned'
+
+    @pytest.mark.parametrize("mutate,message", [
+        (lambda r, k: (r + [dict(r[0])], k), "duplicate rating"),
+        (lambda r, k: ([dict(x, rater_id="r1") for x in r], k), "distinct raters"),
+        (lambda r, k: (r, k + [dict(k[0])]), "duplicate item_id in answer key"),
+        (lambda r, k: ([x for x in r if x["item_id"] != "i1"], k), "no ratings"),
+        (lambda r, k: ([x for x in r if not (x["item_id"] == "i1" and x["rater_id"] == "r3")], k), "distinct raters"),
+        (lambda r, k: ([], k), "empty"),
+        (lambda r, k: (r, []), "empty"),
+        (lambda r, k: ([{kk: v for kk, v in x.items() if kk != "rater_id"} for x in r], k), "missing field"),
+        (lambda r, k: (r, [dict(x, is_poisoned="yes") for x in k]), "is_poisoned"),
+        (lambda r, k: ([dict(x, rating="unsure") for x in r], k), "invalid rating"),
+    ])
+    def test_stealth_rejects_invalid_input(mutate, message):
+        ratings, key = mutate(*_sheet())
+>       with pytest.raises(ValueError, match=message):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_analysis.py:98: Failed
+=========================== short test summary info ============================
+FAILED tests/test_reconcile.py::test_prose_sign_conflict_is_a_contradiction[Revenue-100]
+FAILED tests/test_reconcile.py::test_prose_sign_conflict_is_a_contradiction[Operating income-2,340]
+FAILED tests/test_reconcile.py::test_prose_sign_conflict_is_a_contradiction[Segment profit-57.5]
+FAILED tests/test_reconcile.py::test_prose_consistent_negative_passes_with_signed_values[$(75) million]
+FAILED tests/test_reconcile.py::test_prose_consistent_negative_passes_with_signed_values[-$75 million]
+FAILED tests/test_reconcile.py::test_prose_consistent_negative_passes_with_signed_values[$-75 million]
+FAILED tests/test_reconcile.py::test_prose_consistent_negative_passes_with_signed_values[\u2212$75 million]
+FAILED tests/test_reconcile.py::test_prose_explicit_negative_vs_positive_cell_is_a_contradiction
+FAILED tests/test_reconcile.py::test_unsigned_magnitude_wording_is_reported_not_compared[Foreign exchange loss-Foreign exchange loss was $150 million in 2019.]
+FAILED tests/test_reconcile.py::test_unsigned_magnitude_wording_is_reported_not_compared[Other items-Other items reflected a loss of $150 million in 2019.]
+FAILED tests/test_reconcile.py::test_unsigned_magnitude_wording_is_reported_not_compared[Cash flows from investing activities-Cash flows from investing activities used $150 million in 2019.]
+FAILED tests/test_reconcile.py::test_arithmetic_respects_currency_identity[$-\u20ac-currency_mismatch]
+FAILED tests/test_reconcile.py::test_arithmetic_respects_currency_identity[\xa3-$-currency_mismatch]
+FAILED tests/test_reconcile.py::test_arithmetic_respects_currency_identity[\u20ac-\xa3-currency_mismatch]
+FAILED tests/test_reconcile.py::test_arithmetic_respects_currency_identity[US$-$-currency_ambiguous]
+FAILED tests/test_reconcile.py::test_arithmetic_respects_currency_identity[EUR -\u20ac-None]
+FAILED tests/test_reconcile.py::test_prose_respects_currency_identity[\u20ac1,500-Revenue was $1.5 billion in 2019.-currency_mismatch]
+FAILED tests/test_reconcile.py::test_prose_respects_currency_identity[$1,500-Revenue was \u20ac1.5 billion in 2019.-currency_mismatch]
+FAILED tests/test_reconcile.py::test_prose_respects_currency_identity[1,500-Revenue was \xa31.5 billion in 2019.-currency_mismatch]
+FAILED tests/test_reconcile.py::test_prose_respects_currency_identity[$1,500-Revenue was 1.5 billion euros in 2019.-currency_mismatch]
+FAILED tests/test_reconcile.py::test_prose_respects_currency_identity[US$1,500-Revenue was $1.5 billion in 2019.-currency_ambiguous]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Total current assets-Total assets-0]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Total current assets-Total assets-1]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Total current assets-Total assets-2]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Total current assets-Total assets-3]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Total current assets-Total assets-4]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Subtotal-Total-0]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Subtotal-Total-1]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Subtotal-Total-2]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Subtotal-Total-3]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Subtotal-Total-4]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Total current liabilities-Total liabilities-0]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Total current liabilities-Total liabilities-1]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Total current liabilities-Total liabilities-2]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Total current liabilities-Total liabilities-3]
+FAILED tests/test_reconcile.py::test_grand_total_scope_does_not_follow_values[Total current liabilities-Total liabilities-4]
+FAILED tests/test_reconcile.py::test_sibling_subtotals_are_not_merged_to_make_a_sum_pass
+FAILED tests/test_reconcile.py::test_unresolvable_total_scope_is_reported_as_ambiguous[100]
+FAILED tests/test_reconcile.py::test_unresolvable_total_scope_is_reported_as_ambiguous[130]
+FAILED tests/test_analysis.py::test_stealth_rejects_invalid_input[<lambda>-duplicate rating]
+FAILED tests/test_analysis.py::test_stealth_rejects_invalid_input[<lambda>-distinct raters0]
+FAILED tests/test_analysis.py::test_stealth_rejects_invalid_input[<lambda>-duplicate item_id in answer key]
+FAILED tests/test_analysis.py::test_stealth_rejects_invalid_input[<lambda>-no ratings]
+FAILED tests/test_analysis.py::test_stealth_rejects_invalid_input[<lambda>-distinct raters1]
+FAILED tests/test_analysis.py::test_stealth_rejects_invalid_input[<lambda>-empty0]
+FAILED tests/test_analysis.py::test_stealth_rejects_invalid_input[<lambda>-empty1]
+FAILED tests/test_analysis.py::test_stealth_rejects_invalid_input[<lambda>-missing field]
+FAILED tests/test_analysis.py::test_stealth_rejects_invalid_input[<lambda>-is_poisoned]
+48 failed, 5 passed, 52 deselected in 0.17s

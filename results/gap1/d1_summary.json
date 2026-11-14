@@ -1,0 +1,255 @@
+{
+  "ablations": {
+    "arithmetic + prose (default)": {
+      "clean_fpr": {
+        "ci_high": 0.13,
+        "ci_low": 0.078,
+        "n": 500,
+        "rate": 0.102
+      },
+      "newly_flagged": {
+        "consistent_cell": {
+          "ci_high": 0.0,
+          "ci_low": 0.0,
+          "n": 38,
+          "rate": 0.0
+        },
+        "header": {
+          "ci_high": 0.0,
+          "ci_low": 0.0,
+          "n": 15,
+          "rate": 0.0
+        },
+        "naive_cell": {
+          "ci_high": 0.21052631578947367,
+          "ci_low": 0.02631578947368421,
+          "n": 38,
+          "rate": 0.10526315789473684
+        },
+        "unit": {
+          "ci_high": 0.0,
+          "ci_low": 0.0,
+          "n": 8,
+          "rate": 0.0
+        }
+      }
+    },
+    "arithmetic only": {
+      "clean_fpr": {
+        "ci_high": 0.128,
+        "ci_low": 0.076,
+        "n": 500,
+        "rate": 0.1
+      },
+      "newly_flagged": {
+        "consistent_cell": {
+          "ci_high": 0.0,
+          "ci_low": 0.0,
+          "n": 38,
+          "rate": 0.0
+        },
+        "header": {
+          "ci_high": 0.0,
+          "ci_low": 0.0,
+          "n": 15,
+          "rate": 0.0
+        },
+        "naive_cell": {
+          "ci_high": 0.21052631578947367,
+          "ci_low": 0.02631578947368421,
+          "n": 38,
+          "rate": 0.10526315789473684
+        },
+        "unit": {
+          "ci_high": 0.0,
+          "ci_low": 0.0,
+          "n": 8,
+          "rate": 0.0
+        }
+      }
+    },
+    "prose only": {
+      "clean_fpr": {
+        "ci_high": 0.008,
+        "ci_low": 0.0,
+        "n": 500,
+        "rate": 0.002
+      },
+      "newly_flagged": {
+        "consistent_cell": {
+          "ci_high": 0.0,
+          "ci_low": 0.0,
+          "n": 38,
+          "rate": 0.0
+        },
+        "header": {
+          "ci_high": 0.0,
+          "ci_low": 0.0,
+          "n": 15,
+          "rate": 0.0
+        },
+        "naive_cell": {
+          "ci_high": 0.0,
+          "ci_low": 0.0,
+          "n": 38,
+          "rate": 0.0
+        },
+        "unit": {
+          "ci_high": 0.0,
+          "ci_low": 0.0,
+          "n": 8,
+          "rate": 0.0
+        }
+      }
+    }
+  },
+  "attacks": {
+    "consistent_cell": {
+      "clean_twin_already_flagged": 7,
+      "flagged": {
+        "ci_high": 0.3157894736842105,
+        "ci_low": 0.07894736842105263,
+        "n": 38,
+        "rate": 0.18421052631578946
+      },
+      "n": 38,
+      "newly_flagged": {
+        "ci_high": 0.0,
+        "ci_low": 0.0,
+        "n": 38,
+        "rate": 0.0
+      },
+      "newly_flagged_ids": [],
+      "status_counts": {
+        "checks_passed": 6,
+        "contradiction": 7,
+        "uncheckable": 25
+      }
+    },
+    "header": {
+      "clean_twin_already_flagged": 0,
+      "flagged": {
+        "ci_high": 0.0,
+        "ci_low": 0.0,
+        "n": 15,
+        "rate": 0.0
+      },
+      "n": 15,
+      "newly_flagged": {
+        "ci_high": 0.0,
+        "ci_low": 0.0,
+        "n": 15,
+        "rate": 0.0
+      },
+      "newly_flagged_ids": [],
+      "status_counts": {
+        "checks_passed": 3,
+        "uncheckable": 12
+      }
+    },
+    "naive_cell": {
+      "clean_twin_already_flagged": 7,
+      "flagged": {
+        "ci_high": 0.4473684210526316,
+        "ci_low": 0.15789473684210525,
+        "n": 38,
+        "rate": 0.2894736842105263
+      },
+      "n": 38,
+      "newly_flagged": {
+        "ci_high": 0.21052631578947367,
+        "ci_low": 0.02631578947368421,
+        "n": 38,
+        "rate": 0.10526315789473684
+      },
+      "newly_flagged_ids": [
+        "G1_naive_cell_q0039",
+        "G1_naive_cell_q0058",
+        "G1_naive_cell_q0067",
+        "G1_naive_cell_q0171"
+      ],
+      "status_counts": {
+        "checks_passed": 2,
+        "contradiction": 11,
+        "uncheckable": 25
+      }
+    },
+    "unit": {
+      "clean_twin_already_flagged": 0,
+      "flagged": {
+        "ci_high": 0.0,
+        "ci_low": 0.0,
+        "n": 8,
+        "rate": 0.0
+      },
+      "n": 8,
+      "newly_flagged": {
+        "ci_high": 0.0,
+        "ci_low": 0.0,
+        "n": 8,
+        "rate": 0.0
+      },
+      "newly_flagged_ids": [],
+      "status_counts": {
+        "uncheckable": 8
+      }
+    }
+  },
+  "attacks_source": {
+    "path": "g1.jsonl",
+    "sha256": "e219dfa710ea7f1f93c8fae1967ea700c51580fa145e8e64c2dfc43f12a7a5a5"
+  },
+  "clean": {
+    "coverage_at_least_one_check": {
+      "ci_high": 0.38204999999999995,
+      "ci_low": 0.304,
+      "n": 500,
+      "rate": 0.344
+    },
+    "false_positive_rate": {
+      "ci_high": 0.13,
+      "ci_low": 0.078,
+      "n": 500,
+      "rate": 0.102
+    },
+    "false_positive_rate_among_checkable": {
+      "ci_high": 0.36627906976744184,
+      "ci_low": 0.22674418604651161,
+      "n": 172,
+      "rate": 0.29651162790697677
+    },
+    "n_pages": 500,
+    "status_counts": {
+      "checks_passed": 121,
+      "contradiction": 51,
+      "uncheckable": 328
+    }
+  },
+  "config": {
+    "check_arithmetic": true,
+    "check_prose": true,
+    "dash_as_zero": false
+  },
+  "d1_version": "0.2.0",
+  "pairs": {
+    "consistent_newly_flagged_on_differing": {
+      "ci_high": 0.0,
+      "ci_low": 0.0,
+      "n": 13,
+      "rate": 0.0
+    },
+    "discordant_consistent_only": 0,
+    "discordant_naive_only": 4,
+    "identical_pages": 25,
+    "mcnemar_exact_p": 0.125,
+    "n_differing_pairs": 13,
+    "n_pairs": 38,
+    "naive_newly_flagged_on_differing": {
+      "ci_high": 0.5384615384615384,
+      "ci_low": 0.07692307692307693,
+      "n": 13,
+      "rate": 0.3076923076923077
+    }
+  },
+  "text_source": "standin"
+}
