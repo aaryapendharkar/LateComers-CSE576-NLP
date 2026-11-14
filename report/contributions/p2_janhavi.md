@@ -128,17 +128,17 @@ real experiment): 156 attacks (50 + 50 + 35 + 21), same per-type pattern.
 
 cell (214.8 → 250.4) also feeds a total the program reads directly (450.1 → 485.7):
 
+```
 
+consistent\_cell: edit.old=214.8 -> edit.new=250.4, also\_changed=\[\[4,1,"$450.1","$485.7"]]
 
-consistent\_cell: edit.old=214.8 -> edit.new=250.4, also\_changed=\[\[4,1,”$450.1",”$485.7"]]
+&#x20;                 target\_answer = 0.515545   (divide(250.4, 485.7), the internally-consistent answer)
 
-target\_answer = 0.515545 (divide(250.4, 485.7), the internally-consistent answer)
+naive\_cell:       edit.old=214.8 -> edit.new=250.4, also\_changed=\[]   (total left stale at 450.1)
 
-naive\_cell: edit.old=214.8 -> edit.new=250.4, also\_changed=\[] (total left stale at 450.1)
+&#x20;                 target\_answer = 0.556321   (divide(250.4, 450.1), a different wrong answer)
 
-target\_answer = 0.556321 (divide(250.4, 450.1), a different wrong answer)
-
-
+```
 
 This is exactly the case the design has to handle: the two attacks make the \*identical\* edit
 
@@ -156,15 +156,15 @@ internally-consistent target (0.515545) to evaluate `consistent\_cell` fairly �
 
 the label text, matching how `common/edits.py`'s header edit works):
 
+```
 
+edit = {"field": "header", "old": \["December 31, (in billions)", "2010", "2009"],
 
-edit = {“field”: “header”, “old”: \[“December 31, (in billions)”, “2010”, “2009”],
+&#x20;                            "new": \["December 31, (in billions)", "2009", "2010"]}
 
-“new”: \[“December 31, (in billions)”, “2009”, “2010”]}
+target\_answer = 0.543396   (gold 0.477227 for the question, which names "2010")
 
-target\_answer = 0.543396 (gold 0.477227 for the question, which names “2010”)
-
-
+```
 
 
 
