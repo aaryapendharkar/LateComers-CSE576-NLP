@@ -39,7 +39,7 @@ they are not evidence that D1 detected the edit. Of the 38 naive/consistent cell
 pairs, 25 produce identical inputs to D1. See `summary.json` for per-type counts.
 
 ## Human review
-Confirmed 2 of 4 new warnings.
+Manually confirmed all 4 newly triggered warnings among the 99 edited records.
 
 - `G1_naive_cell_q0039` (FBHS 2017 p22), reviewed by Vatsal Patel (Person 3) on
   2026-11-14: **D1 warning confirmed.** I checked the four segment sales figures
@@ -52,10 +52,19 @@ Confirmed 2 of 4 new warnings.
   Corporate & Other) summed to 6,596, matching the printed total. After GFS
   changed from 2,360 to 1,808, the sum was 6,044, so the printed total of
   6,596 was 552 too high.
+- `G1_naive_cell_q0067` (SNA 2013 p84), reviewed by Vatsal Patel (Person 3) on
+  2026-11-14: **D1 warning confirmed.** After the edit to 2013 trade and other
+  accounts receivable ($546.5 → $660.8), the edited figures give a net of
+  645.9 million (660.8 less the 14.9 allowance). The table still prints
+  531.6 million, which is 114.3 million too low.
+- `G1_naive_cell_q0171` (CMCSA 2015 p67), reviewed by Vatsal Patel (Person 3)
+  on 2026-11-14: **D1 warning confirmed.** After the edit to 2015 cable
+  distribution system ($2,424 → $2,904), the edited figures sum to 7,514
+  million. The table still prints 7,034 million, which is 480 million too low.
 
 ## Pending
-- Human review of the remaining 2 new warnings (q0067, q0171) and of the
-  other outcomes.
+- Human review of the other 95 edited-record outcomes (pre-existing warnings,
+  checks passed, uncheckable).
 - Human review of the separate 50-page development audit
   (`results/dev_finqa/d1_dev_review_sheet.csv`); still pending.
 - End-to-end pipeline evaluation (rendered/parsed tables, downstream RAG).
