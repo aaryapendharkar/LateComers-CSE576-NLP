@@ -1,0 +1,34 @@
+{
+  "n_reviewed": 30,
+  "n_agree": 28,
+  "raw_agreement": 0.9333333333333333,
+  "cohen_kappa": 0.85,
+  "reviewers": [
+    "VP"
+  ],
+  "rule_label_counts": {
+    "trend": 10,
+    "arithmetic": 20
+  },
+  "reviewer_label_counts": {
+    "trend": 10,
+    "arithmetic": 20
+  },
+  "disagreements": [
+    {
+      "qid": "q0087",
+      "rule": "arithmetic",
+      "reviewer": "trend",
+      "question": "What was the percentage change in the balance at the end of the fiscal year for the gross unrecognized tax benefits for WestRock Company as reported in their 2018 consolidated financial statements?",
+      "comment": "The program measures the percentage change between two balances over time, from 148.9 to 127.1."
+    },
+    {
+      "qid": "q0120",
+      "rule": "trend",
+      "reviewer": "arithmetic",
+      "question": "Considering JPMorgan Chase's 12-month pre-tax earnings sensitivity profile as of December 31, 2005 and 2004, what would be the estimated total impact on earnings if interest rates were to increase by 2%?",
+      "comment": "The 2% increase is a hypothetical interest-rate shock. The question asks for the total earnings impact, calculated by adding two amounts."
+    }
+  ],
+  "flagged_only_rows_reviewed": 0
+}
