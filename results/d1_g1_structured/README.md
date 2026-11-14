@@ -1,8 +1,9 @@
 # D1 on the fixed Gap 1 edits — automated evaluation on structured source tables
 
 **Label:** automated evaluation on structured source tables (FinQA table + prose
-from `data/docs.jsonl`, before rendering or parsing). This is not a human-reviewed
-result, not an observed-parser result, and not an end-to-end RAG/pipeline result.
+from `data/docs.jsonl`, before rendering or parsing). Human review is partial
+(see below). This is not an observed-parser result and not an end-to-end
+RAG/pipeline result.
 
 ## Inputs
 - Edits: 99 Gap 1 records from `data/attacks/g1.jsonl` at Person 2 commit
@@ -37,6 +38,24 @@ Pre-existing warnings are flags on pages D1 already flagged before editing, so
 they are not evidence that D1 detected the edit. Of the 38 naive/consistent cell
 pairs, 25 produce identical inputs to D1. See `summary.json` for per-type counts.
 
+## Human review
+Confirmed 2 of 4 new warnings.
+
+- `G1_naive_cell_q0039` (FBHS 2017 p22), reviewed by Vatsal Patel (Person 3) on
+  2026-11-14: **D1 warning confirmed.** I checked the four segment sales figures
+  in the `2017Net Sales(in millions)` column myself. The original sum was
+  $5,283.3 million and matched the printed total. After the Cabinets edit
+  ($2,467.1 → $2,720.3), the sum was $5,536.5 million while the printed total
+  stayed at $5,283.3 million.
+- `G1_naive_cell_q0058` (FIS 2016 p9), reviewed by Vatsal Patel (Person 3) on
+  2026-11-14: **D1 warning confirmed.** The original 2015 values (IFS, GFS,
+  Corporate & Other) summed to 6,596, matching the printed total. After GFS
+  changed from 2,360 to 1,808, the sum was 6,044, so the printed total of
+  6,596 was 552 too high.
+
 ## Pending
-- Human review of these outcomes (none of the warnings has been inspected).
+- Human review of the remaining 2 new warnings (q0067, q0171) and of the
+  other outcomes.
+- Human review of the separate 50-page development audit
+  (`results/dev_finqa/d1_dev_review_sheet.csv`); still pending.
 - End-to-end pipeline evaluation (rendered/parsed tables, downstream RAG).
