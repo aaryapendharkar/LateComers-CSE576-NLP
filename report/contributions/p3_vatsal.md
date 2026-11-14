@@ -63,7 +63,7 @@ With the header row restored, D1 flags 5 `consistent_cell` edits (q0005, q0095, 
 | P1 R2-correct (72) | 0 | 2 | 59 | 11 |
 | Questions with a Gap 1 attack (46) | 0 | 0 | 38 | 8 |
 
-FinQA is almost entirely computed answers, so the four-way typology reduces to arithmetic versus trend on our data, and only 8 attacked questions are trend. Hand check of 30 randomly sampled labels: **PENDING** [agreement = __ of 30, Cohen's kappa = __, from `python scripts/qtype_review_score.py`].
+FinQA is almost entirely computed answers, so the four-way typology reduces to arithmetic versus trend on our data, and only 8 attacked questions are trend. Hand check of 30 randomly sampled labels (one reviewer): the rule label and the manual label agree on 28 of 30 (93.3%), Cohen's kappa = 0.85 (`results/qtypes/review_agreement.json`). The two disagreements are q0087 (rule: arithmetic, manual: trend) and q0120 (rule: trend, manual: arithmetic).
 
 **Gap 1 ASR by question type (P1, P2): PENDING**, same command as above (`results/gap1/funnel_by_question_type.md`). With 8 trend questions the trend row will be reported with its n and not interpreted.
 
