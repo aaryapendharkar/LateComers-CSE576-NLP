@@ -1,6 +1,8 @@
-# Person 3 analysis plan (not yet run, because no real data exists)
+# Person 3 analysis plan
 
-Everything here is a plan. No numbers in this file are results.
+This file is the plan, written before any real data existed. No numbers in it
+are results. Results and what has been run so far are in [STATUS.md](STATUS.md)
+and `report/contributions/p3_vatsal.md`.
 
 ## Shared conventions
 

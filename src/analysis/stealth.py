@@ -16,8 +16,9 @@ Design (see docs/person3/ANALYSIS_PLAN.md):
 OWNER: Person 3 (Vatsal). Departure from the repo skeleton (documented in
 docs/person3/HANDOFF.md): `analyze` takes the ratings AND the private answer key
 as two arguments. Accuracy cannot be computed from annotations alone, and
-putting the truth into rater rows would leak conditions. `sample_pages` is
-blocked until rendered clean/poisoned pages exist.
+putting the truth into rater rows would leak conditions. `sample_pages` picks
+the pilot items from the G1 attacks; copying the page images needs Person 4's
+rendered pages (scripts/stealth_study.py build).
 """
 
 from __future__ import annotations
@@ -160,6 +161,57 @@ def analyze(ratings: list[dict], key: list[dict], raters_per_item: int = PILOT_R
     }
 
 
-def sample_pages(n_clean: int = 20, n_poison: int = 20, seed: int = 576) -> list[dict]:
-    """Shuffled list of {"item", "page_id", "is_poisoned"}; no clean twin of a poisoned page."""
-    raise NotImplementedError("Person 3: sample_pages needs rendered pages (P4) and G1 attacks (P2)")
+def sample_pages(n_clean: int = 20, n_poison: int = 20, seed: int = 576, cfg: dict | None = None,
+                 attacks: dict | None = None, clean_doc_ids: list[str] | None = None) -> list[dict]:
+    """Shuffled pilot items; no page is shown together with its clean twin.
+
+    Returns [{"item", "page_id", "doc_id", "is_poisoned", "condition"}] with
+    opaque item ids ("S01", ...). Poisoned pages: half naive_cell, half
+    consistent_cell, each from a different document. Naive edits are taken
+    first from pairs whose consistent twin updates a total, because only those
+    leave a stale total on the page (the other naive pages are identical to
+    their consistent twin). Clean pages come from documents that contribute no
+    poisoned page. ``attacks`` ({attack_id: Attack or dict}) and
+    ``clean_doc_ids`` default to the project's G1 attacks and FinQA documents.
+    """
+    import random
+
+    if attacks is None or clean_doc_ids is None:
+        from ..common.io import load_attacks, load_docs
+        attacks = load_attacks(cfg, gap="G1") if attacks is None else attacks
+        clean_doc_ids = sorted(load_docs(cfg, ("finqa",))) if clean_doc_ids is None else clean_doc_ids
+
+    def get(a, k):
+        return a.get(k) if isinstance(a, dict) else getattr(a, k)
+
+    rng = random.Random(seed)
+    by_qid: dict[str, dict] = defaultdict(dict)
+    for a in attacks.values():
+        if get(a, "attack_type") in ("naive_cell", "consistent_cell"):
+            by_qid[get(a, "qid")][get(a, "attack_type")] = a
+    stale = {q for q, v in by_qid.items()
+             if "consistent_cell" in v and (get(v["consistent_cell"], "edit") or {}).get("also_changed")}
+    want = {"naive_cell": n_poison // 2, "consistent_cell": n_poison - n_poison // 2}
+    chosen, used_docs = [], set()
+    for kind in ("naive_cell", "consistent_cell"):
+        pool = sorted(q for q, v in by_qid.items() if kind in v)
+        rng.shuffle(pool)
+        if kind == "naive_cell":
+            pool.sort(key=lambda q: q not in stale)  # stable: stale-total pairs first
+        for q in pool:
+            a = by_qid[q][kind]
+            doc_id = get(a, "clean_page_id").split("__", 1)[0]
+            if want[kind] == 0 or doc_id in used_docs:
+                continue
+            used_docs.add(doc_id)
+            want[kind] -= 1
+            chosen.append({"page_id": get(a, "poison_page_id"), "doc_id": doc_id, "is_poisoned": True, "condition": kind})
+    if any(want.values()):
+        raise StealthInputError(f"not enough G1 cell attacks from distinct documents; still missing {want}")
+    clean_pool = sorted(d for d in clean_doc_ids if d not in used_docs)
+    if len(clean_pool) < n_clean:
+        raise StealthInputError(f"need {n_clean} clean documents outside the poisoned set, found {len(clean_pool)}")
+    for doc_id in rng.sample(clean_pool, n_clean):
+        chosen.append({"page_id": f"{doc_id}__clean", "doc_id": doc_id, "is_poisoned": False, "condition": "clean"})
+    rng.shuffle(chosen)
+    return [{"item": f"S{i:02d}", **c} for i, c in enumerate(chosen, 1)]

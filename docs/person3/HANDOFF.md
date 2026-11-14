@@ -1,76 +1,49 @@
 # Person 3 integration handoff
 
-Status as of 2026-11-11.
+Status as of 2026-11-14. Current state and results: [STATUS.md](STATUS.md).
 
-**Repository.** `https://github.com/aaryapendharkar/LateComers-CSE576-NLP`
-is reachable with this machine's credentials.
-* At the first check on 2026-11-11 it was empty: `git ls-remote` returned no
-  refs, and the GitHub API returned `409 Git Repository is empty`.
-* Person 1 then pushed the team skeleton to `main`: commits `2b90224` and
-  `11662e7`, 2026-11-11 18:34–18:39 MST.
-* (An earlier version of these notes said the repo "did not exist". That claim
-  was unsupported.)
+Person 3 work is on `p3-table-defense` (pull request into `main`). It changes
+only Person 3's files and adds Person 3 helper files; no teammate file is
+modified, and the team acceptance tests in `tests/test_p3_defense_analysis.py`
+pass unchanged.
 
-**Branches (local only; nothing pushed or merged).**
-* `p3-table-defense` (the branch named in CONTRIBUTING.md) is based on
-  `origin/main` `11662e7`. It adds Person 3 work in Person 3's owned files plus
-  new Person 3 helper files only:
-  * Owned stubs `src/defenses/reconcile.py` and `src/analysis/{qtypes,stealth}.py`
-    are replaced. Their skeleton function names are kept and implemented,
-    except as noted below.
-  * New helpers: `src/defenses/{d1_numbers,d1_input}.py`,
-    `scripts/{run_d1,qtype_review_sheet,finqa_dev_sample,finqa_dev_audit}.py`,
-    `tests/test_p3_{d1,d1_numbers,analysis}.py`, `tests/fixtures/synthetic/`,
-    `docs/person3/`, `results/{dev_finqa,synthetic}/`.
-  * Person 3's `reconcile:` section in `configs/default.yaml` is updated.
-  * No teammate file is modified. The team acceptance tests
-    `tests/test_p3_defense_analysis.py` are unchanged, and both pass.
-* `p3-defense-analysis` is the earlier transfer branch, created while `main` was
-  empty. It records the history: the unchanged import (`af110f2`), the review
-  fixes with failing-first regression tests (`cd8208f`), the FinQA sample frozen
-  **before** D1 was run (`f1e7771`), and the audit (`11005fe`). It is kept for
-  provenance and should not be merged.
-* The original prototype folder `../cse576-structured-poisoning/` is unchanged
-  (the D1 0.1.0 baseline).
+## Found while evaluating D1 (please read)
 
-**Remaining integration step:** push `p3-table-defense` and open a PR to `main`
-(CONTRIBUTING.md workflow). This needs Vatsal's go-ahead; I did not push.
+* **Person 1, `docs.jsonl`:** 42 of 500 documents have their first data row
+  stored as the table header (example: `finqa_AMT_2014_p160`, header
+  `['2015', '$574,438']`), and 18 documents have "2013" or "2014" in cells where
+  the report prints a dash (example: `finqa_ABMD_2006_p43`). Lists are in
+  `results/gap1/d1_diagnostics.json`.
+* **Person 2, `g1.jsonl`:** in 25 of the 38 naive/consistent pairs the two
+  edits are identical (`also_changed` is empty). On headerless tables the total
+  is not detected, so 5 `consistent_cell` edits (q0005, q0095, q0098, q0167,
+  q0194) leave the table inconsistent.
+* **Person 1, D1 filter run:** `results/gap1/d1_flags.jsonl` is ready for
+  `scripts/run_attacks.py --drop-flags`. Note that the flags would also drop the
+  gold page for 8 of the 72 R2-correct questions on the clean run.
 
 **Departures from the skeleton's Person 3 stubs (please confirm):**
 
 | Skeleton | Implemented | Why |
 |---|---|---|
 | `reconcile.D1Result` TypedDict | Renamed to `D1Output`; `D1Result` is the diagnostics dataclass | No teammate code imports it; the richer result is needed by the evaluator |
-| `sum_check(table, rel_tol=0.005, abs_tol=1.0)` | `sum_check(table)`, using the printed-precision rounding bound | A fixed ±1.0 hides edits on tables printed in billions; 0.5% hides small naive edits |
+| `sum_check(table, rel_tol=0.005, abs_tol=1.0)` | `sum_check(table)`, using the printed-precision rounding bound | A fixed tolerance of 1.0 hides edits on tables printed in billions; 0.5% hides small naive edits |
 | `reconcile:` config keys `sum_rel_tol`, `sum_abs_tol`, `total_keywords: [.., net, sum, ..]` | `check_arithmetic`, `check_prose`, `dash_as_zero`; unknown keys raise | Tolerance is derived, not tuned; `net` rows are differences and are reported as not checked |
 | `stealth.analyze(annotations)` with `annotator/item/label: edited/normal` | `analyze(ratings, key)` with `rater_id/item_id/rating: looks_edited/looks_normal` | Accuracy needs the private answer key; truth in rater rows would leak |
-| `stealth.sample_pages`, `funnel.*`, `scripts/{eval_reconcile,stealth_study}.py` | Left as stubs (skipped tests) | Blocked on parsed pages, attacks, rendered pages and run logs |
+| `stealth.sample_pages()` with no inputs | `sample_pages(..., attacks=None, clean_doc_ids=None)`; defaults load the project data | Lets the selection be tested without the real attack file |
+| `funnel.funnel_by(records, keys, r2_correct)` | Same, plus `annotate()`, `asr_with_defense()`; `r2_correct` may be a set or `{pipeline: set}` | Run logs carry no attack or question type; the D1 filter run needs the same fixed denominator |
 | `scripts/label_qtypes.py` writes `data/labels/qtypes.jsonl` directly (README step 3) | Unchanged; it now works. `scripts/qtype_review_sheet.py` makes the review sheet | Labels written there are **unreviewed proposals** until the 30-label check is done |
 
-## Smallest next handoffs (unblock the next stage)
+## What runs today
 
-* **Person 1:** about 10 **observed parsed pages** (Docling output, errors
-  intact) from the clean corpus, plus a short note on the format: where the
-  header row(s), the unit note ("in millions") and the surrounding text end up.
-  With that I can replace the provisional adapter and measure D1 on observed
-  parses instead of source JSON.
-* **Person 2:** about 5 **matched triples** (clean / `naive_cell` /
-  `consistent_cell` of the same cell edit, ideally plus one `unit` and one
-  `header` attack) as A6 `docs.jsonl` rows, with the `attacks.jsonl` rows that
-  link them. The link rows stay evaluator-only.
-
-## Runs today without any teammate input
-
+* D1 on clean pages and Gap 1 edits: `python scripts/eval_reconcile.py`
+* D1 diagnostics and filter cost: `python scripts/d1_diagnostics.py`
+* Question-type labels: `python scripts/label_qtypes.py`; review sheet:
+  `python scripts/qtype_review_sheet.py --examples data/examples.jsonl --out-dir results/qtypes`;
+  agreement after the sheet is filled: `python scripts/qtype_review_score.py`
+* Gap 1 stage analysis, once run logs exist: `python scripts/gap1_analysis.py --runs ... --clean ...`
+* Stealth pilot: `python scripts/stealth_study.py build` (needs rendered pages for the images)
 * D1 on synthetic fixtures: `python scripts/run_d1.py fixtures`
-* D1 dry run on any A6 `docs.jsonl`: `python scripts/run_d1.py docs --docs <path> --out-dir <dir>`
-  (clean structured JSON only: a development proxy)
-* Question-type labels: `python scripts/label_qtypes.py` (team step 3, writes `data/labels/qtypes.jsonl`).
-  Proposals and review sheet: `python scripts/qtype_review_sheet.py --examples <examples.jsonl> --out-dir <dir>`
-* Stealth statistics functions in `src/analysis/stealth.py`. Input validation
-  rejects duplicate (rater, item) votes, missing coverage and an incomplete
-  key. No ratings exist yet.
-* FinQA development audit (original train JSON, not observed parses):
-  see [FINQA_DEV_AUDIT.md](FINQA_DEV_AUDIT.md).
 
 ## Needed from Person 1 (pipelines / repo)
 
@@ -127,17 +100,14 @@ is reachable with this machine's credentials.
 * Person 5: `funnel.py` is shared. Agree on per-stage column names before
   either of us writes it.
 
-## Results that are blocked until handoffs arrive
+## Results that are still blocked
 
 | Result | Blocked on |
 |---|---|
-| D1 false-positive rate on 500 clean pages (observed parse) | P1 parsed pages |
-| D1 detection rate by attack type | P2 attacks + P4 rendering + P1 parse |
-| Arithmetic-only / prose-only / combined comparison | same as above |
-| ASR with D1 as a filter | P1 runner hook + the decisions above |
-| ASR by question type | P1 run logs + r2_correct.json + reviewed labels |
-| Stealth pilot kappa / accuracy | rendered pages + three teammates' ratings |
-| Stage funnel for Gap 1 | P1 run logs |
+| D1 on observed parses (Docling or pdfplumber text) | P4 rendered pages + P1 parse |
+| ASR with D1 as a filter | P1 attack run with `--drop-flags` |
+| ASR by question type, stage funnel for Gap 1 | P1 attack run logs |
+| Stealth pilot kappa and accuracy | P4 rendered pages + three teammates' ratings |
 
 ## D1 on P2 (vision-only)
 
@@ -151,8 +121,8 @@ and extraction procedure are agreed.
 
 | Brief says | What I did | Why |
 |---|---|---|
-| Write labels into `examples.jsonl` | Write `proposed_labels.jsonl` + review sheet | Do not overwrite shared annotations before review. Merge after the 30-label check |
+| Write labels into `examples.jsonl` | Labels go to `data/labels/qtypes.jsonl`, which `io.load_examples()` overlays (repo convention) | `examples.jsonl` is Person 1's file |
 | ChartQA: "ask an LLM for unclear ones" | Flag `needs_review` for a person | No paid APIs or models in this milestone. Avoid an unvalidated labeller |
 | "If accuracy isn't better than chance, the edits are stealthy" | Report the result as inconclusive, together with power | With n=40 pages, power is only 0.57 if raters are truly 65% accurate |
-| Google Form, sent Sat 10 am | Spec only (ANALYSIS_PLAN.md). No form created | Requires the team's go-ahead and real pages |
+| Google Form, sent Sat 10 am | Selection, key and analysis are scripted (`scripts/stealth_study.py`). No form sent | The form needs rendered page images, which do not exist yet |
 | Attack parser: dashes = 0/blank | D1: dashes = missing (opt-in flag to treat as 0) | Avoid silently assuming values |

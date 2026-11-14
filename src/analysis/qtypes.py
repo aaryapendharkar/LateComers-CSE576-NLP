@@ -18,7 +18,8 @@ Precedence when several rules fire: trend > comparison > arithmetic > lookup.
     question; it is still flagged for review because both apply.
 Trend requires a change cue AND evidence of two periods (two years, "from..to",
 "between..and", "year over year", CAGR), so "what was the increase in 2019"
-with one period is not trend.
+with one period is not trend. The word "trend" is not a cue inside "trend rate"
+(0.1.1): "health care cost trend rate" is a row label, not a temporal question.
 
 These are PROPOSALS. They must be reviewed by a person before being written to
 the shared examples.jsonl; this module never edits shared files.
@@ -34,7 +35,7 @@ from __future__ import annotations
 import re
 from dataclasses import asdict, dataclass, field
 
-QTYPES_VERSION = "0.1.0"
+QTYPES_VERSION = "0.1.1"
 LABELS = ("lookup", "comparison", "arithmetic", "trend")
 PRECEDENCE = ("trend", "comparison", "arithmetic", "lookup")
 
@@ -45,7 +46,7 @@ COMPARISON_OPS = {"greater"}
 _YEAR = re.compile(r"\b(?:19|20)\d{2}\b")
 _TREND_CUE = re.compile(
     r"\b(?:change[sd]?|growth|grow|grew|increase[sd]?|decrease[sd]?|decline[sd]?|rise|rose|"
-    r"fell|fall|drop(?:ped)?|trend|cagr)\b", re.I)
+    r"fell|fall|drop(?:ped)?|trend(?!\s+rates?\b)|cagr)\b", re.I)
 _TWO_PERIODS = re.compile(
     r"\bfrom\b.+\bto\b|\bbetween\b.+\band\b|year[- ]over[- ]year|\bcagr\b|\bover the (?:period|years)\b", re.I)
 _COMPARISON_CUE = re.compile(
