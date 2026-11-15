@@ -1,0 +1,464 @@
+{"page_id": "finqa_AAL_2013_p15__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AAL_2013_p172__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AAL_2016_p8__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_ADI_2011_p50__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AES_2001_p85__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AES_2003_p52__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AMT_2003_p27__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AMT_2012_p118__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AMT_2014_p160__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AON_2010_p28__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AON_2014_p47__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AON_2015_p96__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AOS_2010_p18__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_APD_2013_p36__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_APD_2016_p57__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_BLK_2014_p120__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_BLL_2010_p35__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_BLL_2011_p32__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_CB_2008_p229__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_CDW_2015_p93__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_CMCSA_2015_p67__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_CNP_2010_p31__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_C_2008_p22__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_C_2008_p65__clean", "kind": "clean_table", "attack_id": null, "flag": true, "mismatches": [["credit card receivables held-for-sale ( 2 )", "end of period 2008", "2014", "(2014)"]], "error": null}
+{"page_id": "finqa_C_2009_p45__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_C_2018_p176__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_DG_2007_p67__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_DISH_2010_p117__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_DISH_2011_p122__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_DRE_2002_p15__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_DVN_2014_p87__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_DVN_2015_p79__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_DVN_2018_p35__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_D_2002_p87__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_EMR_2017_p78__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_ETFC_2011_p82__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_ETR_2004_p281__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_ETR_2011_p376__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_ETR_2016_p150__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_FBHS_2017_p76__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_FIS_2016_p45__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GIS_2017_p31__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GIS_2018_p110__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GIS_2019_p37__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GPN_2013_p87__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GPN_2014_p92__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GS_2013_p126__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GS_2013_p72__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GS_2013_p85__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GS_2017_p86__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GS_2018_p69__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GS_2018_p78__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_HIG_2011_p188__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_HII_2017_p124__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_HOLX_2006_p100__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_HOLX_2007_p93__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_HOLX_2008_p142__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_HOLX_2009_p151__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_HUM_2009_p105__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_IP_2009_p45__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_JKHY_2019_p18__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_JPM_2007_p147__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_JPM_2009_p175__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_JPM_2010_p281__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_JPM_2014_p70__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_JPM_2015_p137__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_JPM_2018_p90__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_K_2013_p62__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_LMT_2015_p54__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_L_2009_p84__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MAR_2004_p45__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MAS_2017_p27__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MKTX_2004_p99__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MMM_2007_p23__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MMM_2007_p84__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MO_2014_p62__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MRO_2003_p45__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MRO_2003_p84__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MRO_2006_p93__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MRO_2017_p111__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MS_2007_p179__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MS_2014_p292__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_PM_2018_p24__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_PNC_2008_p122__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_PNC_2015_p159__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_PPG_2008_p52__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_RSG_2009_p140__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_RSG_2016_p145__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_RSG_2018_p135__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_SLG_2001_p48__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_SNA_2013_p34__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_STT_2009_p127__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_TFX_2015_p89__clean", "kind": "clean_table", "attack_id": null, "flag": true, "mismatches": [["other restructuring programs - prior years ( 1 )", "2015 total", "(170)", "170)"], ["other restructuring programs - prior years ( 1 )", "2015 total", "$-170", "((1)"], ["other restructuring programs - prior years ( 1 )", "2015 other exit costs", "$35", "$-170"], ["other restructuring programs - prior years ( 1 )", "2015 contract termination costs", "(13)", "$35"], ["other restructuring programs - prior years ( 1 )", "2015 facility closure costs", "$2", "$-13"], ["other restructuring programs - prior years ( 1 )", "2015 termination benefits", "(194)", "$2"]], "error": null}
+{"page_id": "finqa_TROW_2010_p22__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_UNP_2006_p15__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_UNP_2007_p25__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_UNP_2010_p21__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_UNP_2013_p44__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_UNP_2014_p25__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_ZBH_2009_p58__clean", "kind": "clean_table", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_01729694006399__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_1201__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_25615455003200__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_29035673000697__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_32511750001973__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_33677405003863__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_33979578000285__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_3728__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_3854__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_44409110004673__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_4643__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_5593__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_6021__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_6734__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_7246__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_75128429008407__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_97331592016092__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_OECD_AGRICULTURAL_LAND_CAN_ESP_KAZ_KOR_LUX_000017__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_100037__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_100362__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_100839__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_101008__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_101181__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_1164__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_1188__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_20328__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_20452__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_20841__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_40202__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_40311__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_40440__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_40666__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_40844__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_60236__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_60551__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_60916__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_796__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_80102__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_80133__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_80918__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_101304__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_101826__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_102033__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_102178__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_102373__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_102980__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_103185__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_103575__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_104152__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_104700__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_20485__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_21091__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_2120__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_21934__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_22831__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_23324__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_23924__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_24063__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_2536__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_2650__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_3750__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_3863__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_41210__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_4168__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_41806__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_42075__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_42501__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_42702__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_43014__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_43256__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_4340__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_43767__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_4484__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_4513__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_4720__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_477__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_4925__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_60038__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_60196__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_60276__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_60392__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_61199__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_6133__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_62040__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_62073__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_62237__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_62325__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_62510__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_6306__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_63392__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_63504__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_63677__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_81087__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_81950__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_82073__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_82231__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_82496__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_82651__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_83125__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_two_col_83153__clean", "kind": "clean_chart", "attack_id": null, "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_07019431002493__G2_image_only_chart_c0001", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0001", "flag": true, "mismatches": [["Mali", "Mortality from non-communicable diseases, 2000", "33.1", "27.5"]], "error": null}
+{"page_id": "chartqa_08546788003698__G2_image_only_chart_c0002", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0002", "flag": true, "mismatches": [["India", "Cereal yield, 2001", "1.77", "2.42"]], "error": null}
+{"page_id": "chartqa_1201__G2_image_only_chart_c0003", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0003", "flag": true, "mismatches": [["All adults", "Your personal financial situation", "31", "41"]], "error": null}
+{"page_id": "chartqa_12097783003404__G2_image_only_chart_c0004", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0004", "flag": true, "mismatches": [["Land Locked Developing Countries", "Cashew nut yields, 1991", "0.7", "0.6"]], "error": null}
+{"page_id": "chartqa_12793__G2_image_only_chart_c0005", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0005", "flag": true, "mismatches": [["Do not go online", "Value", "47", "41"]], "error": null}
+{"page_id": "chartqa_12797__G2_image_only_chart_c0006", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0006", "flag": true, "mismatches": [["Providing treatment", "Value", "54", "67"]], "error": null}
+{"page_id": "chartqa_1392__G2_image_only_chart_c0007", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0007", "flag": true, "mismatches": [["Australia", "Bottom 75% of tweeters", "37", "29"]], "error": null}
+{"page_id": "chartqa_15359798001840__G2_image_only_chart_c0008", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0008", "flag": true, "mismatches": [["Personal contacts", "Distribution of job finding methods for employed workers in Europeancountries, Greece", "33", "41"]], "error": null}
+{"page_id": "chartqa_15687__G2_image_only_chart_c0009", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0009", "flag": true, "mismatches": [["02", "CNN", "31", "25"]], "error": null}
+{"page_id": "chartqa_16008__G2_image_only_chart_c0010", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0010", "flag": true, "mismatches": [["Notsafe", "Value", "90", "76"]], "error": null}
+{"page_id": "chartqa_166__G2_image_only_chart_c0011", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0011", "flag": true, "mismatches": [["Dangerous", "Values", "52", "62"]], "error": null}
+{"page_id": "chartqa_21881727007008__G2_image_only_chart_c0012", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0012", "flag": true, "mismatches": [["Indonesia", "Share of primary energy from fossil fuels, 1993", "67.6", "96.4"]], "error": null}
+{"page_id": "chartqa_24427049001318__G2_image_only_chart_c0013", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0013", "flag": true, "mismatches": [["Cattle", "Share of tropical deforestation from agricultural products", "52.3", "40.7"]], "error": null}
+{"page_id": "chartqa_25615455003200__G2_image_only_chart_c0014", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0014", "flag": true, "mismatches": [["Laos", "Government expenditure on secondary education by country, 1974-2014,2003", "7.56", "9.29"]], "error": null}
+{"page_id": "chartqa_26027711018261__G2_image_only_chart_c0015", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0015", "flag": true, "mismatches": [["Egypt", "Scheduled teaching time that teachers are in the classroom, 2002 to 2016", "112.23", "93.45"]], "error": null}
+{"page_id": "chartqa_26535003011580__G2_image_only_chart_c0016", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0016", "flag": true, "mismatches": [["Portugal", "Personal remittances as a share of GDP, 1986", "5.05", "6.85"]], "error": null}
+{"page_id": "chartqa_32511750001973__G2_image_only_chart_c0017", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0017", "flag": true, "mismatches": [["Carbon Monoxide (CO)", "Emissions of air pollutants, Italy, 2008", "39.53", "48.01"]], "error": null}
+{"page_id": "chartqa_33055146000034__G2_image_only_chart_c0018", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0018", "flag": true, "mismatches": [["Under-5s", "Change in stroke death rates by age, Belarus, 2011", "0.03", "0.04"]], "error": null}
+{"page_id": "chartqa_33156208005328__G2_image_only_chart_c0019", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0019", "flag": true, "mismatches": [["Boys", "Child labor in Italy, 1901", "40.8", "56.6"]], "error": null}
+{"page_id": "chartqa_33677405003863__G2_image_only_chart_c0020", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0020", "flag": true, "mismatches": [["Czechia", "Agriculture orientation index for government expenditures, 2000", "0.57", "0.69"]], "error": null}
+{"page_id": "chartqa_33979578000285__G2_image_only_chart_c0021", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0021", "flag": true, "mismatches": [["Whole Milk", "Protein efficiency of meat and dairy production", "28", "24"]], "error": null}
+{"page_id": "chartqa_3854__G2_image_only_chart_c0022", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0022", "flag": true, "mismatches": [["Mobile phone addiction", "Not concerned", "13", "18"]], "error": null}
+{"page_id": "chartqa_42902375003200__G2_image_only_chart_c0023", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0023", "flag": true, "mismatches": [["Slovenia", "Annual CO₂ emissions from deforestation for food production", "1237515", "977633"]], "error": null}
+{"page_id": "chartqa_4643__G2_image_only_chart_c0024", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0024", "flag": true, "mismatches": [["Angela Merkel", "Confid ence", "67", "52"]], "error": null}
+{"page_id": "chartqa_6021__G2_image_only_chart_c0025", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0025", "flag": true, "mismatches": [["Shared democratic values", "Americans", "24", "21"]], "error": null}
+{"page_id": "chartqa_61110329005447__G2_image_only_chart_c0026", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0026", "flag": true, "mismatches": [["Milk (1/2 gallon)", "How much food can you buy for working one hour in the manufacturingsector?, 1950", "4.93", "3.88"]], "error": null}
+{"page_id": "chartqa_6310__G2_image_only_chart_c0027", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0027", "flag": true, "mismatches": [["Indonesia", "a great deal", "32", "27"]], "error": null}
+{"page_id": "chartqa_64970172000121__G2_image_only_chart_c0028", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0028", "flag": true, "mismatches": [["Share of women in top 10", "Share of women in top income groups, UK, 2013", "35", "28"]], "error": null}
+{"page_id": "chartqa_65934022004372__G2_image_only_chart_c0029", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0029", "flag": true, "mismatches": [["Asia -", "Population of all world regions, including the UN projection until 2100, 1950", "1.1", "1.4"]], "error": null}
+{"page_id": "chartqa_6734__G2_image_only_chart_c0030", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0030", "flag": true, "mismatches": [["Total", "More", "40", "52"]], "error": null}
+{"page_id": "chartqa_7246__G2_image_only_chart_c0031", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0031", "flag": true, "mismatches": [["Men", "Favorable", "35", "28"]], "error": null}
+{"page_id": "chartqa_7432__G2_image_only_chart_c0032", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0032", "flag": true, "mismatches": [["like math", "Agree", "57", "46"]], "error": null}
+{"page_id": "chartqa_75128429008407__G2_image_only_chart_c0033", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0033", "flag": true, "mismatches": [["South Sudan", "Share of the population living in urban areas, 1950", "10.27", "8.87"]], "error": null}
+{"page_id": "chartqa_78465227007926__G2_image_only_chart_c0034", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0034", "flag": true, "mismatches": [["Turkey", "Expenditures on general government outsourcing (%GDP)", "5.99", "7.54"]], "error": null}
+{"page_id": "chartqa_8127__G2_image_only_chart_c0035", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0035", "flag": true, "mismatches": [["2015", "Play a more active military role", "18", "23"]], "error": null}
+{"page_id": "chartqa_939__G2_image_only_chart_c0036", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0036", "flag": true, "mismatches": [["2020", "Bad", "48", "68"]], "error": null}
+{"page_id": "chartqa_97331592016092__G2_image_only_chart_c0037", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0037", "flag": true, "mismatches": [["Malaysia", "Share of people who say university is more important for boys", "53", "43"]], "error": null}
+{"page_id": "chartqa_9987__G2_image_only_chart_c0038", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0038", "flag": true, "mismatches": [["Democrats", "Wouldn't matter", "68", "53"]], "error": null}
+{"page_id": "chartqa_OECD_AGRICULTURAL_LAND_CAN_ESP_KAZ_KOR_LUX_000017__G2_image_only_chart_c0039", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0039", "flag": true, "mismatches": [["Kazakhstan", "Agricultural land", "265", "213"]], "error": null}
+{"page_id": "chartqa_OECD_DEATHS_FROM_CANCER_COL_CRI_SVN_000015__G2_image_only_chart_c0040", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0040", "flag": true, "mismatches": [["Colombia", "Deaths from cancer", "135", "175"]], "error": null}
+{"page_id": "chartqa_multi_col_100787__G2_image_only_chart_c0041", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0041", "flag": true, "mismatches": [["2000", "Casual consumers**", "30.7%", "43.4%"]], "error": null}
+{"page_id": "chartqa_multi_col_101008__G2_image_only_chart_c0042", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0042", "flag": true, "mismatches": [["2019", "Narrowbody", "851", "1125"]], "error": null}
+{"page_id": "chartqa_multi_col_1164__G2_image_only_chart_c0043", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0043", "flag": true, "mismatches": [["2009", "0-14", "57.62%", "48.25%"]], "error": null}
+{"page_id": "chartqa_multi_col_1188__G2_image_only_chart_c0044", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0044", "flag": true, "mismatches": [["Immediately", "United States", "15%", "20%"]], "error": null}
+{"page_id": "chartqa_multi_col_1189__G2_image_only_chart_c0045", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0045", "flag": true, "mismatches": [["Democrats", "Yes", "49%", "65%"]], "error": null}
+{"page_id": "chartqa_multi_col_20159__G2_image_only_chart_c0046", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0046", "flag": true, "mismatches": [["Italy", "PET plastics collection rate", "65%", "55%"]], "error": null}
+{"page_id": "chartqa_multi_col_20328__G2_image_only_chart_c0047", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0047", "flag": true, "mismatches": [["Poisoning", "Male", "6.5%", "8.5%"]], "error": null}
+{"page_id": "chartqa_multi_col_20394__G2_image_only_chart_c0048", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0048", "flag": true, "mismatches": [["Air", "2013", "70%", "85%"]], "error": null}
+{"page_id": "chartqa_multi_col_20416__G2_image_only_chart_c0049", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0049", "flag": true, "mismatches": [["Hispanic", "Obama", "82%", "69%"]], "error": null}
+{"page_id": "chartqa_multi_col_20436__G2_image_only_chart_c0050", "kind": "image_only_chart", "attack_id": "G2_image_only_chart_c0050", "flag": true, "mismatches": [["2018*", "Online sales", "13%", "11%"]], "error": null}
+{"page_id": "finqa_AAL_2013_p172__G2_image_only_table_q0005", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0005", "flag": true, "mismatches": [["Single-dip equity obligations", "$3,329", "1,123", "1,246"]], "error": null}
+{"page_id": "finqa_JPM_2010_p281__G2_image_only_table_q0014", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0014", "flag": true, "mismatches": [["Loans", "2010", "250.4", "214.8"], ["Totalassetspledged", "2010", "$485.7", "$450.1"]], "error": null}
+{"page_id": "finqa_DRE_2008_p46__G2_image_only_table_q0026", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0026", "flag": true, "mismatches": [["Weighted average number of common shares outstanding", "2007", "112,405", "139,255"]], "error": null}
+{"page_id": "finqa_MRO_2017_p96__G2_image_only_table_q0029", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0029", "flag": true, "mismatches": [["Initial health care trend rate", "2016", "6.66%", "8.25%"]], "error": null}
+{"page_id": "finqa_MRO_2004_p46__G2_image_only_table_q0031", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0031", "flag": true, "mismatches": [["10/01/04 – 10/31/04", "(b)", "$31.49", "$40.51"]], "error": null}
+{"page_id": "finqa_AES_2010_p227__G2_image_only_table_q0037", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0037", "flag": true, "mismatches": [["2011", "Annual Maturities  (in millions)", "$383", "$463"], ["Total recourse debt", "Annual Maturities  (in millions)", "$4,532", "$4,612"]], "error": null}
+{"page_id": "finqa_FBHS_2017_p22__G2_image_only_table_q0039", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0039", "flag": true, "mismatches": [["Total", "2017Net Sales(in millions)", "$5,536.5", "$5,283.3"]], "error": null}
+{"page_id": "finqa_MO_2014_p62__G2_image_only_table_q0046", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0046", "flag": true, "mismatches": [["net earnings attributable to altria group inc .", "for the years ended december 31 , 2013", "$5211", "$4535"], ["earnings for basic and diluted eps", "for the years ended december 31 , 2013", "$5199", "$4523"]], "error": null}
+{"page_id": "finqa_JPM_2012_p140__G2_image_only_table_q0049", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0049", "flag": true, "mismatches": [["lending-related commitments", "december 31 , 2011", "452265", "382739"], ["credit portfolio management derivatives notional net ( b )", "december 31 , 2011", "$-26240", "$-27447"], ["credit portfolio management derivatives notional net ( b )", "december 31 , 2012", "(27447)", "(b"], ["credit portfolio management derivatives notional net ( b )", "december 31 , 2012", "$-27447", "net"]], "error": null}
+{"page_id": "finqa_JPM_2003_p106__G2_image_only_table_q0053", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0053", "flag": true, "mismatches": [["Structured commercial loan vehicles", "2003", "$6.0", "$5.3"]], "error": null}
+{"page_id": "finqa_FIS_2016_p9__G2_image_only_table_q0058", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0058", "flag": true, "mismatches": [["GFS", "2015", "1,808", "2,360"], ["Total Consolidated Revenues", "2015", "$6,044", "$6,596"]], "error": null}
+{"page_id": "finqa_C_2009_p45__G2_image_only_table_q0060", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0060", "flag": true, "mismatches": [["Net interest revenue", "2009", "$3,594", "$3,173"], ["Revenues, net of interest expense", "2009", "$(3,261)", "$(3,682)"]], "error": null}
+{"page_id": "finqa_SNA_2013_p84__G2_image_only_table_q0067", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0067", "flag": true, "mismatches": [["Trade and other accounts receivable", "2013", "$660.8", "$546.5"], ["Total trade and other accounts receivable – net", "2013", "$645.9", "$531.6"]], "error": null}
+{"page_id": "finqa_HOLX_2009_p151__G2_image_only_table_q0068", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0068", "flag": true, "mismatches": [["Forfeited", "Weighted-Average Grant-Date Fair Value", "24.68", "23.44"]], "error": null}
+{"page_id": "finqa_BLL_2011_p32__G2_image_only_table_q0074", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0074", "flag": true, "mismatches": [["Net sales", "2009", "$7,428.8", "$6,710.4"]], "error": null}
+{"page_id": "finqa_RL_2008_p23__G2_image_only_table_q0084", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0084", "flag": true, "mismatches": [["Europe", "Ralph Lauren", "20", "22"], ["Total", "Ralph Lauren", "156", "158"]], "error": null}
+{"page_id": "finqa_ADBE_2008_p74__G2_image_only_table_q0085", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0085", "flag": true, "mismatches": [["Purchased technology", "Weighted Average Useful Life (Years)", "5", "4"], ["Trademarks", "Weighted Average Useful Life (Years)", "6", "5"]], "error": null}
+{"page_id": "finqa_HOLX_2009_p127__G2_image_only_table_q0095", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0095", "flag": true, "mismatches": [["Total estimated purchase price", "$2,094,800", "$5,551,388", "$6,156,900"]], "error": null}
+{"page_id": "finqa_DVN_2012_p77__G2_image_only_table_q0096", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0096", "flag": true, "mismatches": [["Total", "$3,189", "$12,941", "$11,664"]], "error": null}
+{"page_id": "finqa_HOLX_2009_p127__G2_image_only_table_q0098", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0098", "flag": true, "mismatches": [["Fair value of securities issued", "$2,094,800", "4,502,475", "3,671,500"]], "error": null}
+{"page_id": "finqa_VRTX_2006_p111__G2_image_only_table_q0112", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0112", "flag": true, "mismatches": [["Total property and equipment, net", "2005", "$66,950", "$54,533"]], "error": null}
+{"page_id": "finqa_CDNS_2015_p30__G2_image_only_table_q0115", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0115", "flag": true, "mismatches": [["Cadence Design Systems, Inc.", "1/3/2015", "266.22", "314.36"]], "error": null}
+{"page_id": "finqa_AON_2007_p188__G2_image_only_table_q0117", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0117", "flag": true, "mismatches": [["Balance at December 31, 2007", "$53", "$62", "$70"]], "error": null}
+{"page_id": "finqa_AOS_2010_p18__G2_image_only_table_q0127", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0127", "flag": true, "mismatches": [["russell 1000 index", "12/31/10", "119.8", "113.6"]], "error": null}
+{"page_id": "finqa_MO_2014_p62__G2_image_only_table_q0133", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0133", "flag": true, "mismatches": [["net earnings attributable to altria group inc .", "for the years ended december 31 , 2014", "$5642", "$5070"], ["earnings for basic and diluted eps", "for the years ended december 31 , 2014", "$5630", "$5058"]], "error": null}
+{"page_id": "finqa_AON_2007_p188__G2_image_only_table_q0135", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0135", "flag": true, "mismatches": [["Balance at December 31, 2007", "$53", "$63", "$70"]], "error": null}
+{"page_id": "finqa_PNC_2012_p174__G2_image_only_table_q0144", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0144", "flag": true, "mismatches": [["Total commercial lending", "Dec. 312012", "421", "541"], ["Total TDRs", "Dec. 312012", "$2,739", "$2,859"], ["Total TDRs", "Dec. 312012", "$2,739", "$2,859"]], "error": null}
+{"page_id": "finqa_BKNG_2016_p33__G2_image_only_table_q0151", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0151", "flag": true, "mismatches": [["2016", "The Priceline Group Inc.", "336.21", "313.45"]], "error": null}
+{"page_id": "finqa_MMM_2015_p93__G2_image_only_table_q0154", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0154", "flag": true, "mismatches": [["2016 benefit payments", "qualified and non-qualified pension benefits international", "$172", "$205"]], "error": null}
+{"page_id": "finqa_C_2018_p176__G2_image_only_table_q0157", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0157", "flag": true, "mismatches": [["Granted", "Shares", "10,223,256", "12,896,599"], ["Unvested at December 31, 2018", "Shares", "29,055,253", "31,728,596"]], "error": null}
+{"page_id": "finqa_GPN_2010_p87__G2_image_only_table_q0160", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0160", "flag": true, "mismatches": [["Share-based compensation cost", "2010", "$19.7", "$18.1"]], "error": null}
+{"page_id": "finqa_AMT_2014_p160__G2_image_only_table_q0167", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0167", "flag": true, "mismatches": [["Total", "$574,438", "$8,159,143", "$6,903,188"]], "error": null}
+{"page_id": "finqa_CB_2008_p229__G2_image_only_table_q0168", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0168", "flag": true, "mismatches": [["statutory net income", "bermuda subsidiaries 2008", "$835", "$684"]], "error": null}
+{"page_id": "finqa_CMCSA_2015_p67__G2_image_only_table_q0171", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0171", "flag": true, "mismatches": [["Cable distribution system", "2015", "$2,904", "$2,424"], ["Total", "2015", "$7,514", "$7,034"]], "error": null}
+{"page_id": "finqa_JPM_2015_p82__G2_image_only_table_q0172", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0172", "flag": true, "mismatches": [["Net interest income", "2015", "37,903", "43,510"]], "error": null}
+{"page_id": "finqa_MKTX_2012_p42__G2_image_only_table_q0174", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0174", "flag": true, "mismatches": [["October 1, 2011 to December 31, 2011", "Low", "$26.51", "$24.57"]], "error": null}
+{"page_id": "finqa_BLL_2010_p37__G2_image_only_table_q0175", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0175", "flag": true, "mismatches": [["Cash flows provided by (used in) operating activities, including discontinued operations", "2010", "$413.0", "$515.2"]], "error": null}
+{"page_id": "finqa_GPN_2013_p92__G2_image_only_table_q0194", "kind": "image_only_table", "attack_id": "G2_image_only_table_q0194", "flag": true, "mismatches": [["Total future minimum lease payments", "$11,057", "$44,003", "$57,096"]], "error": null}
+{"page_id": "chartqa_07019431002493__G2_propagate_chart_c0001", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0001", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_08546788003698__G2_propagate_chart_c0002", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0002", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_1201__G2_propagate_chart_c0003", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0003", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_12097783003404__G2_propagate_chart_c0004", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0004", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_12793__G2_propagate_chart_c0005", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0005", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_12797__G2_propagate_chart_c0006", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0006", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_1392__G2_propagate_chart_c0007", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0007", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_15359798001840__G2_propagate_chart_c0008", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0008", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_15687__G2_propagate_chart_c0009", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0009", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_16008__G2_propagate_chart_c0010", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0010", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_166__G2_propagate_chart_c0011", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0011", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_21881727007008__G2_propagate_chart_c0012", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0012", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_24427049001318__G2_propagate_chart_c0013", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0013", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_25615455003200__G2_propagate_chart_c0014", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0014", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_26027711018261__G2_propagate_chart_c0015", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0015", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_26535003011580__G2_propagate_chart_c0016", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0016", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_32511750001973__G2_propagate_chart_c0017", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0017", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_33055146000034__G2_propagate_chart_c0018", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0018", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_33156208005328__G2_propagate_chart_c0019", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0019", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_33677405003863__G2_propagate_chart_c0020", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0020", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_33979578000285__G2_propagate_chart_c0021", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0021", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_3854__G2_propagate_chart_c0022", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0022", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_42902375003200__G2_propagate_chart_c0023", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0023", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_4643__G2_propagate_chart_c0024", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0024", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_6021__G2_propagate_chart_c0025", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0025", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_61110329005447__G2_propagate_chart_c0026", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0026", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_6310__G2_propagate_chart_c0027", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0027", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_64970172000121__G2_propagate_chart_c0028", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0028", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_65934022004372__G2_propagate_chart_c0029", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0029", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_6734__G2_propagate_chart_c0030", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0030", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_7246__G2_propagate_chart_c0031", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0031", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_7432__G2_propagate_chart_c0032", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0032", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_75128429008407__G2_propagate_chart_c0033", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0033", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_78465227007926__G2_propagate_chart_c0034", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0034", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_8127__G2_propagate_chart_c0035", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0035", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_939__G2_propagate_chart_c0036", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0036", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_97331592016092__G2_propagate_chart_c0037", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0037", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_9987__G2_propagate_chart_c0038", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0038", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_OECD_AGRICULTURAL_LAND_CAN_ESP_KAZ_KOR_LUX_000017__G2_propagate_chart_c0039", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0039", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_OECD_DEATHS_FROM_CANCER_COL_CRI_SVN_000015__G2_propagate_chart_c0040", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0040", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_100787__G2_propagate_chart_c0041", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0041", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_101008__G2_propagate_chart_c0042", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0042", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_1164__G2_propagate_chart_c0043", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0043", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_1188__G2_propagate_chart_c0044", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0044", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_1189__G2_propagate_chart_c0045", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0045", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_20159__G2_propagate_chart_c0046", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0046", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_20328__G2_propagate_chart_c0047", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0047", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_20394__G2_propagate_chart_c0048", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0048", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_20416__G2_propagate_chart_c0049", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0049", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_multi_col_20436__G2_propagate_chart_c0050", "kind": "propagate_chart", "attack_id": "G2_propagate_chart_c0050", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AAL_2013_p172__G2_propagate_table_q0005", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0005", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_JPM_2010_p281__G2_propagate_table_q0014", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0014", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_DRE_2008_p46__G2_propagate_table_q0026", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0026", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MRO_2017_p96__G2_propagate_table_q0029", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0029", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MRO_2004_p46__G2_propagate_table_q0031", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0031", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AES_2010_p227__G2_propagate_table_q0037", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0037", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_FBHS_2017_p22__G2_propagate_table_q0039", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0039", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MO_2014_p62__G2_propagate_table_q0046", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0046", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_JPM_2012_p140__G2_propagate_table_q0049", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0049", "flag": true, "mismatches": [["credit portfolio management derivatives notional net ( b )", "december 31 , 2011", "$-26240", "$-27447"], ["credit portfolio management derivatives notional net ( b )", "december 31 , 2012", "(27447)", "(b"], ["credit portfolio management derivatives notional net ( b )", "december 31 , 2012", "$-27447", "net"]], "error": null}
+{"page_id": "finqa_JPM_2003_p106__G2_propagate_table_q0053", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0053", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_FIS_2016_p9__G2_propagate_table_q0058", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0058", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_C_2009_p45__G2_propagate_table_q0060", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0060", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_SNA_2013_p84__G2_propagate_table_q0067", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0067", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_HOLX_2009_p151__G2_propagate_table_q0068", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0068", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_BLL_2011_p32__G2_propagate_table_q0074", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0074", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_RL_2008_p23__G2_propagate_table_q0084", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0084", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_ADBE_2008_p74__G2_propagate_table_q0085", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0085", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_HOLX_2009_p127__G2_propagate_table_q0095", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0095", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_DVN_2012_p77__G2_propagate_table_q0096", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0096", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_HOLX_2009_p127__G2_propagate_table_q0098", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0098", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_VRTX_2006_p111__G2_propagate_table_q0112", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0112", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_CDNS_2015_p30__G2_propagate_table_q0115", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0115", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AON_2007_p188__G2_propagate_table_q0117", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0117", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AOS_2010_p18__G2_propagate_table_q0127", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0127", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MO_2014_p62__G2_propagate_table_q0133", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0133", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AON_2007_p188__G2_propagate_table_q0135", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0135", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_PNC_2012_p174__G2_propagate_table_q0144", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0144", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_BKNG_2016_p33__G2_propagate_table_q0151", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0151", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MMM_2015_p93__G2_propagate_table_q0154", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0154", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_C_2018_p176__G2_propagate_table_q0157", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0157", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GPN_2010_p87__G2_propagate_table_q0160", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0160", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_AMT_2014_p160__G2_propagate_table_q0167", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0167", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_CB_2008_p229__G2_propagate_table_q0168", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0168", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_CMCSA_2015_p67__G2_propagate_table_q0171", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0171", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_JPM_2015_p82__G2_propagate_table_q0172", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0172", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_MKTX_2012_p42__G2_propagate_table_q0174", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0174", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_BLL_2010_p37__G2_propagate_table_q0175", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0175", "flag": false, "mismatches": [], "error": null}
+{"page_id": "finqa_GPN_2013_p92__G2_propagate_table_q0194", "kind": "propagate_table", "attack_id": "G2_propagate_table_q0194", "flag": false, "mismatches": [], "error": null}
+{"page_id": "chartqa_07019431002493__G2_text_only_chart_c0001", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0001", "flag": true, "mismatches": [["Mali", "Mortality from non-communicable diseases, 2000", "27.5", "33.1"]], "error": null}
+{"page_id": "chartqa_08546788003698__G2_text_only_chart_c0002", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0002", "flag": true, "mismatches": [["India", "Cereal yield, 2001", "2.42", "1.77"]], "error": null}
+{"page_id": "chartqa_1201__G2_text_only_chart_c0003", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0003", "flag": true, "mismatches": [["All adults", "Your personal financial situation", "41", "31"]], "error": null}
+{"page_id": "chartqa_12097783003404__G2_text_only_chart_c0004", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0004", "flag": true, "mismatches": [["Land Locked Developing Countries", "Cashew nut yields, 1991", "0.6", "0.7"]], "error": null}
+{"page_id": "chartqa_12793__G2_text_only_chart_c0005", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0005", "flag": true, "mismatches": [["Do not go online", "Value", "41", "47"]], "error": null}
+{"page_id": "chartqa_12797__G2_text_only_chart_c0006", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0006", "flag": true, "mismatches": [["Providing treatment", "Value", "67", "54"]], "error": null}
+{"page_id": "chartqa_1392__G2_text_only_chart_c0007", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0007", "flag": true, "mismatches": [["Australia", "Bottom 75% of tweeters", "29", "37"]], "error": null}
+{"page_id": "chartqa_15359798001840__G2_text_only_chart_c0008", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0008", "flag": true, "mismatches": [["Personal contacts", "Distribution of job finding methods for employed workers in Europeancountries, Greece", "41", "33"]], "error": null}
+{"page_id": "chartqa_15687__G2_text_only_chart_c0009", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0009", "flag": true, "mismatches": [["02", "CNN", "25", "31"]], "error": null}
+{"page_id": "chartqa_16008__G2_text_only_chart_c0010", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0010", "flag": true, "mismatches": [["Notsafe", "Value", "76", "90"]], "error": null}
+{"page_id": "chartqa_166__G2_text_only_chart_c0011", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0011", "flag": true, "mismatches": [["Dangerous", "Values", "62", "52"]], "error": null}
+{"page_id": "chartqa_21881727007008__G2_text_only_chart_c0012", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0012", "flag": true, "mismatches": [["Indonesia", "Share of primary energy from fossil fuels, 1993", "96.4", "67.6"]], "error": null}
+{"page_id": "chartqa_24427049001318__G2_text_only_chart_c0013", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0013", "flag": true, "mismatches": [["Cattle", "Share of tropical deforestation from agricultural products", "40.7", "52.3"]], "error": null}
+{"page_id": "chartqa_25615455003200__G2_text_only_chart_c0014", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0014", "flag": true, "mismatches": [["Laos", "Government expenditure on secondary education by country, 1974-2014,2003", "9.29", "7.56"]], "error": null}
+{"page_id": "chartqa_26027711018261__G2_text_only_chart_c0015", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0015", "flag": true, "mismatches": [["Egypt", "Scheduled teaching time that teachers are in the classroom, 2002 to 2016", "93.45", "112.23"]], "error": null}
+{"page_id": "chartqa_26535003011580__G2_text_only_chart_c0016", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0016", "flag": true, "mismatches": [["Portugal", "Personal remittances as a share of GDP, 1986", "6.85", "5.05"]], "error": null}
+{"page_id": "chartqa_32511750001973__G2_text_only_chart_c0017", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0017", "flag": true, "mismatches": [["Carbon Monoxide (CO)", "Emissions of air pollutants, Italy, 2008", "48.01", "39.53"]], "error": null}
+{"page_id": "chartqa_33055146000034__G2_text_only_chart_c0018", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0018", "flag": true, "mismatches": [["Under-5s", "Change in stroke death rates by age, Belarus, 2011", "0.04", "0.03"]], "error": null}
+{"page_id": "chartqa_33156208005328__G2_text_only_chart_c0019", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0019", "flag": true, "mismatches": [["Boys", "Child labor in Italy, 1901", "56.6", "40.8"]], "error": null}
+{"page_id": "chartqa_33677405003863__G2_text_only_chart_c0020", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0020", "flag": true, "mismatches": [["Czechia", "Agriculture orientation index for government expenditures, 2000", "0.69", "0.57"]], "error": null}
+{"page_id": "chartqa_33979578000285__G2_text_only_chart_c0021", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0021", "flag": true, "mismatches": [["Whole Milk", "Protein efficiency of meat and dairy production", "24", "28"]], "error": null}
+{"page_id": "chartqa_3854__G2_text_only_chart_c0022", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0022", "flag": true, "mismatches": [["Mobile phone addiction", "Not concerned", "18", "13"]], "error": null}
+{"page_id": "chartqa_42902375003200__G2_text_only_chart_c0023", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0023", "flag": true, "mismatches": [["Slovenia", "Annual CO₂ emissions from deforestation for food production", "977633", "1237515"]], "error": null}
+{"page_id": "chartqa_4643__G2_text_only_chart_c0024", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0024", "flag": true, "mismatches": [["Angela Merkel", "Confid ence", "52", "67"]], "error": null}
+{"page_id": "chartqa_6021__G2_text_only_chart_c0025", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0025", "flag": true, "mismatches": [["Shared democratic values", "Americans", "21", "24"]], "error": null}
+{"page_id": "chartqa_61110329005447__G2_text_only_chart_c0026", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0026", "flag": true, "mismatches": [["Milk (1/2 gallon)", "How much food can you buy for working one hour in the manufacturingsector?, 1950", "3.88", "4.93"]], "error": null}
+{"page_id": "chartqa_6310__G2_text_only_chart_c0027", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0027", "flag": true, "mismatches": [["Indonesia", "a great deal", "27", "32"]], "error": null}
+{"page_id": "chartqa_64970172000121__G2_text_only_chart_c0028", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0028", "flag": true, "mismatches": [["Share of women in top 10", "Share of women in top income groups, UK, 2013", "28", "35"]], "error": null}
+{"page_id": "chartqa_65934022004372__G2_text_only_chart_c0029", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0029", "flag": true, "mismatches": [["Asia -", "Population of all world regions, including the UN projection until 2100, 1950", "1.4", "1.1"]], "error": null}
+{"page_id": "chartqa_6734__G2_text_only_chart_c0030", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0030", "flag": true, "mismatches": [["Total", "More", "52", "40"]], "error": null}
+{"page_id": "chartqa_7246__G2_text_only_chart_c0031", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0031", "flag": true, "mismatches": [["Men", "Favorable", "28", "35"]], "error": null}
+{"page_id": "chartqa_7432__G2_text_only_chart_c0032", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0032", "flag": true, "mismatches": [["like math", "Agree", "46", "57"]], "error": null}
+{"page_id": "chartqa_75128429008407__G2_text_only_chart_c0033", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0033", "flag": true, "mismatches": [["South Sudan", "Share of the population living in urban areas, 1950", "8.87", "10.27"]], "error": null}
+{"page_id": "chartqa_78465227007926__G2_text_only_chart_c0034", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0034", "flag": true, "mismatches": [["Turkey", "Expenditures on general government outsourcing (%GDP)", "7.54", "5.99"]], "error": null}
+{"page_id": "chartqa_8127__G2_text_only_chart_c0035", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0035", "flag": true, "mismatches": [["2015", "Play a more active military role", "23", "18"]], "error": null}
+{"page_id": "chartqa_939__G2_text_only_chart_c0036", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0036", "flag": true, "mismatches": [["2020", "Bad", "68", "48"]], "error": null}
+{"page_id": "chartqa_97331592016092__G2_text_only_chart_c0037", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0037", "flag": true, "mismatches": [["Malaysia", "Share of people who say university is more important for boys", "43", "53"]], "error": null}
+{"page_id": "chartqa_9987__G2_text_only_chart_c0038", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0038", "flag": true, "mismatches": [["Democrats", "Wouldn't matter", "53", "68"]], "error": null}
+{"page_id": "chartqa_OECD_AGRICULTURAL_LAND_CAN_ESP_KAZ_KOR_LUX_000017__G2_text_only_chart_c0039", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0039", "flag": true, "mismatches": [["Kazakhstan", "Agricultural land", "213", "265"]], "error": null}
+{"page_id": "chartqa_OECD_DEATHS_FROM_CANCER_COL_CRI_SVN_000015__G2_text_only_chart_c0040", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0040", "flag": true, "mismatches": [["Colombia", "Deaths from cancer", "175", "135"]], "error": null}
+{"page_id": "chartqa_multi_col_100787__G2_text_only_chart_c0041", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0041", "flag": true, "mismatches": [["2000", "Casual consumers**", "43.4%", "30.7%"]], "error": null}
+{"page_id": "chartqa_multi_col_101008__G2_text_only_chart_c0042", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0042", "flag": true, "mismatches": [["2019", "Narrowbody", "1125", "851"]], "error": null}
+{"page_id": "chartqa_multi_col_1164__G2_text_only_chart_c0043", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0043", "flag": true, "mismatches": [["2009", "0-14", "48.25%", "57.62%"]], "error": null}
+{"page_id": "chartqa_multi_col_1188__G2_text_only_chart_c0044", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0044", "flag": true, "mismatches": [["Immediately", "United States", "20%", "15%"]], "error": null}
+{"page_id": "chartqa_multi_col_1189__G2_text_only_chart_c0045", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0045", "flag": true, "mismatches": [["Democrats", "Yes", "65%", "49%"]], "error": null}
+{"page_id": "chartqa_multi_col_20159__G2_text_only_chart_c0046", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0046", "flag": true, "mismatches": [["Italy", "PET plastics collection rate", "55%", "65%"]], "error": null}
+{"page_id": "chartqa_multi_col_20328__G2_text_only_chart_c0047", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0047", "flag": true, "mismatches": [["Poisoning", "Male", "8.5%", "6.5%"]], "error": null}
+{"page_id": "chartqa_multi_col_20394__G2_text_only_chart_c0048", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0048", "flag": true, "mismatches": [["Air", "2013", "85%", "70%"]], "error": null}
+{"page_id": "chartqa_multi_col_20416__G2_text_only_chart_c0049", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0049", "flag": true, "mismatches": [["Hispanic", "Obama", "69%", "82%"]], "error": null}
+{"page_id": "chartqa_multi_col_20436__G2_text_only_chart_c0050", "kind": "text_only_chart", "attack_id": "G2_text_only_chart_c0050", "flag": true, "mismatches": [["2018*", "Online sales", "11%", "13%"]], "error": null}
+{"page_id": "finqa_AAL_2013_p172__G2_text_only_table_q0005", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0005", "flag": true, "mismatches": [["Single-dip equity obligations", "$3,329", "1,246", "1,123"]], "error": null}
+{"page_id": "finqa_JPM_2010_p281__G2_text_only_table_q0014", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0014", "flag": true, "mismatches": [["Loans", "2010", "214.8", "250.4"], ["Totalassetspledged", "2010", "$450.1", "$485.7"]], "error": null}
+{"page_id": "finqa_DRE_2008_p46__G2_text_only_table_q0026", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0026", "flag": true, "mismatches": [["Weighted average number of common shares outstanding", "2007", "139,255", "112,405"]], "error": null}
+{"page_id": "finqa_MRO_2017_p96__G2_text_only_table_q0029", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0029", "flag": true, "mismatches": [["Initial health care trend rate", "2016", "8.25%", "6.66%"]], "error": null}
+{"page_id": "finqa_MRO_2004_p46__G2_text_only_table_q0031", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0031", "flag": true, "mismatches": [["10/01/04 – 10/31/04", "(b)", "$40.51", "$31.49"]], "error": null}
+{"page_id": "finqa_AES_2010_p227__G2_text_only_table_q0037", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0037", "flag": true, "mismatches": [["2011", "Annual Maturities  (in millions)", "$463", "$383"], ["Total recourse debt", "Annual Maturities  (in millions)", "$4,612", "$4,532"]], "error": null}
+{"page_id": "finqa_FBHS_2017_p22__G2_text_only_table_q0039", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0039", "flag": true, "mismatches": [["Total", "2017Net Sales(in millions)", "$5,283.3", "$5,536.5"]], "error": null}
+{"page_id": "finqa_MO_2014_p62__G2_text_only_table_q0046", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0046", "flag": true, "mismatches": [["net earnings attributable to altria group inc .", "for the years ended december 31 , 2013", "$4535", "$5211"], ["earnings for basic and diluted eps", "for the years ended december 31 , 2013", "$4523", "$5199"]], "error": null}
+{"page_id": "finqa_JPM_2012_p140__G2_text_only_table_q0049", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0049", "flag": true, "mismatches": [["lending-related commitments", "december 31 , 2011", "382739", "452265"], ["credit portfolio management derivatives notional net ( b )", "december 31 , 2011", "$-26240", "$-27447"], ["credit portfolio management derivatives notional net ( b )", "december 31 , 2012", "(27447)", "(b"], ["credit portfolio management derivatives notional net ( b )", "december 31 , 2012", "$-27447", "net"]], "error": null}
+{"page_id": "finqa_JPM_2003_p106__G2_text_only_table_q0053", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0053", "flag": true, "mismatches": [["Structured commercial loan vehicles", "2003", "$5.3", "$6.0"]], "error": null}
+{"page_id": "finqa_FIS_2016_p9__G2_text_only_table_q0058", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0058", "flag": true, "mismatches": [["GFS", "2015", "2,360", "1,808"], ["Total Consolidated Revenues", "2015", "$6,596", "$6,044"]], "error": null}
+{"page_id": "finqa_C_2009_p45__G2_text_only_table_q0060", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0060", "flag": true, "mismatches": [["Net interest revenue", "2009", "$3,173", "$3,594"], ["Revenues, net of interest expense", "2009", "$(3,682)", "$(3,261)"]], "error": null}
+{"page_id": "finqa_SNA_2013_p84__G2_text_only_table_q0067", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0067", "flag": true, "mismatches": [["Trade and other accounts receivable", "2013", "$546.5", "$660.8"], ["Total trade and other accounts receivable – net", "2013", "$531.6", "$645.9"]], "error": null}
+{"page_id": "finqa_HOLX_2009_p151__G2_text_only_table_q0068", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0068", "flag": true, "mismatches": [["Forfeited", "Weighted-Average Grant-Date Fair Value", "23.44", "24.68"]], "error": null}
+{"page_id": "finqa_BLL_2011_p32__G2_text_only_table_q0074", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0074", "flag": true, "mismatches": [["Net sales", "2009", "$6,710.4", "$7,428.8"]], "error": null}
+{"page_id": "finqa_RL_2008_p23__G2_text_only_table_q0084", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0084", "flag": true, "mismatches": [["Europe", "Ralph Lauren", "22", "20"], ["Total", "Ralph Lauren", "158", "156"]], "error": null}
+{"page_id": "finqa_ADBE_2008_p74__G2_text_only_table_q0085", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0085", "flag": true, "mismatches": [["Purchased technology", "Weighted Average Useful Life (Years)", "4", "5"], ["Trademarks", "Weighted Average Useful Life (Years)", "5", "6"]], "error": null}
+{"page_id": "finqa_HOLX_2009_p127__G2_text_only_table_q0095", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0095", "flag": true, "mismatches": [["Total estimated purchase price", "$2,094,800", "$6,156,900", "$5,551,388"]], "error": null}
+{"page_id": "finqa_DVN_2012_p77__G2_text_only_table_q0096", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0096", "flag": true, "mismatches": [["Total", "$3,189", "$11,664", "$12,941"]], "error": null}
+{"page_id": "finqa_HOLX_2009_p127__G2_text_only_table_q0098", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0098", "flag": true, "mismatches": [["Fair value of securities issued", "$2,094,800", "3,671,500", "4,502,475"]], "error": null}
+{"page_id": "finqa_VRTX_2006_p111__G2_text_only_table_q0112", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0112", "flag": true, "mismatches": [["Total property and equipment, net", "2005", "$54,533", "$66,950"]], "error": null}
+{"page_id": "finqa_CDNS_2015_p30__G2_text_only_table_q0115", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0115", "flag": true, "mismatches": [["Cadence Design Systems, Inc.", "1/3/2015", "314.36", "266.22"]], "error": null}
+{"page_id": "finqa_AON_2007_p188__G2_text_only_table_q0117", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0117", "flag": true, "mismatches": [["Balance at December 31, 2007", "$53", "$70", "$62"]], "error": null}
+{"page_id": "finqa_AOS_2010_p18__G2_text_only_table_q0127", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0127", "flag": true, "mismatches": [["russell 1000 index", "12/31/10", "113.6", "119.8"]], "error": null}
+{"page_id": "finqa_MO_2014_p62__G2_text_only_table_q0133", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0133", "flag": true, "mismatches": [["net earnings attributable to altria group inc .", "for the years ended december 31 , 2014", "$5070", "$5642"], ["earnings for basic and diluted eps", "for the years ended december 31 , 2014", "$5058", "$5630"]], "error": null}
+{"page_id": "finqa_AON_2007_p188__G2_text_only_table_q0135", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0135", "flag": true, "mismatches": [["Balance at December 31, 2007", "$53", "$70", "$63"]], "error": null}
+{"page_id": "finqa_PNC_2012_p174__G2_text_only_table_q0144", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0144", "flag": true, "mismatches": [["Total commercial lending", "Dec. 312012", "541", "421"], ["Total TDRs", "Dec. 312012", "$2,859", "$2,739"], ["Total TDRs", "Dec. 312012", "$2,859", "$2,739"]], "error": null}
+{"page_id": "finqa_BKNG_2016_p33__G2_text_only_table_q0151", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0151", "flag": true, "mismatches": [["2016", "The Priceline Group Inc.", "313.45", "336.21"]], "error": null}
+{"page_id": "finqa_MMM_2015_p93__G2_text_only_table_q0154", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0154", "flag": true, "mismatches": [["2016 benefit payments", "qualified and non-qualified pension benefits international", "$205", "$172"]], "error": null}
+{"page_id": "finqa_C_2018_p176__G2_text_only_table_q0157", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0157", "flag": true, "mismatches": [["Granted", "Shares", "12,896,599", "10,223,256"], ["Unvested at December 31, 2018", "Shares", "31,728,596", "29,055,253"]], "error": null}
+{"page_id": "finqa_GPN_2010_p87__G2_text_only_table_q0160", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0160", "flag": true, "mismatches": [["Share-based compensation cost", "2010", "$18.1", "$19.7"]], "error": null}
+{"page_id": "finqa_AMT_2014_p160__G2_text_only_table_q0167", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0167", "flag": true, "mismatches": [["Total", "$574,438", "$6,903,188", "$8,159,143"]], "error": null}
+{"page_id": "finqa_CB_2008_p229__G2_text_only_table_q0168", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0168", "flag": true, "mismatches": [["statutory net income", "bermuda subsidiaries 2008", "$684", "$835"]], "error": null}
+{"page_id": "finqa_CMCSA_2015_p67__G2_text_only_table_q0171", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0171", "flag": true, "mismatches": [["Cable distribution system", "2015", "$2,424", "$2,904"], ["Total", "2015", "$7,034", "$7,514"]], "error": null}
+{"page_id": "finqa_JPM_2015_p82__G2_text_only_table_q0172", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0172", "flag": true, "mismatches": [["Net interest income", "2015", "43,510", "37,903"]], "error": null}
+{"page_id": "finqa_MKTX_2012_p42__G2_text_only_table_q0174", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0174", "flag": true, "mismatches": [["October 1, 2011 to December 31, 2011", "Low", "$24.57", "$26.51"]], "error": null}
+{"page_id": "finqa_BLL_2010_p37__G2_text_only_table_q0175", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0175", "flag": true, "mismatches": [["Cash flows provided by (used in) operating activities, including discontinued operations", "2010", "$515.2", "$413.0"]], "error": null}
+{"page_id": "finqa_GPN_2013_p92__G2_text_only_table_q0194", "kind": "text_only_table", "attack_id": "G2_text_only_table_q0194", "flag": true, "mismatches": [["Total future minimum lease payments", "$11,057", "$57,096", "$44,003"]], "error": null}

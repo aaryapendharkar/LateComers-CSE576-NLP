@@ -1,0 +1,12 @@
+Read the table or chart in this page image and copy its values exactly as printed.
+
+Rules:
+- Copy every number exactly as it appears: keep commas, parentheses, $, % and decimals. Do not compute, round, correct or convert anything.
+- Copy row labels and column headers exactly as printed.
+- If the page shows a unit note such as "in millions" or "in thousands", put it in "unit_note"; otherwise use "".
+- For a TABLE: "header" is the header row (first cell is the row-label column, "" if blank); each entry of "rows" is one table row: [row label, value, value, ...].
+- For a CHART: "header" is ["", "<series or axis name>"]; each entry of "rows" is [bar or point label, value printed on the chart].
+- Ignore the page title, paragraphs and any "Source data" note; read only the table or chart itself.
+
+Reply with JSON only, in exactly this form:
+{"title": "<table or chart title>", "unit_note": "<unit note or empty>", "header": ["", "<col 1>", "<col 2>"], "rows": [["<label>", "<value>", "<value>"]]}

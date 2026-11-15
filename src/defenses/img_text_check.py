@@ -1,37 +1,548 @@
-"""Image-text consistency checker for Gap 2.
-
-OWNER: Person 5 (Disha). Brief task 1.
-
-  1. a VLM (reuse the generator model) reads the page IMAGE -> table JSON (charts: value list)
-  2. parse the page's TEXT layer (Docling output P1 uses) into the same format
-  3. align rows/cols by label, compare numbers with tolerance, flag any mismatch
-Cheaper mode (configs: img_text_check.only_question_rows): compare only rows
-whose label appears in the question.
-
-Expected: catches text_only / image_only, ~0% on propagate (both layers agree on
-the wrong value) -> the key blind spot.
-"""
-
 from __future__ import annotations
 
-from typing import Any, Optional, TypedDict
+import csv
+import hashlib
+import json
+import random
+import re
+from difflib import SequenceMatcher
+from typing import Any, NotRequired, Optional, TypedDict
+
+from ..common import io
+from ..common.answer_match import parse_number
+from ..common.config import get_config, resolve
+from ..common.edits import apply_edit
+from ..common.metrics import fmt_rate, rate
+from ..common.schemas import doc_id_of_page
+from ..common.tables import guess_unit_note, rows_to_table, split_markdown_context
+
+LABEL_MATCH = 0.80
+G2_ORDER = ("propagate_table", "text_only_table", "image_only_table",
+            "propagate_chart", "text_only_chart", "image_only_chart")
+DEFAULTS = {"rel_tol": 0.01, "only_question_rows": False, "prompt_file": "configs/prompts/img_extract_v1.txt",
+            "max_new_tokens": 1024, "text_source": None, "cache_dir": "data/parsed/img_tables", "n_clean": 100,
+            "max_pixels": 800_000}
+
+_NUM_TOKEN = re.compile(r"^\$?\(?[-−$]?\$?\d[\d,]*\.?\d*%?\)?%?\*?$")
 
 
 class CheckResult(TypedDict):
     flag: bool
-    mismatches: list[list[Any]]   # [[row_label, col_label, img_val, text_val], ...]
+    mismatches: list[list[Any]]
+    unmatched: NotRequired[dict[str, list[str]]]
+
+
+def norm_label(label: Any) -> str:
+    s = re.sub(r"[^a-z0-9]+", " ", str(label or "").lower())
+    return " ".join(s.split())
+
+
+def label_similarity(a: Any, b: Any) -> float:
+    a, b = norm_label(a), norm_label(b)
+    if a == b:
+        return 1.0
+    if not a or not b:
+        return 0.0
+    return SequenceMatcher(None, a, b).ratio()
+
+
+def cells_equal(img_cell: Any, text_cell: Any, rel_tol: float = 0.01) -> bool:
+    a, b = parse_number(img_cell), parse_number(text_cell)
+    if a is not None and b is not None:
+        return a == b or abs(a - b) <= rel_tol * max(abs(a), abs(b))
+    if a is None and b is None:
+        return norm_label(img_cell) == norm_label(text_cell)
+    return False
+
+
+def align(labels_a: list[Any], labels_b: list[Any], threshold: float = LABEL_MATCH) -> list[tuple[int, int]]:
+    n, m = len(labels_a), len(labels_b)
+    sim = [[label_similarity(labels_a[i], labels_b[j]) for j in range(m)] for i in range(n)]
+    best = [[0.0] * (m + 1) for _ in range(n + 1)]
+    for i in range(n - 1, -1, -1):
+        for j in range(m - 1, -1, -1):
+            take = sim[i][j] + best[i + 1][j + 1] if sim[i][j] >= threshold else -1.0
+            best[i][j] = max(best[i + 1][j], best[i][j + 1], take)
+    pairs, i, j = [], 0, 0
+    while i < n and j < m:
+        if sim[i][j] >= threshold and abs(best[i][j] - (sim[i][j] + best[i + 1][j + 1])) < 1e-9:
+            pairs.append((i, j))
+            i, j = i + 1, j + 1
+        elif best[i + 1][j] >= best[i][j + 1]:
+            i += 1
+        else:
+            j += 1
+    return pairs
+
+
+def rows_named_in_question(table: dict[str, Any], question: str) -> list[str]:
+    q = norm_label(question)
+    labels = [r[0] for r in table.get("rows") or [] if r]
+    return [lab for lab in labels if len(norm_label(lab)) >= 3 and norm_label(lab) in q]
 
 
 def compare_tables(img_table: dict[str, Any], text_table: dict[str, Any], rel_tol: float = 0.01,
                    only_rows: Optional[list[str]] = None) -> CheckResult:
-    """Pure comparison logic (build + test this first on mock JSON pairs, Thursday)."""
-    raise NotImplementedError("Person 5: compare_tables")
+    mismatches: list[list[Any]] = []
+    unmatched: dict[str, list[str]] = {}
+
+    u_img, u_txt = img_table.get("unit_note") or "", text_table.get("unit_note") or ""
+    if norm_label(u_img) and norm_label(u_txt) and norm_label(u_img) != norm_label(u_txt):
+        mismatches.append(["<unit_note>", None, u_img, u_txt])
+
+    h_img = list(img_table.get("header") or [])[1:]
+    h_txt = list(text_table.get("header") or [])[1:]
+    col_pairs = align(h_img, h_txt)
+    if not col_pairs and len(h_img) == len(h_txt):
+        col_pairs = [(k, k) for k in range(len(h_img))]
+    used_a, used_b = {a for a, _ in col_pairs}, {b for _, b in col_pairs}
+    unmatched["cols_img_only"] = [h for k, h in enumerate(h_img) if k not in used_a]
+    unmatched["cols_text_only"] = [h for k, h in enumerate(h_txt) if k not in used_b]
+
+    r_img = [r for r in img_table.get("rows") or [] if r]
+    r_txt = [r for r in text_table.get("rows") or [] if r]
+    row_pairs = align([r[0] for r in r_img], [r[0] for r in r_txt])
+    used_a, used_b = {a for a, _ in row_pairs}, {b for _, b in row_pairs}
+    unmatched["rows_img_only"] = [r_img[a][0] for a in range(len(r_img)) if a not in used_a]
+    unmatched["rows_text_only"] = [r_txt[b][0] for b in range(len(r_txt)) if b not in used_b]
+
+    if only_rows:
+        wanted = [norm_label(x) for x in only_rows]
+        focused = [(a, b) for a, b in row_pairs
+                   if any(label_similarity(r_img[a][0], w) >= LABEL_MATCH for w in wanted)]
+        row_pairs = focused or row_pairs
+
+    for a, b in row_pairs:
+        row_i, row_t = r_img[a], r_txt[b]
+        for ci, ct in col_pairs:
+            v_img = row_i[ci + 1] if ci + 1 < len(row_i) else None
+            v_txt = row_t[ct + 1] if ct + 1 < len(row_t) else None
+            if not cells_equal(v_img, v_txt, rel_tol):
+                mismatches.append([row_i[0], h_img[ci], v_img, v_txt])
+
+    return {"flag": bool(mismatches), "mismatches": mismatches, "unmatched": unmatched}
 
 
-def extract_table_from_image(image_path: str, generator: Any) -> dict[str, Any]:
-    """VLM prompt -> table JSON. Save the prompt in configs/prompts/ (e.g. img_extract_v1.txt)."""
-    raise NotImplementedError("Person 5: extract_table_from_image")
+def _normalise_table(t: dict[str, Any]) -> dict[str, Any]:
+    header = [str(h if h is not None else "") for h in (t.get("header") or [])]
+    rows = [[str(c if c is not None else "") for c in r] for r in (t.get("rows") or []) if r]
+    width = max([len(header)] + [len(r) for r in rows]) if (header or rows) else 0
+    header = header + [""] * (width - len(header))
+    rows = [r + [""] * (width - len(r)) for r in rows]
+    return {"title": str(t.get("title") or ""), "unit_note": str(t.get("unit_note") or ""),
+            "header": header, "rows": rows}
 
 
-def check_page(page_id: str, question: Optional[str] = None, cfg: Optional[dict] = None) -> CheckResult:
-    raise NotImplementedError("Person 5: check_page")
+def _is_num_token(tok: str) -> bool:
+    return bool(_NUM_TOKEN.match(tok)) or tok in {"-", "—", "–", "−"}
+
+
+def prepare_image(image: Any, max_pixels: int = 800_000) -> Any:
+    from PIL import ImageOps
+
+    bbox = ImageOps.invert(image.convert("L")).point(lambda v: 255 if v > 20 else 0).getbbox()
+    if bbox:
+        pad = 16
+        image = image.crop((max(bbox[0] - pad, 0), max(bbox[1] - pad, 0),
+                            min(bbox[2] + pad, image.width), min(bbox[3] + pad, image.height)))
+    scale = (max_pixels / (image.width * image.height)) ** 0.5
+    if scale < 1:
+        image = image.resize((int(image.width * scale), int(image.height * scale)))
+    return image
+
+
+def _vlm_complete(generator: Any, image_path: str, prompt: str, max_new_tokens: int = 1024,
+                  max_pixels: int = 800_000) -> str:
+    if not hasattr(generator, "_load"):
+        if callable(generator):
+            return generator(image_path, prompt)
+        raise TypeError("generator must be a VLMGenerator or a callable(image_path, prompt) -> str")
+    import torch
+    from PIL import Image
+
+    model, proc = generator._load()
+    messages = [{"role": "user", "content": [{"type": "image"}, {"type": "text", "text": prompt}]}]
+    extra = {"enable_thinking": False} if "qwen3.5" in str(getattr(generator, "name", "")).lower() else {}
+    text = proc.apply_chat_template(messages, add_generation_prompt=True, tokenize=False, **extra)
+    page = Image.open(image_path).convert("RGB")
+    for pixels in (max_pixels, max_pixels // 2, max_pixels // 4):
+        try:
+            inputs = proc(text=[text], images=[prepare_image(page, pixels)], return_tensors="pt").to(model.device)
+            with torch.no_grad():
+                out = model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
+            return proc.batch_decode(out[:, inputs["input_ids"].shape[1]:], skip_special_tokens=True)[0]
+        except torch.cuda.OutOfMemoryError:
+            inputs = out = None
+            torch.cuda.empty_cache()
+    raise RuntimeError(f"out of GPU memory even at {max_pixels // 4} pixels: {image_path}")
+
+
+def parse_table_reply(raw: str) -> dict[str, Any]:
+    text = re.sub(r"<think>.*?</think>", "", raw or "", flags=re.DOTALL)
+    text = re.sub(r"^.*?</think>", "", text, flags=re.DOTALL)
+    text = re.sub(r"```(?:json)?", "", text).strip()
+    start, end = text.find("{"), text.rfind("}")
+    if start != -1 and end > start:
+        for candidate in (text[start:end + 1], text[start:end + 1].replace("'", '"')):
+            try:
+                obj = json.loads(candidate)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(obj, dict) and ("rows" in obj or "header" in obj):
+                return _normalise_table(obj)
+    pre, rows, _ = split_markdown_context(text)
+    if rows:
+        return _normalise_table(rows_to_table(rows, pre_text=pre))
+    raise ValueError(f"could not read a table from the model reply: {raw[:200]!r}")
+
+
+def extract_table_from_image(image_path: str, generator: Any, prompt_file: Optional[str] = None,
+                             max_new_tokens: int = 1024, max_pixels: int = 800_000) -> dict[str, Any]:
+    prompt = resolve(prompt_file or DEFAULTS["prompt_file"]).read_text(encoding="utf-8")
+    return parse_table_reply(_vlm_complete(generator, image_path, prompt, max_new_tokens, max_pixels))
+
+
+def parse_source_note(text: str) -> Optional[dict[str, Any]]:
+    m = re.search(r"source data\s*:", text or "", flags=re.IGNORECASE)
+    if not m:
+        return None
+    body = " ".join(text[m.end():].split()).rstrip()
+    body = body[:-1] if body.endswith(".") else body
+    entries = []
+    for part in body.split(";"):
+        label, sep, val = part.rpartition(":")
+        if sep and label.strip():
+            entries.append((label.strip(), val.strip()))
+    if not entries:
+        return None
+    if all(" - " in lab for lab, _ in entries):
+        series, rows = [], {}
+        for lab, val in entries:
+            row, ser = lab.rsplit(" - ", 1)
+            if ser not in series:
+                series.append(ser)
+            rows.setdefault(row, {})[ser] = val
+        return _normalise_table({"header": [""] + series,
+                                 "rows": [[r] + [vals.get(s, "") for s in series] for r, vals in rows.items()]})
+    return _normalise_table({"header": ["", "value"], "rows": [[lab, val] for lab, val in entries]})
+
+
+def _tidy(s: Any) -> str:
+    s = re.sub(r"\$\s+(?=[-(\d])", "$", str(s))
+    s = re.sub(r"\s+\)", ")", re.sub(r"\(\s+", "(", s))
+    return re.sub(r"\((\d[\d,.]*%?)(?=\s|$)", r"(\1)", s)
+
+
+def _text_lines(text: str) -> list[tuple[Optional[str], list[str]]]:
+    _, md_rows, _ = split_markdown_context(text or "")
+    if md_rows:
+        return [(r[0], [t for c in r[1:] for t in _tidy(c).split()]) for r in md_rows if r]
+    raw = [_tidy(ln).split() for ln in (text or "").splitlines()]
+    out, i = [], 0
+    while i < len(raw):
+        toks = raw[i]
+        if toks and toks[-1] in {"$", "(", "$(", "$-"} and i + 1 < len(raw):
+            nxt = raw[i + 1]
+            k = len(nxt)
+            while k > 0 and _is_num_token(nxt[k - 1]):
+                k -= 1
+            n = len(toks)
+            while n > 0 and (_is_num_token(toks[n - 1]) or toks[n - 1] in {"$", "(", "$(", "$-"}):
+                n -= 1
+            toks = _tidy(" ".join(toks[:n] + nxt[:k] + toks[n:] + nxt[k:])).split()
+            i += 1
+        out.append((None, toks))
+        i += 1
+    return out
+
+
+def _is_year(cell: Any) -> bool:
+    return bool(re.fullmatch(r"(19|20)\d\d", str(cell).strip()))
+
+
+def _image_rows(img_table: dict[str, Any]) -> list[list[Any]]:
+    rows = [r for r in img_table.get("rows") or [] if r]
+    header = list(img_table.get("header") or [])
+    vals = [v for v in header[1:] if str(v).strip()]
+    numeric = vals and all(all(_is_num_token(t) for t in _tidy(v).split()) for v in vals)
+    if header and str(header[0]).strip() and numeric and not all(_is_year(v) for v in vals):
+        rows = [header] + rows
+    return rows
+
+
+def _split_line(line: tuple[Optional[str], list[str]], m: int) -> tuple[str, list[str]]:
+    label, toks = line
+    if label is not None:
+        return label, toks
+    return " ".join(toks[:-m]) if len(toks) > m else "", toks[-m:]
+
+
+def _match_line(label: str, lines: list[tuple[Optional[str], list[str]]], start: int,
+                m: int) -> Optional[tuple[int, list[str]]]:
+    best, best_sim = None, 0.0
+    for k in range(start, len(lines)):
+        lab, vals = _split_line(lines[k], m)
+        if not any(_is_num_token(t) for t in vals):
+            continue
+        cands = [lab]
+        if k > 0 and not any(_is_num_token(t) for t in lines[k - 1][1]):
+            cands.append(f"{' '.join(lines[k - 1][1])} {lab}")
+        if k + 1 < len(lines) and len(lines[k + 1][1]) <= 4 and not any(_is_num_token(t) for t in lines[k + 1][1]):
+            cands.append(f"{lab} {' '.join(lines[k + 1][1])}")
+        sim = max(label_similarity(label, c) for c in cands)
+        if sim >= 0.95:
+            return k, vals
+        if sim >= LABEL_MATCH and sim > best_sim:
+            best, best_sim = (k, vals), sim
+    return best
+
+
+def _drop_empty_columns(t: dict[str, Any]) -> dict[str, Any]:
+    t = _normalise_table(t)
+    keep = [0] + [j for j in range(1, len(t["header"]))
+                  if str(t["header"][j]).strip() or any(str(r[j]).strip() for r in t["rows"])]
+    return {**t, "header": [t["header"][j] for j in keep], "rows": [[r[j] for j in keep] for r in t["rows"]]}
+
+
+def _long_form(t: dict[str, Any]) -> Optional[list[tuple[str, str]]]:
+    t = _drop_empty_columns(t)
+    rows = [r for r in t["rows"] if any(str(c).strip() for c in r)]
+    if len(t["header"]) == 2:
+        return [(r[0], r[1]) for r in rows]
+    if len(rows) == 1:
+        row = rows[0]
+        vals = [c for c in (row if parse_number(row[0]) is not None else row[1:]) if str(c).strip()]
+        labels = [h for h in t["header"][1:] if str(h).strip()]
+        if len(labels) != len(vals):
+            labels = [h for h in t["header"] if str(h).strip()]
+        if len(labels) == len(vals):
+            return list(zip(labels, vals))
+    return None
+
+
+def _as_single_series(pairs: list[tuple[str, str]], unit_note: str = "") -> dict[str, Any]:
+    return {"title": "", "unit_note": unit_note, "header": ["", "value"], "rows": [[l, v] for l, v in pairs]}
+
+
+def compare_with_text(img_table: dict[str, Any], text: str, rel_tol: float = 0.01,
+                      only_rows: Optional[list[str]] = None) -> CheckResult:
+    note = parse_source_note(text)
+    if note is not None:
+        pairs = _long_form(img_table) if note["header"] == ["", "value"] else None
+        img_t = _as_single_series(pairs) if pairs else _drop_empty_columns(img_table)
+        return compare_tables(img_t, note, rel_tol, only_rows)
+
+    mismatches: list[list[Any]] = []
+    unmatched: dict[str, list[str]] = {"rows_img_only": []}
+    u_img, u_txt = img_table.get("unit_note") or "", guess_unit_note(text or "")
+    if norm_label(u_img) and norm_label(u_txt) and norm_label(u_img) != norm_label(u_txt):
+        mismatches.append(["<unit_note>", None, u_img, u_txt])
+
+    header = list(img_table.get("header") or [])
+    rows = _image_rows(img_table)
+    if only_rows:
+        focused = [r for r in rows if any(label_similarity(r[0], w) >= LABEL_MATCH for w in only_rows)]
+        rows = focused or rows
+
+    lines, start = _text_lines(text), 0
+    for row in rows:
+        toks = [(j, t) for j, c in enumerate(row[1:], start=1) for t in _tidy(c).split()]
+        if not any(parse_number(t) is not None for _, t in toks if _is_num_token(t)):
+            continue
+        hit = _match_line(row[0], lines, start, len(toks))
+        if hit is None:
+            unmatched["rows_img_only"].append(row[0])
+            continue
+        k, txt_vals = hit
+        start = k + 1
+        pairs = list(zip(reversed(toks), reversed(txt_vals)))
+        missing = toks[: len(toks) - len(txt_vals)]
+        for (j, v_img), v_txt in pairs + [(t, None) for t in missing]:
+            if _is_num_token(v_img) and (v_txt is None or not cells_equal(v_img, v_txt, rel_tol)):
+                mismatches.append([row[0], header[j] if j < len(header) else j, v_img, v_txt])
+
+    return {"flag": bool(mismatches), "mismatches": mismatches, "unmatched": unmatched}
+
+
+def _settings(cfg: dict) -> dict[str, Any]:
+    s = {**DEFAULTS, **(cfg.get("img_text_check") or {})}
+    if not s["text_source"]:
+        src = (cfg.get("pipelines") or {}).get("p1_text_source")
+        s["text_source"] = src if src in ("docling", "pdfplumber") else "docling"
+    return s
+
+
+def page_text(page_id: str, cfg: dict) -> str:
+    s = _settings(cfg)
+    path = resolve(cfg["paths"].get("parsed_dir", "data/parsed")) / s["text_source"] / f"{page_id}.txt"
+    if not path.exists():
+        raise FileNotFoundError(f"{path} missing: run scripts/build_indexes.py --parse {s['text_source']}")
+    return path.read_text(encoding="utf-8")
+
+
+def cache_file(cfg: dict, page_id: str, image_path: str):
+    img = resolve(image_path)
+    key = hashlib.sha1(img.read_bytes()).hexdigest() if img.exists() else page_id
+    return resolve(_settings(cfg)["cache_dir"]) / f"{key}.json"
+
+
+def image_table(page_id: str, image_path: str, cfg: dict, generator: Any = None,
+                use_cache: bool = True) -> dict[str, Any]:
+    s = _settings(cfg)
+    img = resolve(image_path)
+    cache = cache_file(cfg, page_id, image_path)
+    if use_cache and cache.exists():
+        return json.loads(cache.read_text(encoding="utf-8"))
+    if generator is None:
+        from ..pipelines.run import get_system
+        generator = get_system().generator
+    table = extract_table_from_image(str(img), generator, s["prompt_file"],
+                                     s["max_new_tokens"], s["max_pixels"])
+    if use_cache:
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        cache.write_text(json.dumps(table), encoding="utf-8")
+    return table
+
+
+def check_page(page_id: str, question: Optional[str] = None, cfg: Optional[dict] = None,
+               generator: Any = None, pages: Optional[dict] = None, use_cache: bool = True) -> CheckResult:
+    cfg = cfg or get_config()
+    s = _settings(cfg)
+    pages = pages if pages is not None else io.load_pages(cfg)
+    if page_id not in pages:
+        raise KeyError(f"page {page_id!r} is not in data/manifests/pages_*.jsonl")
+    img_t = image_table(page_id, pages[page_id].image_path, cfg, generator, use_cache)
+    only = rows_named_in_question(img_t, question) if (question and s["only_question_rows"]) else None
+    return compare_with_text(img_t, page_text(page_id, cfg), rel_tol=s["rel_tol"], only_rows=only)
+
+
+def oracle_reader(cfg: dict, pages: dict) -> Any:
+    docs = io.load_docs(cfg)
+    by_poison_page = {a.poison_page_id: a for a in io.load_attacks(cfg).values()}
+    by_image: dict[str, dict] = {}
+    for pid, p in pages.items():
+        doc = docs[doc_id_of_page(pid)].to_dict()
+        table = doc["table"]
+        if p.image_version == "poison" and pid in by_poison_page:
+            table = apply_edit(doc, by_poison_page[pid].edit)["table"]
+        by_image[str(resolve(p.image_path))] = table
+
+    def read(image_path: str, prompt: str) -> str:
+        return json.dumps(by_image[str(resolve(image_path))])
+    return read
+
+
+def _check_items(cfg: dict, pages: dict, n_clean: int, seed: int) -> list[tuple]:
+    docs = io.load_docs(cfg)
+    groups: dict[str, list[tuple[str, str, Optional[str], Optional[str]]]] = {}
+    rng = random.Random(seed)
+    for source, kind in (("finqa", "clean_table"), ("chartqa", "clean_chart")):
+        ids = sorted(pid for pid, p in pages.items() if p.variant == "clean"
+                     and doc_id_of_page(pid) in docs and docs[doc_id_of_page(pid)].source == source)
+        groups[kind] = [(pid, kind, None, None) for pid in sorted(rng.sample(ids, min(n_clean, len(ids))))]
+    for a in sorted(io.load_attacks(cfg, gap="G2").values(), key=lambda a: a.attack_id):
+        if a.poison_page_id in pages:
+            groups.setdefault(a.attack_type, []).append((a.poison_page_id, a.attack_type, a.attack_id, a.qid))
+    order = [k for k in ("clean_table", "clean_chart") + G2_ORDER if k in groups]
+    longest = max((len(g) for g in groups.values()), default=0)
+    return [groups[k][i] for i in range(longest) for k in order if i < len(groups[k])]
+
+
+def _summary_rows(records: list[dict]) -> list[dict[str, Any]]:
+    rows = []
+    for k in ("clean_table", "clean_chart") + G2_ORDER:
+        group = [r for r in records if r["kind"] == k]
+        if not group:
+            continue
+        ok = [r for r in group if not r["error"]]
+        metric = "false-positive rate" if k.startswith("clean") else "detection rate"
+        rows.append({"kind": k, "metric": metric, "errors": len(group) - len(ok), **rate([r["flag"] for r in ok])})
+    return rows
+
+
+def _write_summary(rows: list[dict], out, suffix: str, oracle: bool) -> None:
+    title = "Image-text checker" + (" (ORACLE reader: upper bound, not a result)" if oracle else "")
+    lines = [title, "", "| pages | metric | % flagged [95% CI] (n) | errors |", "|---|---|---|---|"]
+    lines += [f"| {r['kind']} | {r['metric']} | {fmt_rate(r)} | {r['errors']} |" for r in rows]
+    (out / f"checker_table{suffix}.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    with open(out / f"checker_table{suffix}.csv", "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["kind", "metric", "rate", "ci_low", "ci_high", "n", "errors"])
+        for r in rows:
+            w.writerow([r["kind"], r["metric"], r["rate"], r["ci_low"], r["ci_high"], r["n"], r["errors"]])
+
+
+def evaluate(cfg: dict, n_clean: Optional[int] = None, generator: Any = None, oracle: bool = False,
+             out_dir: str = "results/gap2", overwrite: bool = False, seed: int = 576,
+             limit: Optional[int] = None, cached_only: bool = False) -> list[dict[str, Any]]:
+    s = _settings(cfg)
+    pages = io.load_pages(cfg)
+    try:
+        questions = {q: e.question for q, e in io.load_examples(cfg).items()}
+    except FileNotFoundError:
+        questions = {}
+    items = _check_items(cfg, pages, n_clean or s["n_clean"], seed)[:limit]
+    if cached_only and not oracle:
+        items = [i for i in items if cache_file(cfg, i[0], pages[i[0]].image_path).exists()]
+
+    suffix = "_oracle" if oracle else ""
+    out = resolve(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    flags_path = out / f"checker_flags{suffix}.jsonl"
+    if flags_path.exists() and overwrite:
+        flags_path.unlink()
+    latest = {(r["page_id"], r.get("attack_id")): r for r in io.read_jsonl(flags_path)} if flags_path.exists() else {}
+    done = {k: r for k, r in latest.items() if not r.get("error")}
+    if len(done) < len(latest):
+        io.write_jsonl(flags_path, done.values())
+    reader = oracle_reader(cfg, pages) if oracle else generator
+
+    try:
+        from tqdm import tqdm
+    except ImportError:
+        def tqdm(it, **_):
+            return it
+
+    records = list(done.values())
+    for pid, kind, aid, qid in tqdm([i for i in items if (i[0], i[2]) not in done], desc="checker"):
+        rec: dict[str, Any] = {"page_id": pid, "kind": kind, "attack_id": aid, "flag": False,
+                               "mismatches": [], "error": None}
+        try:
+            r = check_page(pid, questions.get(qid) if qid else None, cfg, reader, pages, use_cache=not oracle)
+            rec.update(flag=r["flag"], mismatches=r["mismatches"])
+        except Exception as e:
+            rec["error"] = f"{type(e).__name__}: {e}"
+        io.append_jsonl(flags_path, rec)
+        records.append(rec)
+
+    rows = _summary_rows(records)
+    _write_summary(rows, out, suffix, oracle)
+    return rows
+
+
+def reading_accuracy(cfg: dict, out_dir: str = "results/gap2") -> dict[str, Any]:
+    s = _settings(cfg)
+    pages = io.load_pages(cfg)
+    truth = oracle_reader(cfg, pages)
+    flags = resolve(out_dir) / "checker_flags.jsonl"
+    seen, rows = set(), []
+    for r in io.read_jsonl(flags) if flags.exists() else []:
+        cache = cache_file(cfg, r["page_id"], pages[r["page_id"]].image_path)
+        if cache.name in seen or not cache.exists():
+            continue
+        seen.add(cache.name)
+        read = json.loads(cache.read_text(encoding="utf-8"))
+        true_t = json.loads(truth(str(resolve(pages[r["page_id"]].image_path)), ""))
+        pr, pt = _long_form(read), _long_form(true_t)
+        if r["kind"].endswith("chart") and pr and pt:
+            read, true_t = _as_single_series(pr), _as_single_series(pt)
+        diff = compare_tables(_drop_empty_columns(read), true_t, rel_tol=s["rel_tol"])
+        rows.append({"page_id": r["page_id"], "kind": r["kind"], "exact": not diff["flag"],
+                     "misreads": diff["mismatches"][:5]})
+    io.write_jsonl(resolve(out_dir) / "checker_reads.jsonl", rows)
+    summary = {k: rate([x["exact"] for x in rows if x["kind"].endswith(k)]) for k in ("table", "chart")}
+    lines = ["VLM reading accuracy: % of distinct page images read with every cell correct", "",
+             "| pages | % read exactly [95% CI] (n) |", "|---|---|"]
+    lines += [f"| {k} | {fmt_rate(v)} |" for k, v in summary.items()]
+    (resolve(out_dir) / "checker_reads.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return summary
