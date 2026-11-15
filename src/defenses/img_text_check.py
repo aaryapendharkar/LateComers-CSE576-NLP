@@ -5,7 +5,6 @@ import hashlib
 import json
 import random
 import re
-from collections import Counter
 from difflib import SequenceMatcher
 from typing import Any, NotRequired, Optional, TypedDict
 
@@ -201,46 +200,6 @@ def extract_table_from_image(image_path: str, generator: Any, prompt_file: Optio
                              max_new_tokens: int = 1024, max_pixels: int = 800_000) -> dict[str, Any]:
     prompt = resolve(prompt_file or DEFAULTS["prompt_file"]).read_text(encoding="utf-8")
     return parse_table_reply(_vlm_complete(generator, image_path, prompt, max_new_tokens, max_pixels))
-
-
-def parse_text_layer(text: str) -> dict[str, Any]:
-    pre, rows, _ = split_markdown_context(text or "")
-    if rows:
-        t = rows_to_table(rows, pre_text=pre)
-        if not t["unit_note"]:
-            t["unit_note"] = guess_unit_note(text)
-        return _normalise_table(t)
-
-    note = parse_source_note(text)
-    if note is not None:
-        return note
-
-    return _normalise_table(_plain_text_rows(text or ""))
-
-
-def _plain_text_rows(text: str) -> dict[str, Any]:
-    parsed = []
-    lines = text.splitlines()
-    for i, ln in enumerate(lines):
-        toks = ln.split()
-        k = len(toks)
-        while k > 0 and _is_num_token(toks[k - 1]):
-            k -= 1
-        vals = toks[k:]
-        if vals and k > 0:
-            parsed.append((i, " ".join(toks[:k]), vals))
-    if not parsed:
-        return {"header": [], "rows": [], "unit_note": guess_unit_note(text)}
-    width = Counter(len(v) for _, _, v in parsed).most_common(1)[0][0]
-    body = [(i, lab, v) for i, lab, v in parsed if len(v) == width]
-    header = [""] + [f"col{j + 1}" for j in range(width)]
-    first = body[0][0]
-    if first > 0:
-        htoks = lines[first - 1].split()
-        if len(htoks) >= width:
-            header = [" ".join(htoks[:-width])] + htoks[-width:]
-    return {"header": header, "rows": [[lab] + v for _, lab, v in body],
-            "unit_note": guess_unit_note(text)}
 
 
 def parse_source_note(text: str) -> Optional[dict[str, Any]]:

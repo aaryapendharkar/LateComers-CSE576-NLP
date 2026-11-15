@@ -4,8 +4,8 @@ from src.common import io
 from src.common.edits import apply_edit
 from src.common.schemas import Page
 from src.common.tables import doc_to_text
-from src.defenses.img_text_check import (check_page, compare_with_text, extract_table_from_image, parse_table_reply,
-                                         parse_text_layer)
+from src.defenses.img_text_check import (check_page, compare_with_text, extract_table_from_image,
+                                         parse_source_note, parse_table_reply)
 
 
 def test_parse_reply_json_with_noise():
@@ -21,22 +21,19 @@ def test_parse_reply_markdown_fallback():
     assert t["rows"] == [["Products", "1,204"]]
 
 
-def test_text_layer_docling_markdown(cfg):
+def test_markdown_text_layer(cfg):
     doc = io.load_docs(cfg)["finqa_ACME_2019_p12"].to_dict()
-    t = parse_text_layer(doc_to_text(doc))
-    assert t["header"] == doc["table"]["header"] and t["rows"] == doc["table"]["rows"]
+    assert compare_with_text(doc["table"], doc_to_text(doc))["flag"] is False
+    poisoned = apply_edit(doc, io.load_attacks(cfg)["G2_text_only_table_q0001"].edit)
+    assert len(compare_with_text(doc["table"], doc_to_text(poisoned))["mismatches"]) == 2
 
 
-def test_text_layer_plain_text_and_chart_note():
-    plain = "Revenue by segment\n(in millions)\n2019 2018\nProducts 1,204 1,090\nServices 512 488\nTotal revenue 1,716 1,578"
-    t = parse_text_layer(plain)
-    assert t["header"][1:] == ["2019", "2018"] and t["rows"][2] == ["Total revenue", "1,716", "1,578"]
-    assert t["unit_note"] == "in millions"
+def test_source_note():
     chart = "Figure 1. E-bike sales.\nSource data: 2016: 1,120; 2017: 145; 2018: 19.5."
-    assert parse_text_layer(chart)["rows"] == [["2016", "1,120"], ["2017", "145"], ["2018", "19.5"]]
+    assert parse_source_note(chart)["rows"] == [["2016", "1,120"], ["2017", "145"], ["2018", "19.5"]]
     multi = ("Figure 1. A vs B.\nSource data: 65+ - Health: 49; 65+ - Money: 32; Ages 18-29 -\n"
              "Health: 26; Ages 18-29 - Money: 40.")
-    t = parse_text_layer(multi)
+    t = parse_source_note(multi)
     assert t["header"] == ["", "Health", "Money"]
     assert t["rows"] == [["65+", "49", "32"], ["Ages 18-29", "26", "40"]]
 
