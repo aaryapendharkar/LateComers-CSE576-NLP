@@ -21,7 +21,8 @@ LABEL_MATCH = 0.80
 G2_ORDER = ("propagate_table", "text_only_table", "image_only_table",
             "propagate_chart", "text_only_chart", "image_only_chart")
 DEFAULTS = {"rel_tol": 0.01, "only_question_rows": False, "prompt_file": "configs/prompts/img_extract_v1.txt",
-            "max_new_tokens": 1024, "text_source": None, "cache_dir": "data/parsed/img_tables", "n_clean": 100}
+            "max_new_tokens": 1024, "text_source": None, "cache_dir": "data/parsed/img_tables", "n_clean": 100,
+            "max_pixels": 800_000}
 
 _NUM_TOKEN = re.compile(r"^\$?\(?[-−$]?\$?\d[\d,]*\.?\d*%?\)?%?\*?$")
 
@@ -138,7 +139,22 @@ def _is_num_token(tok: str) -> bool:
     return bool(_NUM_TOKEN.match(tok)) or tok in {"-", "—", "–", "−"}
 
 
-def _vlm_complete(generator: Any, image_path: str, prompt: str, max_new_tokens: int = 1024) -> str:
+def prepare_image(image: Any, max_pixels: int = 800_000) -> Any:
+    from PIL import ImageOps
+
+    bbox = ImageOps.invert(image.convert("L")).point(lambda v: 255 if v > 20 else 0).getbbox()
+    if bbox:
+        pad = 16
+        image = image.crop((max(bbox[0] - pad, 0), max(bbox[1] - pad, 0),
+                            min(bbox[2] + pad, image.width), min(bbox[3] + pad, image.height)))
+    scale = (max_pixels / (image.width * image.height)) ** 0.5
+    if scale < 1:
+        image = image.resize((int(image.width * scale), int(image.height * scale)))
+    return image
+
+
+def _vlm_complete(generator: Any, image_path: str, prompt: str, max_new_tokens: int = 1024,
+                  max_pixels: int = 800_000) -> str:
     if not hasattr(generator, "_load"):
         if callable(generator):
             return generator(image_path, prompt)
@@ -148,13 +164,19 @@ def _vlm_complete(generator: Any, image_path: str, prompt: str, max_new_tokens: 
 
     model, proc = generator._load()
     messages = [{"role": "user", "content": [{"type": "image"}, {"type": "text", "text": prompt}]}]
-    text = proc.apply_chat_template(messages, add_generation_prompt=True, tokenize=False,
-                                    enable_thinking=False)
-    image = Image.open(image_path).convert("RGB")
-    inputs = proc(text=[text], images=[image], return_tensors="pt").to(model.device)
-    with torch.no_grad():
-        out = model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
-    return proc.batch_decode(out[:, inputs["input_ids"].shape[1]:], skip_special_tokens=True)[0]
+    extra = {"enable_thinking": False} if "qwen3.5" in str(getattr(generator, "name", "")).lower() else {}
+    text = proc.apply_chat_template(messages, add_generation_prompt=True, tokenize=False, **extra)
+    page = Image.open(image_path).convert("RGB")
+    for pixels in (max_pixels, max_pixels // 2, max_pixels // 4):
+        try:
+            inputs = proc(text=[text], images=[prepare_image(page, pixels)], return_tensors="pt").to(model.device)
+            with torch.no_grad():
+                out = model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
+            return proc.batch_decode(out[:, inputs["input_ids"].shape[1]:], skip_special_tokens=True)[0]
+        except torch.cuda.OutOfMemoryError:
+            inputs = out = None
+            torch.cuda.empty_cache()
+    raise RuntimeError(f"out of GPU memory even at {max_pixels // 4} pixels: {image_path}")
 
 
 def parse_table_reply(raw: str) -> dict[str, Any]:
@@ -177,9 +199,9 @@ def parse_table_reply(raw: str) -> dict[str, Any]:
 
 
 def extract_table_from_image(image_path: str, generator: Any, prompt_file: Optional[str] = None,
-                             max_new_tokens: int = 1024) -> dict[str, Any]:
+                             max_new_tokens: int = 1024, max_pixels: int = 800_000) -> dict[str, Any]:
     prompt = resolve(prompt_file or DEFAULTS["prompt_file"]).read_text(encoding="utf-8")
-    return parse_table_reply(_vlm_complete(generator, image_path, prompt, max_new_tokens))
+    return parse_table_reply(_vlm_complete(generator, image_path, prompt, max_new_tokens, max_pixels))
 
 
 def parse_text_layer(text: str) -> dict[str, Any]:
@@ -383,7 +405,7 @@ def image_table(page_id: str, image_path: str, cfg: dict, generator: Any = None,
         from ..pipelines.run import get_system
         generator = get_system().generator
     table = extract_table_from_image(str(img), generator, s["prompt_file"],
-                                     s["max_new_tokens"])
+                                     s["max_new_tokens"], s["max_pixels"])
     if use_cache:
         cache.parent.mkdir(parents=True, exist_ok=True)
         cache.write_text(json.dumps(table), encoding="utf-8")
@@ -473,7 +495,10 @@ def evaluate(cfg: dict, n_clean: Optional[int] = None, generator: Any = None, or
     flags_path = out / f"checker_flags{suffix}.jsonl"
     if flags_path.exists() and overwrite:
         flags_path.unlink()
-    done = {(r["page_id"], r.get("attack_id")): r for r in io.read_jsonl(flags_path)} if flags_path.exists() else {}
+    latest = {(r["page_id"], r.get("attack_id")): r for r in io.read_jsonl(flags_path)} if flags_path.exists() else {}
+    done = {k: r for k, r in latest.items() if not r.get("error")}
+    if len(done) < len(latest):
+        io.write_jsonl(flags_path, done.values())
     reader = oracle_reader(cfg, pages) if oracle else generator
 
     try:
