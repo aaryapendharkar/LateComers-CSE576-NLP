@@ -58,6 +58,10 @@ class PageStore:
         atk = self.attacks_by_page.get(page_id)
         if atk is None:
             raise KeyError(f"unknown page {page_id!r}: not rendered and not an attack's poison page")
+        # A virtual page is TEXT only, so it follows the attack's text layer (A4): an
+        # image_only attack leaves the text layer clean, so P1 must see the clean text.
+        if atk.text_version == "clean":
+            return doc
         return apply_edit(doc, atk.edit)
 
     def _load(self, page_id: str) -> PageContent:
