@@ -1,0 +1,9 @@
+{
+  "_status": "PROPOSED BY THE ASSISTANT AFTER READING THE SOURCE TABLES. NOT HUMAN-REVIEWED. The reviewer decides.",
+  "IPG/2016/page_24.pdf": "Likely D1 rule error (false positive): the 'Average Price Paid per Share' column is a weighted average, not additive. D1 excludes averages only by the TOTAL row's label, not by the column header. The share-count columns were not flagged.",
+  "RSG/2005/page_26.pdf": "Likely D1 rule error (false positive): column (b) is an average price and column (d) is a remaining balance ('may yet be purchased'); the Total row repeats the period-end balance (216.2) rather than a sum. Non-additive columns are not detected from header semantics.",
+  "AAPL/2015/page_68.pdf": "Likely adapter/layout issue (false positive): this FinQA table_ori has no header row, so the adapter's 'first row = header' rule turned the 2016 row ($772) into the header. The discrepancy (772) equals exactly the dropped row; 772+774+744+715+674+2,592 = 6,271.",
+  "IP/2018/page_50.pdf": "Likely scope mismatch, not an inconsistency: the sentence before the table says the table EXCLUDES discontinued operations ($111M in 2017); the prose 'capital spending ... $1.4 billion in 2017' appears to include them (1,280 + 111 = 1,391). D1's scope guard only inspects words adjacent to the row label in the same sentence.",
+  "UAA/2016/page_82.pdf": "Likely adapter/layout issue (false positive): headerless table; the 2017 row ($114,857) became the header and the discrepancy equals exactly that value.",
+  "MMM/2005/page_81.pdf": "Likely adapter/layout issue (false positive): a one-row horizontal table with no label column; the first value ($492) was read as the row label and the discrepancy equals exactly 492 (492+622+85+44+0+558 = 1,801)."
+}

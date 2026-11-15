@@ -100,10 +100,14 @@ attacks_g2:
   n_charts: 50
 
 # ---------------------------------------------------------------- Person 3
+# D1 0.2.0 (docs/person3/D1_DESIGN.md). Tolerance is not a setting: a total may
+# differ from its components by at most the sum of their printed half-units.
+# Totals are found from labels (total/subtotal); "net" rows are differences and
+# are reported as not checked. Unknown keys here raise an error.
 reconcile:
-  sum_rel_tol: 0.005                       # rounding tolerance for totals
-  sum_abs_tol: 1.0
-  total_keywords: [total, net, sum, subtotal]
+  check_arithmetic: true
+  check_prose: true
+  dash_as_zero: false                      # dashes are MISSING unless this is on (must be reported)
 
 # ---------------------------------------------------------------- Person 5
 img_text_check:

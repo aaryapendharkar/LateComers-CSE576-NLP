@@ -1,0 +1,42 @@
+{
+  "attacks_commit": "504e5ddfef4e878e1f6ffb09baff4f27cf960d1b",
+  "cell_pairs": 38,
+  "config": {
+    "check_arithmetic": true,
+    "check_prose": true,
+    "dash_as_zero": false
+  },
+  "d1_checkout": "3e04faa48727bbd30c2dfe81842e1fbc23a721d4",
+  "d1_version": "0.2.0",
+  "distinct_originals": 43,
+  "distinct_questions": 46,
+  "edited_records": 99,
+  "edited_status_counts_by_type": {
+    "consistent_cell": {
+      "checks_passed": 6,
+      "contradiction": 7,
+      "uncheckable": 25
+    },
+    "header": {
+      "checks_passed": 3,
+      "uncheckable": 12
+    },
+    "naive_cell": {
+      "checks_passed": 2,
+      "contradiction": 11,
+      "newly_flagged": 4,
+      "uncheckable": 25
+    },
+    "unit": {
+      "uncheckable": 8
+    }
+  },
+  "identical_inputs_in_cell_pairs": 25,
+  "input": "Structured source tables and prose, before rendering or parsing",
+  "original_status_counts": {
+    "checks_passed": 6,
+    "contradiction": 6,
+    "uncheckable": 31
+  },
+  "source_docs_blob": "175010bca4e091f4b4e73c06120faf6a2be5e0ef"
+}

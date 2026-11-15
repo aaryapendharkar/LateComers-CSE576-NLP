@@ -1,0 +1,15 @@
+{
+  "data_label": "REAL questions (proposals only)",
+  "manually_validated": false,
+  "labeler_version": "0.1.1",
+  "examples_path": "data/examples.jsonl",
+  "n_questions": 200,
+  "label_counts": {
+    "trend": 55,
+    "arithmetic": 142,
+    "comparison": 3
+  },
+  "n_rule_flagged_for_review": 13,
+  "review_sample_size": 30,
+  "seed": 576
+}

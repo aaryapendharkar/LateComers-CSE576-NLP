@@ -1,0 +1,571 @@
+{
+  "data_label": "DEVELOPMENT SAMPLE - FinQA train split, original structured JSON",
+  "purpose": "Person 3 D1 development audit; exclude these reports from later held-out evaluation.",
+  "source": {
+    "url": "https://github.com/czyssrs/FinQA",
+    "commit": "0f16e2867befa6840783e58be38c9efb9229d742",
+    "path": "dataset/train.json",
+    "sha256": "49f237eb9779b569473b26b08048867d04635a7cc39ad6a7a5664c55bb428db6",
+    "git_blob_sha1": "a6c2c5a60f9abe3fba5a793cc4d9e1dee2e09209",
+    "bytes": 78216616
+  },
+  "selection": {
+    "unit": "unique FinQA page (filename)",
+    "group": "source report = ticker/year; max one page per report",
+    "method": "random.Random(seed).shuffle(sorted eligible pages); take in order, skipping repeated reports",
+    "seed": 576,
+    "n_requested": 50,
+    "n_records_in_source": 6251,
+    "n_unique_pages": 2110,
+    "n_unique_reports": 741,
+    "n_eligible_pages": 2110,
+    "n_pages_skipped_same_report_before_quota": 1
+  },
+  "exclusions": [],
+  "sample": [
+    {
+      "sample_rank": 1,
+      "filename": "BKR/2018/page_127.pdf",
+      "report_id": "BKR/2018",
+      "ticker": "BKR",
+      "source_record_ids": [
+        "BKR/2018/page_127.pdf-1",
+        "BKR/2018/page_127.pdf-2",
+        "BKR/2018/page_127.pdf-3"
+      ]
+    },
+    {
+      "sample_rank": 2,
+      "filename": "AAPL/2005/page_67.pdf",
+      "report_id": "AAPL/2005",
+      "ticker": "AAPL",
+      "source_record_ids": [
+        "AAPL/2005/page_67.pdf-1",
+        "AAPL/2005/page_67.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 3,
+      "filename": "DISH/2008/page_120.pdf",
+      "report_id": "DISH/2008",
+      "ticker": "DISH",
+      "source_record_ids": [
+        "DISH/2008/page_120.pdf-1"
+      ]
+    },
+    {
+      "sample_rank": 4,
+      "filename": "PNC/2013/page_111.pdf",
+      "report_id": "PNC/2013",
+      "ticker": "PNC",
+      "source_record_ids": [
+        "PNC/2013/page_111.pdf-1",
+        "PNC/2013/page_111.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 5,
+      "filename": "PNC/2012/page_157.pdf",
+      "report_id": "PNC/2012",
+      "ticker": "PNC",
+      "source_record_ids": [
+        "PNC/2012/page_157.pdf-1",
+        "PNC/2012/page_157.pdf-2",
+        "PNC/2012/page_157.pdf-3",
+        "PNC/2012/page_157.pdf-4",
+        "PNC/2012/page_157.pdf-5",
+        "PNC/2012/page_157.pdf-6"
+      ]
+    },
+    {
+      "sample_rank": 6,
+      "filename": "DISCA/2013/page_45.pdf",
+      "report_id": "DISCA/2013",
+      "ticker": "DISCA",
+      "source_record_ids": [
+        "DISCA/2013/page_45.pdf-1",
+        "DISCA/2013/page_45.pdf-2",
+        "DISCA/2013/page_45.pdf-3"
+      ]
+    },
+    {
+      "sample_rank": 7,
+      "filename": "HII/2011/page_69.pdf",
+      "report_id": "HII/2011",
+      "ticker": "HII",
+      "source_record_ids": [
+        "HII/2011/page_69.pdf-1",
+        "HII/2011/page_69.pdf-2",
+        "HII/2011/page_69.pdf-3",
+        "HII/2011/page_69.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 8,
+      "filename": "HIG/2012/page_132.pdf",
+      "report_id": "HIG/2012",
+      "ticker": "HIG",
+      "source_record_ids": [
+        "HIG/2012/page_132.pdf-1",
+        "HIG/2012/page_132.pdf-2",
+        "HIG/2012/page_132.pdf-3"
+      ]
+    },
+    {
+      "sample_rank": 9,
+      "filename": "UA/2009/page_63.pdf",
+      "report_id": "UA/2009",
+      "ticker": "UA",
+      "source_record_ids": [
+        "UA/2009/page_63.pdf-1",
+        "UA/2009/page_63.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 10,
+      "filename": "BLL/2010/page_39.pdf",
+      "report_id": "BLL/2010",
+      "ticker": "BLL",
+      "source_record_ids": [
+        "BLL/2010/page_39.pdf-1",
+        "BLL/2010/page_39.pdf-2",
+        "BLL/2010/page_39.pdf-3"
+      ]
+    },
+    {
+      "sample_rank": 11,
+      "filename": "GPN/2018/page_79.pdf",
+      "report_id": "GPN/2018",
+      "ticker": "GPN",
+      "source_record_ids": [
+        "GPN/2018/page_79.pdf-1",
+        "GPN/2018/page_79.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 12,
+      "filename": "MMM/2007/page_38.pdf",
+      "report_id": "MMM/2007",
+      "ticker": "MMM",
+      "source_record_ids": [
+        "MMM/2007/page_38.pdf-1",
+        "MMM/2007/page_38.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 13,
+      "filename": "LMT/2014/page_49.pdf",
+      "report_id": "LMT/2014",
+      "ticker": "LMT",
+      "source_record_ids": [
+        "LMT/2014/page_49.pdf-1",
+        "LMT/2014/page_49.pdf-2",
+        "LMT/2014/page_49.pdf-3",
+        "LMT/2014/page_49.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 14,
+      "filename": "IPG/2016/page_24.pdf",
+      "report_id": "IPG/2016",
+      "ticker": "IPG",
+      "source_record_ids": [
+        "IPG/2016/page_24.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 15,
+      "filename": "HWM/2015/page_72.pdf",
+      "report_id": "HWM/2015",
+      "ticker": "HWM",
+      "source_record_ids": [
+        "HWM/2015/page_72.pdf-1",
+        "HWM/2015/page_72.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 16,
+      "filename": "UA/2005/page_33.pdf",
+      "report_id": "UA/2005",
+      "ticker": "UA",
+      "source_record_ids": [
+        "UA/2005/page_33.pdf-1",
+        "UA/2005/page_33.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 17,
+      "filename": "IPG/2018/page_39.pdf",
+      "report_id": "IPG/2018",
+      "ticker": "IPG",
+      "source_record_ids": [
+        "IPG/2018/page_39.pdf-1",
+        "IPG/2018/page_39.pdf-2",
+        "IPG/2018/page_39.pdf-3"
+      ]
+    },
+    {
+      "sample_rank": 18,
+      "filename": "RE/2015/page_148.pdf",
+      "report_id": "RE/2015",
+      "ticker": "RE",
+      "source_record_ids": [
+        "RE/2015/page_148.pdf-1",
+        "RE/2015/page_148.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 19,
+      "filename": "CB/2008/page_243.pdf",
+      "report_id": "CB/2008",
+      "ticker": "CB",
+      "source_record_ids": [
+        "CB/2008/page_243.pdf-1",
+        "CB/2008/page_243.pdf-2",
+        "CB/2008/page_243.pdf-3"
+      ]
+    },
+    {
+      "sample_rank": 20,
+      "filename": "GIS/2018/page_82.pdf",
+      "report_id": "GIS/2018",
+      "ticker": "GIS",
+      "source_record_ids": [
+        "GIS/2018/page_82.pdf-1",
+        "GIS/2018/page_82.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 21,
+      "filename": "RSG/2005/page_26.pdf",
+      "report_id": "RSG/2005",
+      "ticker": "RSG",
+      "source_record_ids": [
+        "RSG/2005/page_26.pdf-1"
+      ]
+    },
+    {
+      "sample_rank": 22,
+      "filename": "V/2008/page_138.pdf",
+      "report_id": "V/2008",
+      "ticker": "V",
+      "source_record_ids": [
+        "V/2008/page_138.pdf-1"
+      ]
+    },
+    {
+      "sample_rank": 23,
+      "filename": "ETR/2007/page_36.pdf",
+      "report_id": "ETR/2007",
+      "ticker": "ETR",
+      "source_record_ids": [
+        "ETR/2007/page_36.pdf-1",
+        "ETR/2007/page_36.pdf-2",
+        "ETR/2007/page_36.pdf-3"
+      ]
+    },
+    {
+      "sample_rank": 24,
+      "filename": "GS/2012/page_50.pdf",
+      "report_id": "GS/2012",
+      "ticker": "GS",
+      "source_record_ids": [
+        "GS/2012/page_50.pdf-1",
+        "GS/2012/page_50.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 25,
+      "filename": "AON/2015/page_29.pdf",
+      "report_id": "AON/2015",
+      "ticker": "AON",
+      "source_record_ids": [
+        "AON/2015/page_29.pdf-1",
+        "AON/2015/page_29.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 26,
+      "filename": "FIS/2017/page_14.pdf",
+      "report_id": "FIS/2017",
+      "ticker": "FIS",
+      "source_record_ids": [
+        "FIS/2017/page_14.pdf-1",
+        "FIS/2017/page_14.pdf-2",
+        "FIS/2017/page_14.pdf-3",
+        "FIS/2017/page_14.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 27,
+      "filename": "AMT/2016/page_57.pdf",
+      "report_id": "AMT/2016",
+      "ticker": "AMT",
+      "source_record_ids": [
+        "AMT/2016/page_57.pdf-1",
+        "AMT/2016/page_57.pdf-2",
+        "AMT/2016/page_57.pdf-3"
+      ]
+    },
+    {
+      "sample_rank": 28,
+      "filename": "ETR/2016/page_342.pdf",
+      "report_id": "ETR/2016",
+      "ticker": "ETR",
+      "source_record_ids": [
+        "ETR/2016/page_342.pdf-1",
+        "ETR/2016/page_342.pdf-2",
+        "ETR/2016/page_342.pdf-3",
+        "ETR/2016/page_342.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 29,
+      "filename": "UNP/2012/page_23.pdf",
+      "report_id": "UNP/2012",
+      "ticker": "UNP",
+      "source_record_ids": [
+        "UNP/2012/page_23.pdf-1",
+        "UNP/2012/page_23.pdf-2",
+        "UNP/2012/page_23.pdf-3",
+        "UNP/2012/page_23.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 30,
+      "filename": "MSI/2013/page_87.pdf",
+      "report_id": "MSI/2013",
+      "ticker": "MSI",
+      "source_record_ids": [
+        "MSI/2013/page_87.pdf-1",
+        "MSI/2013/page_87.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 31,
+      "filename": "AON/2010/page_52.pdf",
+      "report_id": "AON/2010",
+      "ticker": "AON",
+      "source_record_ids": [
+        "AON/2010/page_52.pdf-1",
+        "AON/2010/page_52.pdf-2",
+        "AON/2010/page_52.pdf-3",
+        "AON/2010/page_52.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 32,
+      "filename": "UNP/2014/page_32.pdf",
+      "report_id": "UNP/2014",
+      "ticker": "UNP",
+      "source_record_ids": [
+        "UNP/2014/page_32.pdf-1",
+        "UNP/2014/page_32.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 33,
+      "filename": "MRO/2008/page_142.pdf",
+      "report_id": "MRO/2008",
+      "ticker": "MRO",
+      "source_record_ids": [
+        "MRO/2008/page_142.pdf-1",
+        "MRO/2008/page_142.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 34,
+      "filename": "LMT/2010/page_39.pdf",
+      "report_id": "LMT/2010",
+      "ticker": "LMT",
+      "source_record_ids": [
+        "LMT/2010/page_39.pdf-1",
+        "LMT/2010/page_39.pdf-2",
+        "LMT/2010/page_39.pdf-3",
+        "LMT/2010/page_39.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 35,
+      "filename": "AAPL/2015/page_68.pdf",
+      "report_id": "AAPL/2015",
+      "ticker": "AAPL",
+      "source_record_ids": [
+        "AAPL/2015/page_68.pdf-1",
+        "AAPL/2015/page_68.pdf-2",
+        "AAPL/2015/page_68.pdf-3",
+        "AAPL/2015/page_68.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 36,
+      "filename": "L/2010/page_41.pdf",
+      "report_id": "L/2010",
+      "ticker": "L",
+      "source_record_ids": [
+        "L/2010/page_41.pdf-1",
+        "L/2010/page_41.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 37,
+      "filename": "C/2008/page_212.pdf",
+      "report_id": "C/2008",
+      "ticker": "C",
+      "source_record_ids": [
+        "C/2008/page_212.pdf-1",
+        "C/2008/page_212.pdf-2",
+        "C/2008/page_212.pdf-3",
+        "C/2008/page_212.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 38,
+      "filename": "ETR/2015/page_133.pdf",
+      "report_id": "ETR/2015",
+      "ticker": "ETR",
+      "source_record_ids": [
+        "ETR/2015/page_133.pdf-1",
+        "ETR/2015/page_133.pdf-2",
+        "ETR/2015/page_133.pdf-3",
+        "ETR/2015/page_133.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 39,
+      "filename": "AOS/2003/page_23.pdf",
+      "report_id": "AOS/2003",
+      "ticker": "AOS",
+      "source_record_ids": [
+        "AOS/2003/page_23.pdf-1",
+        "AOS/2003/page_23.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 40,
+      "filename": "TROW/2013/page_25.pdf",
+      "report_id": "TROW/2013",
+      "ticker": "TROW",
+      "source_record_ids": [
+        "TROW/2013/page_25.pdf-1",
+        "TROW/2013/page_25.pdf-2",
+        "TROW/2013/page_25.pdf-3",
+        "TROW/2013/page_25.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 41,
+      "filename": "IP/2018/page_50.pdf",
+      "report_id": "IP/2018",
+      "ticker": "IP",
+      "source_record_ids": [
+        "IP/2018/page_50.pdf-1",
+        "IP/2018/page_50.pdf-2",
+        "IP/2018/page_50.pdf-3",
+        "IP/2018/page_50.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 42,
+      "filename": "ETR/2008/page_441.pdf",
+      "report_id": "ETR/2008",
+      "ticker": "ETR",
+      "source_record_ids": [
+        "ETR/2008/page_441.pdf-1",
+        "ETR/2008/page_441.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 43,
+      "filename": "UAA/2016/page_82.pdf",
+      "report_id": "UAA/2016",
+      "ticker": "UAA",
+      "source_record_ids": [
+        "UAA/2016/page_82.pdf-1",
+        "UAA/2016/page_82.pdf-2",
+        "UAA/2016/page_82.pdf-3",
+        "UAA/2016/page_82.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 44,
+      "filename": "TFX/2018/page_47.pdf",
+      "report_id": "TFX/2018",
+      "ticker": "TFX",
+      "source_record_ids": [
+        "TFX/2018/page_47.pdf-1",
+        "TFX/2018/page_47.pdf-2",
+        "TFX/2018/page_47.pdf-3",
+        "TFX/2018/page_47.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 45,
+      "filename": "MRO/2012/page_22.pdf",
+      "report_id": "MRO/2012",
+      "ticker": "MRO",
+      "source_record_ids": [
+        "MRO/2012/page_22.pdf-1",
+        "MRO/2012/page_22.pdf-2",
+        "MRO/2012/page_22.pdf-3"
+      ]
+    },
+    {
+      "sample_rank": 46,
+      "filename": "UNP/2015/page_14.pdf",
+      "report_id": "UNP/2015",
+      "ticker": "UNP",
+      "source_record_ids": [
+        "UNP/2015/page_14.pdf-1",
+        "UNP/2015/page_14.pdf-2"
+      ]
+    },
+    {
+      "sample_rank": 47,
+      "filename": "JPM/2010/page_132.pdf",
+      "report_id": "JPM/2010",
+      "ticker": "JPM",
+      "source_record_ids": [
+        "JPM/2010/page_132.pdf-1",
+        "JPM/2010/page_132.pdf-2",
+        "JPM/2010/page_132.pdf-3",
+        "JPM/2010/page_132.pdf-4"
+      ]
+    },
+    {
+      "sample_rank": 48,
+      "filename": "MMM/2005/page_81.pdf",
+      "report_id": "MMM/2005",
+      "ticker": "MMM",
+      "source_record_ids": [
+        "MMM/2005/page_81.pdf-1"
+      ]
+    },
+    {
+      "sample_rank": 49,
+      "filename": "ETFC/2015/page_27.pdf",
+      "report_id": "ETFC/2015",
+      "ticker": "ETFC",
+      "source_record_ids": [
+        "ETFC/2015/page_27.pdf-1",
+        "ETFC/2015/page_27.pdf-2",
+        "ETFC/2015/page_27.pdf-3"
+      ]
+    },
+    {
+      "sample_rank": 50,
+      "filename": "FIS/2006/page_48.pdf",
+      "report_id": "FIS/2006",
+      "ticker": "FIS",
+      "source_record_ids": [
+        "FIS/2006/page_48.pdf-1",
+        "FIS/2006/page_48.pdf-2",
+        "FIS/2006/page_48.pdf-3",
+        "FIS/2006/page_48.pdf-4"
+      ]
+    }
+  ],
+  "frozen_at": "2026-11-12T01:40:04+00:00",
+  "command": "python scripts/finqa_dev_sample.py --source data/raw/finqa/train.json --out results/dev_finqa/sample_manifest.json",
+  "d1_outcomes_inspected_before_freeze": false
+}

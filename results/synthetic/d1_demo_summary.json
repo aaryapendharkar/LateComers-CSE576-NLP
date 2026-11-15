@@ -1,0 +1,44 @@
+{
+  "data_label": "SYNTHETIC - demonstrates implementation behaviour only; NOT a detection-rate estimate",
+  "fixture_set": "d1_synthetic_v1",
+  "fixture_provenance": "Hand-written SYNTHETIC fixtures by Person 3 (Vatsal). Company names and values are invented. Expected outcomes were derived by hand (see each 'derivation') before running D1. These demonstrate implementation behaviour only; they are not benchmark data and do not estimate detection rates.",
+  "n_cases": 20,
+  "status_counts": {
+    "checks_passed": 11,
+    "contradiction": 6,
+    "uncheckable": 3
+  },
+  "flagged_case_ids": [
+    "02_naive_edit_breaks_total",
+    "04_consistent_edit_contradicted_by_prose",
+    "07_rounding_beyond_tolerance",
+    "11_nested_leaf_naive_edit",
+    "12_unit_edit_contradicted_by_prose",
+    "19_header_swap_contradicted_by_prose"
+  ],
+  "uncheckable_case_ids": [
+    "15_ragged_parse_uncheckable",
+    "16_no_table",
+    "17_less_row_sign_ambiguous"
+  ],
+  "expectation_comparison": {
+    "n_match": 20,
+    "mismatches": []
+  },
+  "provenance": {
+    "d1_version": "0.2.0",
+    "config": {
+      "check_arithmetic": true,
+      "check_prose": true,
+      "dash_as_zero": false
+    },
+    "source_path": "tests/fixtures/synthetic/d1_cases.json",
+    "source_sha256": "5a51ae72d73b6dfe4aa27e95bf1c4f8cf8682f4c20ab5118f8860563d7347fc6",
+    "command": "python scripts/run_d1.py fixtures",
+    "python": "3.13.5",
+    "generated_at_utc": "2026-11-12T01:51:03+00:00"
+  },
+  "outputs": [
+    "results/synthetic/d1_demo_cases.jsonl"
+  ]
+}
