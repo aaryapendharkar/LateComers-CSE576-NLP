@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-import _bootstrap  # noqa: F401
+import _bootstrap
 import argparse
 
 from _runlog import tqdm

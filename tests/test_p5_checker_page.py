@@ -55,12 +55,12 @@ def test_compare_with_plain_text_layer():
 
 def test_extract_with_fake_vlm(cfg, tmp_path):
     table = io.load_docs(cfg)["finqa_ACME_2019_p12"].to_dict()["table"]
-    fake_vlm = lambda image_path, prompt: json.dumps(table)   # noqa: E731
+    def fake_vlm(image_path, prompt):
+        return json.dumps(table)
     assert extract_table_from_image("unused.png", fake_vlm)["rows"] == table["rows"]
 
 
 def test_check_page_end_to_end(cfg, tmp_path):
-    """Clean page -> no flag; text_only page (text layer poisoned) -> flag on cell + total."""
     doc = io.load_docs(cfg)["finqa_ACME_2019_p12"].to_dict()
     atk = io.load_attacks(cfg)["G2_text_only_table_q0001"]
     poisoned_doc = apply_edit(doc, atk.edit)
@@ -76,7 +76,8 @@ def test_check_page_end_to_end(cfg, tmp_path):
              for pid, v, tv in [(clean_id, "clean", "clean"), (poison_id, atk.attack_id, "poison")]}
     run_cfg = {**cfg, "paths": {**cfg["paths"], "parsed_dir": str(tmp_path / "parsed")},
                "img_text_check": {"cache_dir": str(tmp_path / "cache"), "text_source": "docling"}}
-    fake_vlm = lambda image_path, prompt: json.dumps(doc["table"])  # noqa: E731
+    def fake_vlm(image_path, prompt):
+        return json.dumps(doc["table"])
 
     assert check_page(clean_id, cfg=run_cfg, generator=fake_vlm, pages=pages)["flag"] is False
     r = check_page(poison_id, cfg=run_cfg, generator=fake_vlm, pages=pages)

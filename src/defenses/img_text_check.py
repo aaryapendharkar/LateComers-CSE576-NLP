@@ -57,7 +57,6 @@ def cells_equal(img_cell: Any, text_cell: Any, rel_tol: float = 0.01) -> bool:
 
 
 def align(labels_a: list[Any], labels_b: list[Any], threshold: float = LABEL_MATCH) -> list[tuple[int, int]]:
-    # order-preserving DP alignment, so duplicate labels pair in order
     n, m = len(labels_a), len(labels_b)
     sim = [[label_similarity(labels_a[i], labels_b[j]) for j in range(m)] for i in range(n)]
     best = [[0.0] * (m + 1) for _ in range(n + 1)]
@@ -393,12 +392,17 @@ def page_text(page_id: str, cfg: dict) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def cache_file(cfg: dict, page_id: str, image_path: str):
+    img = resolve(image_path)
+    key = hashlib.sha1(img.read_bytes()).hexdigest() if img.exists() else page_id
+    return resolve(_settings(cfg)["cache_dir"]) / f"{key}.json"
+
+
 def image_table(page_id: str, image_path: str, cfg: dict, generator: Any = None,
                 use_cache: bool = True) -> dict[str, Any]:
     s = _settings(cfg)
     img = resolve(image_path)
-    key = hashlib.sha1(img.read_bytes()).hexdigest() if img.exists() else page_id
-    cache = resolve(s["cache_dir"]) / f"{key}.json"
+    cache = cache_file(cfg, page_id, image_path)
     if use_cache and cache.exists():
         return json.loads(cache.read_text(encoding="utf-8"))
     if generator is None:
@@ -442,16 +446,18 @@ def oracle_reader(cfg: dict, pages: dict) -> Any:
 
 def _check_items(cfg: dict, pages: dict, n_clean: int, seed: int) -> list[tuple]:
     docs = io.load_docs(cfg)
-    items: list[tuple[str, str, Optional[str], Optional[str]]] = []
+    groups: dict[str, list[tuple[str, str, Optional[str], Optional[str]]]] = {}
     rng = random.Random(seed)
     for source, kind in (("finqa", "clean_table"), ("chartqa", "clean_chart")):
         ids = sorted(pid for pid, p in pages.items() if p.variant == "clean"
                      and doc_id_of_page(pid) in docs and docs[doc_id_of_page(pid)].source == source)
-        items += [(pid, kind, None, None) for pid in sorted(rng.sample(ids, min(n_clean, len(ids))))]
+        groups[kind] = [(pid, kind, None, None) for pid in sorted(rng.sample(ids, min(n_clean, len(ids))))]
     for a in sorted(io.load_attacks(cfg, gap="G2").values(), key=lambda a: a.attack_id):
         if a.poison_page_id in pages:
-            items.append((a.poison_page_id, a.attack_type, a.attack_id, a.qid))
-    return items
+            groups.setdefault(a.attack_type, []).append((a.poison_page_id, a.attack_type, a.attack_id, a.qid))
+    order = [k for k in ("clean_table", "clean_chart") + G2_ORDER if k in groups]
+    longest = max((len(g) for g in groups.values()), default=0)
+    return [groups[k][i] for i in range(longest) for k in order if i < len(groups[k])]
 
 
 def _summary_rows(records: list[dict]) -> list[dict[str, Any]]:
@@ -480,7 +486,7 @@ def _write_summary(rows: list[dict], out, suffix: str, oracle: bool) -> None:
 
 def evaluate(cfg: dict, n_clean: Optional[int] = None, generator: Any = None, oracle: bool = False,
              out_dir: str = "results/gap2", overwrite: bool = False, seed: int = 576,
-             limit: Optional[int] = None) -> list[dict[str, Any]]:
+             limit: Optional[int] = None, cached_only: bool = False) -> list[dict[str, Any]]:
     s = _settings(cfg)
     pages = io.load_pages(cfg)
     try:
@@ -488,6 +494,8 @@ def evaluate(cfg: dict, n_clean: Optional[int] = None, generator: Any = None, or
     except FileNotFoundError:
         questions = {}
     items = _check_items(cfg, pages, n_clean or s["n_clean"], seed)[:limit]
+    if cached_only and not oracle:
+        items = [i for i in items if cache_file(cfg, i[0], pages[i[0]].image_path).exists()]
 
     suffix = "_oracle" if oracle else ""
     out = resolve(out_dir)
@@ -531,12 +539,10 @@ def reading_accuracy(cfg: dict, out_dir: str = "results/gap2") -> dict[str, Any]
     flags = resolve(out_dir) / "checker_flags.jsonl"
     seen, rows = set(), []
     for r in io.read_jsonl(flags) if flags.exists() else []:
-        img = resolve(pages[r["page_id"]].image_path)
-        key = hashlib.sha1(img.read_bytes()).hexdigest()
-        cache = resolve(s["cache_dir"]) / f"{key}.json"
-        if key in seen or not cache.exists():
+        cache = cache_file(cfg, r["page_id"], pages[r["page_id"]].image_path)
+        if cache.name in seen or not cache.exists():
             continue
-        seen.add(key)
+        seen.add(cache.name)
         read = json.loads(cache.read_text(encoding="utf-8"))
         diff = compare_tables(read, json.loads(truth(str(img), "")), rel_tol=s["rel_tol"])
         rows.append({"page_id": r["page_id"], "kind": r["kind"], "exact": not diff["flag"],

@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-import _bootstrap  # noqa: F401
+import _bootstrap
 import argparse
 
 from src.common.config import get_config
@@ -15,11 +14,13 @@ def main():
     ap.add_argument("--overwrite", action="store_true", help="start over instead of resuming")
     ap.add_argument("--limit", type=int, help="check only the first N pages (quick test)")
     ap.add_argument("--read-accuracy", action="store_true", help="also score the VLM reads against the drawn tables")
+    ap.add_argument("--cached-only", action="store_true", help="no model: only pages the model has already read")
     args = ap.parse_args()
 
     cfg = get_config()
     rows = evaluate(cfg, n_clean=args.n_clean, oracle=args.oracle,
-                    out_dir=args.out_dir, overwrite=args.overwrite, limit=args.limit)
+                    out_dir=args.out_dir, overwrite=args.overwrite, limit=args.limit,
+                    cached_only=args.cached_only)
     for r in rows:
         print(f"{r['kind']:18s} {r['metric']:20s} {fmt_rate(r)}  errors={r['errors']}")
     print(f"wrote {args.out_dir}/checker_table{'_oracle' if args.oracle else ''}.md")
