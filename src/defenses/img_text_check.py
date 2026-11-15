@@ -338,11 +338,40 @@ def _match_line(label: str, lines: list[tuple[Optional[str], list[str]]], start:
     return best
 
 
+def _drop_empty_columns(t: dict[str, Any]) -> dict[str, Any]:
+    t = _normalise_table(t)
+    keep = [0] + [j for j in range(1, len(t["header"]))
+                  if str(t["header"][j]).strip() or any(str(r[j]).strip() for r in t["rows"])]
+    return {**t, "header": [t["header"][j] for j in keep], "rows": [[r[j] for j in keep] for r in t["rows"]]}
+
+
+def _long_form(t: dict[str, Any]) -> Optional[list[tuple[str, str]]]:
+    t = _drop_empty_columns(t)
+    rows = [r for r in t["rows"] if any(str(c).strip() for c in r)]
+    if len(t["header"]) == 2:
+        return [(r[0], r[1]) for r in rows]
+    if len(rows) == 1:
+        row = rows[0]
+        vals = [c for c in (row if parse_number(row[0]) is not None else row[1:]) if str(c).strip()]
+        labels = [h for h in t["header"][1:] if str(h).strip()]
+        if len(labels) != len(vals):
+            labels = [h for h in t["header"] if str(h).strip()]
+        if len(labels) == len(vals):
+            return list(zip(labels, vals))
+    return None
+
+
+def _as_single_series(pairs: list[tuple[str, str]], unit_note: str = "") -> dict[str, Any]:
+    return {"title": "", "unit_note": unit_note, "header": ["", "value"], "rows": [[l, v] for l, v in pairs]}
+
+
 def compare_with_text(img_table: dict[str, Any], text: str, rel_tol: float = 0.01,
                       only_rows: Optional[list[str]] = None) -> CheckResult:
     note = parse_source_note(text)
     if note is not None:
-        return compare_tables(img_table, note, rel_tol, only_rows)
+        pairs = _long_form(img_table) if note["header"] == ["", "value"] else None
+        img_t = _as_single_series(pairs) if pairs else _drop_empty_columns(img_table)
+        return compare_tables(img_t, note, rel_tol, only_rows)
 
     mismatches: list[list[Any]] = []
     unmatched: dict[str, list[str]] = {"rows_img_only": []}
@@ -544,7 +573,11 @@ def reading_accuracy(cfg: dict, out_dir: str = "results/gap2") -> dict[str, Any]
             continue
         seen.add(cache.name)
         read = json.loads(cache.read_text(encoding="utf-8"))
-        diff = compare_tables(read, json.loads(truth(str(img), "")), rel_tol=s["rel_tol"])
+        true_t = json.loads(truth(str(resolve(pages[r["page_id"]].image_path)), ""))
+        pr, pt = _long_form(read), _long_form(true_t)
+        if r["kind"].endswith("chart") and pr and pt:
+            read, true_t = _as_single_series(pr), _as_single_series(pt)
+        diff = compare_tables(_drop_empty_columns(read), true_t, rel_tol=s["rel_tol"])
         rows.append({"page_id": r["page_id"], "kind": r["kind"], "exact": not diff["flag"],
                      "misreads": diff["mismatches"][:5]})
     io.write_jsonl(resolve(out_dir) / "checker_reads.jsonl", rows)

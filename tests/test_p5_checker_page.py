@@ -83,3 +83,13 @@ def test_check_page_end_to_end(cfg, tmp_path):
     r = check_page(poison_id, cfg=run_cfg, generator=fake_vlm, pages=pages)
     assert r["flag"] is True and len(r["mismatches"]) == 2
     assert len(list((tmp_path / "cache").glob("*.json"))) == 2
+
+
+def test_chart_read_sideways_or_padded():
+    padded = {"header": ["", "Mortality 2000", ""], "rows": [["Mali", "27.5", ""], ["Kenya", "17.3", ""]]}
+    assert compare_with_text(padded, "Source data: Mali: 33.1; Kenya: 17.3.")["mismatches"] == [
+        ["Mali", "value", "27.5", "33.1"]]
+    sideways = {"header": ["", "Use SNS", "Do not go online"], "rows": [["27", "41", ""]]}
+    assert compare_with_text(sideways, "Source data: Use SNS: 27; Do not go online: 47.")["mismatches"] == [
+        ["Do not go online", "value", "41", "47"]]
+    assert compare_with_text(sideways, "Source data: Use SNS: 27; Do not go online: 41.")["flag"] is False
