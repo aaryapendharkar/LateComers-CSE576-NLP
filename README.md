@@ -75,7 +75,7 @@ All: top-20 retrieval → multimodal reranker (or off) → top-5 → one VLM gen
 | 10 | P3 | `python scripts/eval_reconcile.py`, then `run_attacks.py ... --drop-flags results/gap1/d1_flags.jsonl --run-name G1_D1` | D1 tables |
 | 11 | P5 | `python scripts/eval_img_text_check.py`, `python scripts/which_wins.py --runs results/runs/*_G2.jsonl` | checker + which-wins tables |
 
-Hardware / runtime: *(Person 1 fills in on Saturday.)*
+Hardware / runtime (intermediate report): Google Colab, 1x NVIDIA T4 (15 GB); generator Qwen3-VL-4B-Instruct, reranker off, page text capped at 2,000 characters (tables never cut). The GPU steps (5, 8, 10) were run through `notebooks/p1_colab.ipynb` (cells 1–4, 7, 8 for the clean baselines; cells 10a–10f for the attack runs and analysis). Times: BGE-M3 indexing ~1 min; P1 R1 6 min, R2 63 min, R3 18 min (200 questions); Gap 1 attacks 38 min (99), Gap 1 + D1 filter 28 min, Gap 2 tables 39 min (114).
 
 ## Repository layout
 
