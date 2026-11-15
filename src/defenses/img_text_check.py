@@ -327,9 +327,9 @@ def _match_line(label: str, lines: list[tuple[Optional[str], list[str]]], start:
         if not any(_is_num_token(t) for t in vals):
             continue
         cands = [lab]
-        if k > 0:
+        if k > 0 and not any(_is_num_token(t) for t in lines[k - 1][1]):
             cands.append(f"{' '.join(lines[k - 1][1])} {lab}")
-        if k + 1 < len(lines) and len(lines[k + 1][1]) <= 4:
+        if k + 1 < len(lines) and len(lines[k + 1][1]) <= 4 and not any(_is_num_token(t) for t in lines[k + 1][1]):
             cands.append(f"{lab} {' '.join(lines[k + 1][1])}")
         sim = max(label_similarity(label, c) for c in cands)
         if sim >= 0.95:
