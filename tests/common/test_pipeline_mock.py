@@ -60,3 +60,21 @@ def test_parse_generation_robust():
 def test_rrf():
     fused = rrf([["a", "b", "c"], ["b", "a", "d"]], k=60)
     assert [p for p, _ in fused][:2] in (["a", "b"], ["b", "a"]) and fused[-1][0] in ("c", "d")
+
+
+def test_virtual_page_follows_text_layer(cfg):
+    """image_only attacks keep the TEXT layer clean, so P1 (text) must see the clean page."""
+    from src.common.schemas import Attack
+    from src.pipelines.pages import PageStore
+    from src.common import io
+
+    docs = io.load_docs(cfg)
+    base = io.load_attacks(cfg)["G2_text_only_table_q0001"].to_dict()
+    img = Attack.from_dict({**base, "attack_id": "G2_image_only_table_q0001", "attack_type": "image_only_table",
+                            "poison_page_id": "finqa_ACME_2019_p12__G2_image_only_table_q0001",
+                            "image_version": "poison", "text_version": "clean",
+                            "image_answer": "20.4", "text_answer": "10.5"})
+    txt = Attack.from_dict(base)
+    store = PageStore(docs, {}, {img.attack_id: img, txt.attack_id: txt})
+    assert "1,204" in store.get(img.poison_page_id).text and "1,312" not in store.get(img.poison_page_id).text
+    assert "1,312" in store.get(txt.poison_page_id).text
