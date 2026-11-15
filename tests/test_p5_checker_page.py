@@ -4,7 +4,7 @@ from src.common import io
 from src.common.edits import apply_edit
 from src.common.schemas import Page
 from src.common.tables import doc_to_text
-from src.defenses.img_text_check import (check_page, extract_table_from_image, parse_table_reply,
+from src.defenses.img_text_check import (check_page, compare_with_text, extract_table_from_image, parse_table_reply,
                                          parse_text_layer)
 
 
@@ -32,8 +32,25 @@ def test_text_layer_plain_text_and_chart_note():
     t = parse_text_layer(plain)
     assert t["header"][1:] == ["2019", "2018"] and t["rows"][2] == ["Total revenue", "1,716", "1,578"]
     assert t["unit_note"] == "in millions"
-    chart = "E-bike sales\nSource data: 2016: 120, 2017: 145, 2018: 190"
-    assert parse_text_layer(chart)["rows"] == [["2016", "120"], ["2017", "145"], ["2018", "190"]]
+    chart = "Figure 1. E-bike sales.\nSource data: 2016: 1,120; 2017: 145; 2018: 19.5."
+    assert parse_text_layer(chart)["rows"] == [["2016", "1,120"], ["2017", "145"], ["2018", "19.5"]]
+    multi = ("Figure 1. A vs B.\nSource data: 65+ - Health: 49; 65+ - Money: 32; Ages 18-29 -\n"
+             "Health: 26; Ages 18-29 - Money: 40.")
+    t = parse_text_layer(multi)
+    assert t["header"] == ["", "Health", "Money"]
+    assert t["rows"] == [["65+", "49", "32"], ["Ages 18-29", "26", "40"]]
+
+
+def test_compare_with_plain_text_layer():
+    img = {"title": "", "unit_note": "in billions", "header": ["December 31, (in billions)", "2010", "2009"],
+           "rows": [["Securities", "$112.1", "$155.3"], ["Loans", "214.8", "285.5"], ["Total", "$450.1", "$525.4"]]}
+    text = ("Table 1. December 31. Key figures: Securities: $112.1 (2010), $155.3\n(2009); Total: $450.1 (2010).\n"
+            "December 31, (in billions) 2010 2009\nSecurities $112.1 $155.3\nLoans 250.4 285.5\n"
+            "Total $485.7 $525.4\nprose about total assets pledged in 2010 was 3.")
+    r = compare_with_text(img, text)
+    assert r["mismatches"] == [["Loans", "2010", "214.8", "250.4"], ["Total", "2010", "$450.1", "$485.7"]]
+    clean = text.replace("250.4", "214.8").replace("$485.7", "$450.1")
+    assert compare_with_text(img, clean)["flag"] is False
 
 
 def test_extract_with_fake_vlm(cfg, tmp_path):
@@ -64,4 +81,4 @@ def test_check_page_end_to_end(cfg, tmp_path):
     assert check_page(clean_id, cfg=run_cfg, generator=fake_vlm, pages=pages)["flag"] is False
     r = check_page(poison_id, cfg=run_cfg, generator=fake_vlm, pages=pages)
     assert r["flag"] is True and len(r["mismatches"]) == 2
-    assert (tmp_path / "cache" / f"{poison_id}.json").exists()
+    assert len(list((tmp_path / "cache").glob("*.json"))) == 2

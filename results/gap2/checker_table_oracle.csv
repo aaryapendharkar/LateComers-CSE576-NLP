@@ -1,0 +1,9 @@
+kind,metric,rate,ci_low,ci_high,n,errors
+clean_table,false-positive rate,0.02,0.0,0.05,100,0
+clean_chart,false-positive rate,0.0,0.0,0.0,100,0
+propagate_table,detection rate,0.02631578947368421,0.0,0.07894736842105263,38,0
+text_only_table,detection rate,1.0,1.0,1.0,38,0
+image_only_table,detection rate,1.0,1.0,1.0,38,0
+propagate_chart,detection rate,0.0,0.0,0.0,50,0
+text_only_chart,detection rate,1.0,1.0,1.0,50,0
+image_only_chart,detection rate,1.0,1.0,1.0,50,0
