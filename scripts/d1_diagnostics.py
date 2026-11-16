@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Person 3 (Vatsal): why D1 flags clean pages, and what D1 costs as a filter.
 
-    python scripts/d1_diagnostics.py [--attacks /tmp/g1.jsonl] [--clean-run results/runs/P1_R2_finqa.jsonl]
+    python scripts/d1_diagnostics.py [--attacks other_g1.jsonl] [--clean-run results/runs/P1_R2_finqa.jsonl]
 
 Three diagnostics, written to results/gap1/d1_diagnostics.{json,md}:
 
@@ -91,7 +91,7 @@ def bucket(doc: dict, res) -> str:
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--attacks", help="G1 attacks JSONL for the what-if detection counts")
+    ap.add_argument("--attacks", help="G1 attacks JSONL (default: data/attacks/ from the config)")
     ap.add_argument("--clean-run", default="results/runs/P1_R2_finqa.jsonl")
     ap.add_argument("--out-dir", default="results/gap1")
     args = ap.parse_args()
@@ -101,7 +101,12 @@ def main():
     docs = {k: d.to_dict() for k, d in sorted(load_docs(cfg, ("finqa",)).items())}
     examples = load_examples(cfg, ("finqa",), with_qtypes=False)
     gold_docs = {e.doc_id for e in examples.values()}
-    attacks = [a for a in read_jsonl(args.attacks) if a.get("gap") == "G1"] if args.attacks else []
+    if args.attacks:
+        attacks = [a for a in read_jsonl(args.attacks) if a.get("gap") == "G1"]
+    else:  # default: every G1 attack in the config's attacks dir (data/attacks/*.jsonl)
+        adir = resolve(cfg["paths"]["attacks_dir"])
+        attacks = [a for f in sorted(adir.glob("*.jsonl")) for a in read_jsonl(f) if a.get("gap") == "G1"] if adir.exists() else []
+    attacks = [a for a in attacks if a["clean_page_id"].split("__", 1)[0] in docs]
 
     clean = {k: run(d, d1) for k, d in docs.items()}
     flagged = {k: bucket(docs[k], r) for k, r in clean.items() if r.failed}
